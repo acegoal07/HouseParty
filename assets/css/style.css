@@ -1,0 +1,75 @@
+:root {
+   --background-color: #121212;
+   --primary-color: #1DB954;
+   --primary-color-hover: #137d38;
+   --shadow-color: rgba(0, 0, 0, 0.1);
+   --shadow-color-hover: rgba(0, 0, 0, 0.2);
+}
+
+body {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   height: 100vh;
+   background: linear-gradient(347deg, var(--background-color) 40%, var(--primary-color) 100%);
+   -webkit-backdrop-filter: blur(100px);
+   backdrop-filter: blur(100px);
+   font-family: 'Roboto', sans-serif;
+   margin: 0;
+}
+
+.container {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 1.5rem;
+}
+
+.button-container {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 1.5rem;
+}
+
+.header {
+   font-size: 4rem;
+   color: white;
+   padding: 0;
+   margin: 0;
+   text-align: center;
+}
+
+.description {
+   font-size: 2rem;
+   color: white;
+   padding: 0;
+   margin: 0;
+}
+
+button {
+   padding: 1rem 1rem;
+   border-radius: 10px;
+   color: white;
+   font-size: 1rem;
+   cursor: pointer;
+   box-shadow: 0 0 10px var(--shadow-color);
+   transition: background-color ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
+   border: none;
+   background-color: black;
+}
+
+button:hover {
+   background-color: #1d1d1d;
+   box-shadow: 0 0 10px var(--shadow-color-hover);
+   transform: scale(1.05);
+}
+
+.login-button {
+   background-color: var(--primary-color);
+   color: #000000;
+}
+
+.login-button:hover {
+   background-color: var(--primary-color-hover);
+}
