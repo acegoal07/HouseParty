@@ -2,8 +2,8 @@
    --background-color: #121212;
    --primary-color: #1DB954;
    --primary-color-hover: #137d38;
-   --shadow-color: rgba(0, 0, 0, 0.1);
-   --shadow-color-hover: rgba(0, 0, 0, 0.2);
+   --shadow-color: rgba(0, 0, 0, 0.4);
+   --shadow-color-hover: rgba(0, 0, 0, 0.6);
 }
 
 body {
@@ -18,18 +18,8 @@ body {
    margin: 0;
 }
 
-.container {
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   gap: 1.5rem;
-}
-
-.button-container {
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   gap: 1.5rem;
+.body-container {
+   margin: 2rem;
 }
 
 .header {
@@ -41,19 +31,31 @@ body {
 }
 
 .description {
-   font-size: 2rem;
+   font-size: 1.7rem;
    color: white;
    padding: 0;
    margin: 0;
+   text-align: center;
+}
+
+.button-container {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 1rem;
+   margin-top: 3rem;
 }
 
 button {
    padding: 1rem 1rem;
    border-radius: 10px;
    color: white;
-   font-size: 1rem;
+   font-size: 1.2rem;
    cursor: pointer;
    box-shadow: 0 0 10px var(--shadow-color);
+   -webkit-transition: background-color ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
+   -o-transition: background-color ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
+   -moz-transition: background-color ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
    transition: background-color ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
    border: none;
    background-color: black;
@@ -61,8 +63,12 @@ button {
 
 button:hover {
    background-color: #1d1d1d;
-   box-shadow: 0 0 10px var(--shadow-color-hover);
-   transform: scale(1.05);
+   box-shadow: 0 0 15px var(--shadow-color-hover);
+   -o-transform: scale(1.03);
+   -ms-transform: scale(1.03);
+   -moz-transform: scale(1.03);
+   -webkit-transform: scale(1.03);
+   transform: scale(1.03);
 }
 
 .login-button {
