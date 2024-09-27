@@ -16,6 +16,7 @@ body {
    backdrop-filter: blur(100px);
    font-family: 'Roboto', sans-serif;
    margin: 0;
+   padding: 0;
 }
 
 .body-container {
@@ -46,8 +47,9 @@ body {
    margin-top: 3rem;
 }
 
-button {
-   padding: 1rem 1rem;
+a.btn,
+button.btn {
+   padding: 1rem;
    border-radius: 10px;
    color: white;
    font-size: 1.2rem;
@@ -59,9 +61,11 @@ button {
    transition: background-color ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
    border: none;
    background-color: black;
+   text-decoration: none;
 }
 
-button:hover {
+a.btn:hover,
+button.btn:hover {
    background-color: #1d1d1d;
    box-shadow: 0 0 15px var(--shadow-color-hover);
    -o-transform: scale(1.03);
@@ -71,11 +75,46 @@ button:hover {
    transform: scale(1.03);
 }
 
-.login-button {
+a.btn.btn-green,
+button.btn.btn-green {
    background-color: var(--primary-color);
    color: #000000;
 }
 
-.login-button:hover {
+a.btn.btn-green:hover,
+button.btn.btn-green:hover {
    background-color: var(--primary-color-hover);
+}
+
+footer {
+   position: fixed;
+   bottom: 0;
+   left: 0;
+   width: 100%;
+   color: white;
+   text-align: center;
+}
+
+footer a {
+   color: white;
+}
+
+form {
+   display: flex;
+   flex-direction: column;
+   gap: 1rem;
+   margin-bottom: 3rem;
+}
+
+input[type="text"],
+input[type="password"] {
+   text-align: center;
+   padding: 1rem;
+   border-radius: 10px;
+   border: none;
+   background-color: #1d1d1d;
+   color: white;
+   font-size: 1.2rem;
+   box-shadow: 0 0 10px var(--shadow-color);
+   outline: none;
 }

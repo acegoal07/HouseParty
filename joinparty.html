@@ -4,8 +4,8 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>House Party</title>
-   <meta name="description" content="Opening your Spotify queue to your party">
+   <title>Join Party</title>
+   <meta name="description" content="Join session">
    <meta name="author" content="Alexander Wood">
    <link rel="preconnect" href="https://fonts.googleapis.com">
    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,21 +13,22 @@
       href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
       rel="stylesheet">
    <link rel="stylesheet" href="assets/css/style.css">
-   <script src="assets/js/homescreen.js"></script>
    <script src="assets/js/cookies.js"></script>
+   <script src="assets/js/joinparty.js"></script>
 </head>
 
 <body>
    <div class="body-container">
       <header>
-         <h1 class="header">House Party</h1>
-         <p class="description">Opening your Spotify queue to your party</p>
+         <h1 class="header">Join Party</h1>
+         <p class="description">Enter the code to join a party</p>
       </header>
       <main class="button-container">
-         <a class="btn" id="join-party" href="joinparty.html">Join a Party</a>
-         <a class="btn btn-green" id="spotify-login">Log into spotify</a>
-         <a class="btn btn-green" id="go-to-dashboard">Go to dashboard</a>
-         <a class="btn" id="add-test-song">Test</a>
+         <form id="join-party-form">
+            <input type="text" id="party-code" placeholder="Session code">
+            <button class="btn btn-green" type="submit">Join Party</button>
+         </form>
+         <a class="btn" href="./">Back to home screen</a>
       </main>
       <footer>
          <p class="footer">Made by <a href="https://acegoal07.github.io" rel="noopener" target="_blank">Alexander

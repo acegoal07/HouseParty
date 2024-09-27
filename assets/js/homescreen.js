@@ -1,8 +1,5 @@
 window.addEventListener('load', () => {
-   document.querySelector('button#join-party').addEventListener('click', () => {
-      console.log('HousePartyDebug: Joining party');
-   });
-   document.querySelector('button#spotify-login').addEventListener('click', () => {
+   document.querySelector('a#spotify-login').addEventListener('click', () => {
       const queryParams = new URLSearchParams({
          client_id: '67fa8a1f5eec455495394d8429fede37',
          response_type: 'code',
@@ -10,12 +7,10 @@ window.addEventListener('load', () => {
          scope: 'user-read-playback-state user-modify-playback-state',
          show_dialog: true
       }).toString();
-      console.log('HousePartyDebug: Redirecting to Spotify login page');
       window.location.href = `https://accounts.spotify.com/authorize?${queryParams}`;
    });
-   document.querySelector('button#add-test-song').addEventListener('click', () => {
+   document.querySelector('a#add-test-song').addEventListener('click', () => {
       const token = `Bearer ` + getCookie('access_token');
-      console.log('HousePartyDebug: Adding test song to queue');
       fetch('https://api.spotify.com/v1/me/player/queue?uri=spotify:track:4iV5W9uYEdYUVa79Axb7Rh', {
          method: 'POST',
          headers: {
@@ -25,23 +20,16 @@ window.addEventListener('load', () => {
          console.log(response);
       });
    });
-});
-
-/**
- * getCookie
- * Get's the value of the cookie with the provided name
- * @param {String} name The name of the cookie
- * @returns {any} The value of the cookie
- */
-function getCookie(name) {
-   const nameEQ = name + "=";
-   for (let cookie of document.cookie.split(';')) {
-      while (cookie.startsWith(' ')) {
-         cookie = cookie.substring(1, cookie.length);
-      }
-      if (cookie.startsWith(nameEQ)) {
-         return cookie.substring(nameEQ.length, cookie.length);
-      }
+   document.querySelector('a#go-to-dashboard').addEventListener('click', () => {
+      console.log('HousePartyDebug: Redirecting to dashboard');
+   });
+   if (getCookie('access_token') !== null) {
+      document.querySelector('a#spotify-login').style.display = 'none';
+      document.querySelector('a#add-test-song').style.display = 'block';
+      document.querySelector('a#go-to-dashboard').style.display = 'block';
+   } else {
+      document.querySelector('a#spotify-login').style.display = 'block';
+      document.querySelector('a#add-test-song').style.display = 'none';
+      document.querySelector('a#go-to-dashboard').style.display = 'none';
    }
-   return null;
-}
+});
