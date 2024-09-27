@@ -23,3 +23,5 @@ An option to listen to a preview of the song on your device before adding it to 
 The ability for the session host to limit how many songs a user can add to the queue
 
 A voting system allowing for songs to be moved up the queue bases on votes
+
+Support for more music platforms
