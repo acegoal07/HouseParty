@@ -26,9 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       $result = file_get_contents($url, false, $context);
       $result = json_decode($result, true);
 
-      setcookie("refresh_token", $result['refresh_token'], time() + 86400, "/", secure: true);
-      setcookie("access_token", $result['access_token'], time() + 3600, "/", secure: true);
-
-      header("Location: /houseparty/");
+      $accessToken = $result['access_token'];
+      $refreshToken = $result['refresh_token'];
+      echo json_encode(array('access_token' => $accessToken, 'refresh_token' => $refreshToken));
    }
 }

@@ -2,25 +2,40 @@
    --background-color: #121212;
    --primary-color: #1DB954;
    --primary-color-hover: #137d38;
+   --secondary-color: #282828;
    --shadow-color: rgba(0, 0, 0, 0.4);
    --shadow-color-hover: rgba(0, 0, 0, 0.6);
 }
 
+/* Global */
+.hidden {
+   display: none;
+}
+
+/* Body */
+html {
+   font-family: 'Roboto', sans-serif;
+   height: 100%;
+}
+
 body {
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   height: 100vh;
+   height: 100%;
+   margin: 0;
+   padding: 0;
    background: linear-gradient(347deg, var(--background-color) 40%, var(--primary-color) 100%);
    -webkit-backdrop-filter: blur(100px);
    backdrop-filter: blur(100px);
-   font-family: 'Roboto', sans-serif;
-   margin: 0;
-   padding: 0;
+}
+
+.centred-container {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   height: 100%;
 }
 
 .body-container {
-   margin: 2rem;
+   margin: 1.5rem;
 }
 
 .header {
@@ -44,9 +59,10 @@ body {
    flex-direction: column;
    align-items: center;
    gap: 1rem;
-   margin-top: 3rem;
+   margin-top: 1.5rem;
 }
 
+/* Buttons */
 a.btn,
 button.btn {
    padding: 1rem;
@@ -55,18 +71,19 @@ button.btn {
    font-size: 1.2rem;
    cursor: pointer;
    box-shadow: 0 0 10px var(--shadow-color);
+   background-color: black;
+   text-decoration: none;
+   border: none;
+   width: fit-content;
    -webkit-transition: background-color ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
    -o-transition: background-color ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
    -moz-transition: background-color ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
    transition: background-color ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
-   border: none;
-   background-color: black;
-   text-decoration: none;
 }
 
 a.btn:hover,
 button.btn:hover {
-   background-color: #1d1d1d;
+   background-color: var(--secondary-color);
    box-shadow: 0 0 15px var(--shadow-color-hover);
    -o-transform: scale(1.03);
    -ms-transform: scale(1.03);
@@ -75,35 +92,23 @@ button.btn:hover {
    transform: scale(1.03);
 }
 
-a.btn.btn-green,
-button.btn.btn-green {
+a.btn.btn-primary,
+button.btn.btn-primary {
+   color: black;
    background-color: var(--primary-color);
-   color: #000000;
 }
 
-a.btn.btn-green:hover,
-button.btn.btn-green:hover {
+a.btn.btn-primary:hover,
+button.btn.btn-primary:hover {
    background-color: var(--primary-color-hover);
 }
 
-footer {
-   position: fixed;
-   bottom: 0;
-   left: 0;
-   width: 100%;
-   color: white;
-   text-align: center;
-}
-
-footer a {
-   color: white;
-}
-
+/* Join Form */
 form {
    display: flex;
    flex-direction: column;
+   align-items: center;
    gap: 1rem;
-   margin-bottom: 3rem;
 }
 
 input[type="text"],

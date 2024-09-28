@@ -1,6 +1,6 @@
 <?php
-include 'databaseConnection.php';
-include 'spotifyAppInformation.php';
+include '../php/databaseConnection.php';
+include '../php/spotifyAppInformation.php';
 
 if ($conn->connect_error) {
    die("Connection failed: " . $conn->connect_error);
