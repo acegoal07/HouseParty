@@ -1,8 +1,0 @@
-Font
-https://fonts.google.com/specimen/Roboto
-
-SVG library
-https://icons.getbootstrap.com/
-
-Spotify API
-https://developer.spotify.com/documentation/web-api/reference/add-to-queue
