@@ -19,6 +19,10 @@ The ability for the session host to stop duplicate songs from being added the qu
 
 An option to listen to a preview of the song on your device before adding it to the queue
 
+The host can make the queue clear its self after the party has ended either by time running out or it being ended by the host
+
+The host can extended how long the party will last if the time is going to run out
+
 ### Will not have
 The ability for the session host to limit how many songs a user can add to the queue
 
