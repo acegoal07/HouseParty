@@ -2,7 +2,7 @@
 include 'spotifyAppInformation.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-   if ($_GET['error']) {
+   if (isset($_GET['error'])) {
       header("Location: /houseparty/");
    } else {
       $url = "https://accounts.spotify.com/api/token";

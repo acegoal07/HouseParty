@@ -2,7 +2,7 @@
 include 'spotifyAppInformation.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-   if ($_GET['error']) {
+   if (isset($_GET['error'])) {
       header("Location: /houseparty/");
    } else {
       $url = "https://accounts.spotify.com/api/token";
@@ -26,8 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       $result = file_get_contents($url, false, $context);
       $result = json_decode($result, true);
 
-      setcookie("refresh_token", $result['refresh_token'], time() + 86400, "/", secure: true);
-      setcookie("access_token", $result['access_token'], time() + 3600, "/", secure: true);
+      setcookie("refresh_token", $result['refresh_token'], time() + 86400, "/", "", true);
+      setcookie("access_token", $result['access_token'], time() + 3600, "/", "", true);
 
       header("Location: /houseparty/");
    }
