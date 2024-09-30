@@ -1,0 +1,1 @@
+window.addEventListener("load",(()=>{document.querySelector("form#join-party-form").addEventListener("submit",(e=>{e.preventDefault();const t=e.target.querySelector("input#party-code");t.value;t.value=""}))}));

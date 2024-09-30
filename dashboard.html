@@ -19,10 +19,29 @@
    <div class="centred-container">
       <div class="body-container">
          <h1 class="header">Dashboard</h1>
-         <p class="description">Welcome to your party</p>
+         <form id="start-party-form" class="m-15">
+            <div class="form-group">
+               <label for="party-duration">Party Duration in hours</label>
+               <input type="number" id="party-duration" name="party-duration" required min="1" max="24" value="4">
+            </div>
+            <div class="form-group">
+               <label class="custom-checkbox-container">Allow explicit songs
+                  <input type="checkbox" id="explicit-allowed" name="explicit-allowed">
+                  <span class="custom-checkbox"></span>
+               </label>
+            </div>
+            <button class="btn btn-primary m-top-15" type="submit">Create party</button>
+         </form>
+         <div class="button-container hidden">
+            <button class="btn btn-primary" type="button">Extend party</button>
+            <button class="btn" type="button">Disable Explicit</button>
+            <button class="btn hidden" type="button">Enable Explicit</button>
+            <button class="btn btn-primary" type="button">End party</button>
+         </div>
+
          <div class="button-container">
-            <button class="btn btn-primary" type="button" id="start-party-button">Create Party</button>
-            <button class="btn btn-secondary" type="button" id="end-party-button">Manage Party</button>
+            <button class="btn btn-primary hidden" type="button" id="start-party-button">Create Party</button>
+            <button class="btn btn-primary hidden" type="button" id="end-party-button">Manage Party</button>
             <a class="btn" href="./">Back to home screen</a>
          </div>
       </div>

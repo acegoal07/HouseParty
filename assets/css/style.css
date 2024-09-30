@@ -10,7 +10,15 @@
 
 /* Global */
 .hidden {
-   display: none;
+   display: none !important;
+}
+
+.m-15 {
+   margin-top: 1.5rem;
+}
+
+.m-top-15 {
+   margin-top: 1.5rem;
 }
 
 /* Body */
@@ -117,7 +125,8 @@ form {
 }
 
 input[type="text"],
-input[type="password"] {
+input[type="password"],
+input[type="number"] {
    text-align: center;
    padding: 1rem;
    border-radius: 10px;
@@ -127,4 +136,89 @@ input[type="password"] {
    font-size: 1.2rem;
    box-shadow: 0 0 10px var(--shadow-color);
    outline: none;
+}
+
+input[type="number"] {
+   padding: 0.7rem;
+}
+
+input[type="checkbox"] {
+   width: 1.5rem;
+   height: 1.5rem;
+   accent-color: var(--primary-color);
+   border-radius: 10px;
+}
+
+.form-group {
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+   gap: 0.5rem;
+}
+
+label {
+   font-size: 1.2rem;
+   color: white;
+}
+
+/* Checkbox */
+.custom-checkbox-container {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   position: relative;
+   padding-left: 0;
+   cursor: pointer;
+   -webkit-user-select: none;
+   user-select: none;
+   gap: 0.5rem;
+}
+
+.custom-checkbox-container input {
+   position: absolute;
+   opacity: 0;
+   cursor: pointer;
+   height: 0;
+   width: 0;
+}
+
+.custom-checkbox {
+   position: relative;
+   height: 30px;
+   width: 30px;
+   background-color: var(--secondary-color-hover);
+   border-radius: 4px;
+}
+
+.custom-checkbox-container input:checked~.custom-checkbox {
+   background-color: var(--primary-color);
+}
+
+.custom-checkbox:after {
+   content: "";
+   position: absolute;
+   display: none;
+}
+
+.custom-checkbox-container input:checked~.custom-checkbox:after {
+   display: block;
+}
+
+.custom-checkbox-container:hover .custom-checkbox::after {
+   display: block;
+   border-color: var(--secondary-color);
+}
+
+.custom-checkbox-container .custom-checkbox:after {
+   left: 8px;
+   top: 1px;
+   width: 10px;
+   height: 18px;
+   border: solid black;
+   border-width: 0 4px 4px 0;
+   -webkit-transform: rotate(45deg);
+   -ms-transform: rotate(45deg);
+   -moz-transform: rotate(45deg);
+   -o-transform: rotate(45deg);
+   transform: rotate(45deg);
 }
