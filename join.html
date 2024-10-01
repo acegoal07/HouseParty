@@ -22,7 +22,9 @@
          <p class="description">Join a party by entering the party code</p>
          <div class="button-container">
             <form id="join-party-form">
-               <input type="text" id="party-code" placeholder="Session code">
+               <label for="party-code" class="label-visually-hidden">Session code</label>
+               <input type="text" id="party-code" name="party-code" placeholder="Session code" aria-label="Session code"
+                  required>
                <button class="btn btn-primary" type="submit">Join Party</button>
             </form>
             <a class="btn" href="./">Back to home screen</a>

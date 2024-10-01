@@ -12,13 +12,14 @@
       rel="stylesheet">
    <link rel="stylesheet" href="assets/css/style.css">
    <script src="assets/js/cookies-min.js"></script>
-   <script src="assets/js/index-min.js"></script>
+   <script src="assets/js/dashboard-min.js"></script>
 </head>
 
 <body>
    <div class="centred-container">
       <div class="body-container">
          <h1 class="header">Dashboard</h1>
+         <p class="description">Where to create and manage your parties</p>
          <form id="start-party-form" class="m-15">
             <div class="form-group">
                <label for="party-duration">Party Duration in hours</label>
@@ -32,16 +33,13 @@
             </div>
             <button class="btn btn-primary m-top-15" type="submit">Create party</button>
          </form>
-         <div class="button-container hidden">
-            <button class="btn btn-primary" type="button">Extend party</button>
-            <button class="btn" type="button">Disable Explicit</button>
-            <button class="btn hidden" type="button">Enable Explicit</button>
-            <button class="btn btn-primary" type="button">End party</button>
+         <div class="button-container hidden" id="manage-party-buttons">
+            <button class="btn btn-primary" type="button" id="extend-party-button">Extend party</button>
+            <button class="btn" type="button" id="disable-explicit-button">Disable Explicit</button>
+            <button class="btn hidden" type="button" id="enable-explicit-button">Enable Explicit</button>
+            <button class="btn btn-primary" type="button" id="end-party-button">End party</button>
          </div>
-
          <div class="button-container">
-            <button class="btn btn-primary hidden" type="button" id="start-party-button">Create Party</button>
-            <button class="btn btn-primary hidden" type="button" id="end-party-button">Manage Party</button>
             <a class="btn" href="./">Back to home screen</a>
          </div>
       </div>

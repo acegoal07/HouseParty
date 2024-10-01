@@ -1,0 +1,6 @@
+Using minified files for the hosted version has they provide some performance benefits
+Using a API to handle sensitive data so that it doesn't get exposed to the wrong people
+Using a different JS file for each page as this will make it easier to find errors due to the file only being specific for that page and containing less content (micro services)
+Designing PHP scripts to run on the server automatically to handle refreshing API tokens and ending expired sessions
+Im going to build the website with a very basic layout making it easy to use and understand
+Make sure that accessibility is is very high

@@ -52,7 +52,7 @@ body {
 }
 
 .header {
-   font-size: 4rem;
+   font-size: 3rem;
    color: white;
    padding: 0;
    margin: 0;
@@ -60,11 +60,20 @@ body {
 }
 
 .description {
-   font-size: 1.7rem;
+   font-size: 1.5rem;
    color: white;
    padding: 0;
    margin: 0;
    text-align: center;
+}
+
+@media screen and (max-width: 768px) {
+   .header {
+      font-size: 2.5rem;
+   }
+   .description {
+      font-size: 1.3rem;
+   }
 }
 
 .button-container {
@@ -124,6 +133,29 @@ form {
    gap: 1rem;
 }
 
+.form-group {
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+   gap: 0.5rem;
+}
+
+label {
+   font-size: 1.2rem;
+   color: white;
+}
+
+.label-visually-hidden {
+   position: absolute;
+   width: 1px;
+   height: 1px;
+   margin: -1px;
+   padding: 0;
+   overflow: hidden;
+   clip: rect(0, 0, 0, 0);
+   border: 0;
+}
+
 input[type="text"],
 input[type="password"],
 input[type="number"] {
@@ -149,16 +181,12 @@ input[type="checkbox"] {
    border-radius: 10px;
 }
 
-.form-group {
-   display: flex;
-   flex-direction: row;
-   align-items: center;
-   gap: 0.5rem;
-}
-
-label {
-   font-size: 1.2rem;
-   color: white;
+input:focus,
+button:focus,
+a:focus,
+select:focus {
+   outline: 2px solid #2196F3;
+   outline-offset: 2px;
 }
 
 /* Checkbox */
@@ -188,6 +216,7 @@ label {
    width: 30px;
    background-color: var(--secondary-color-hover);
    border-radius: 4px;
+   transition: background-color 0.2s ease;
 }
 
 .custom-checkbox-container input:checked~.custom-checkbox {
@@ -221,4 +250,9 @@ label {
    -moz-transform: rotate(45deg);
    -o-transform: rotate(45deg);
    transform: rotate(45deg);
+}
+
+.custom-checkbox-container input:focus+.custom-checkbox {
+   outline: 2px solid #2196F3;
+   outline-offset: 2px;
 }
