@@ -23,6 +23,8 @@ The host can make the queue clear its self after the party has ended either by t
 
 The host can extended how long the party will last if the time is going to run out
 
+The ability to display a QR code to join the session
+
 ### Will not have
 The ability for the session host to limit how many songs a user can add to the queue
 
