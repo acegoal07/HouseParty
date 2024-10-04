@@ -27,9 +27,37 @@ window.addEventListener('load', () => {
       const explicitAllowed = document.querySelector('input#explicit-allowed').checked;
       console.log(partyDuration, explicitAllowed);
    });
-   // Handle the button press for extending the party
+   // Handle the button press for show join party info
+   this.document.querySelector('button#show-party-join-info').addEventListener('click', (event) => {
+      event.preventDefault();
+      const modal = document.querySelector('div#join-party-info');
+      modal.style.animation = "modal-open 0.6s forwards";
+      modal.style.display = 'block';
+   });
+   // Handle the button press for hiding join party info
+   this.document.querySelector('span#hide-party-join-info').addEventListener('click', (event) => {
+      event.preventDefault();
+      const modal = document.querySelector('div#join-party-info');
+      modal.style.animation = "modal-close 0.6s forwards";
+      setTimeout(function () {
+         modal.style.display = 'none';
+      }, 600);
+   });
+   // Handle the button press for extending the party modal
    this.document.querySelector('button#extend-party-button').addEventListener('click', (event) => {
       event.preventDefault();
+      const modal = document.querySelector('div#extend-party');
+      modal.style.animation = "modal-open 0.6s forwards";
+      modal.style.display = 'block';
+   });
+   // Handle the button press for closing the extend party modal
+   this.document.querySelector('span#hide-extend-party').addEventListener('click', (event) => {
+      event.preventDefault();
+      const modal = document.querySelector('div#extend-party');
+      modal.style.animation = "modal-close 0.6s forwards";
+      setTimeout(function () {
+         modal.style.display = 'none';
+      }, 600);
    });
    // Handle the button press for disabling explicit songs
    disableExplicitButton.addEventListener('click', (event) => {

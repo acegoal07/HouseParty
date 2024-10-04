@@ -11,7 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
       http_response_code(200);
       if ($result->num_rows > 0) {
-         echo json_encode(array('partyExists' => true, 'explicit' => $result->fetch_assoc()['explicit'], 'party_id' => $result->fetch_assoc()['party_id']));
+         $row = $result->fetch_assoc();
+         echo json_encode(array('partyExists' => true, 'explicit' => $row['explicit'], 'partyId' => $row['party_id']));
       } else {
          echo json_encode(array('partyExists' => false));
       }

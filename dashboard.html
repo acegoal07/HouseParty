@@ -16,11 +16,23 @@
 </head>
 
 <body>
+   <div class="modal-background" id="join-party-info">
+      <div class="modal-body">
+         <span class="modal-close" id="hide-party-join-info">&times;</span>
+         <h1>Party join info</h1>
+      </div>
+   </div>
+   <div class="modal-background" id="extend-party">
+      <div class="modal-body">
+         <span class="modal-close" id="hide-extend-party">&times;</span>
+         <h1>Extend party</h1>
+      </div>
+   </div>
    <div class="centred-container">
       <div class="body-container">
          <h1 class="header">Dashboard</h1>
          <p class="description">Where to create and manage your parties</p>
-         <form id="start-party-form" class="m-15 hidden">
+         <form class="m-15 hidden" id="start-party-form">
             <div class="form-group">
                <label for="party-duration">Party Duration in hours</label>
                <input type="number" id="party-duration" name="party-duration" required min="1" max="24" value="4">
@@ -33,7 +45,8 @@
             </div>
             <button class="btn btn-primary m-top-15" type="submit">Create party</button>
          </form>
-         <div class="button-container hidden" id="manage-party-buttons">
+         <div class="button-container" id="manage-party-buttons">
+            <button class="btn" type="button" id="show-party-join-info">Show join info</button>
             <button class="btn btn-primary" type="button" id="extend-party-button">Extend party</button>
             <button class="btn" type="button" id="disable-explicit-button">Disable Explicit</button>
             <button class="btn hidden" type="button" id="enable-explicit-button">Enable Explicit</button>
