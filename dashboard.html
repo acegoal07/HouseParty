@@ -28,6 +28,17 @@
          <h1>Extend party</h1>
       </div>
    </div>
+   <div class="modal-background" id="confirm-end-party">
+      <div class="modal-body">
+         <span class="modal-close" id="hide-confirm-end-party">&times;</span>
+         <h1>End party</h1>
+         <p>Are you sure you want to end the party?</p>
+         <div class="button-container">
+            <button class="btn btn-primary" id="confirm-end-party-button" type="button">Yes</button>
+            <button class="btn" id="cancel-end-party-button" type="button">No</button>
+         </div>
+      </div>
+   </div>
    <div class="centred-container">
       <div class="body-container">
          <h1 class="header">Dashboard</h1>
@@ -45,9 +56,9 @@
             </div>
             <button class="btn btn-primary m-top-15" type="submit">Create party</button>
          </form>
-         <div class="button-container" id="manage-party-buttons">
+         <div class="button-container hidden" id="manage-party-buttons">
             <button class="btn" type="button" id="show-party-join-info">Show join info</button>
-            <button class="btn btn-primary" type="button" id="extend-party-button">Extend party</button>
+            <button class="btn btn-primary hidden" type="button" id="extend-party-button">Extend party</button>
             <button class="btn" type="button" id="disable-explicit-button">Disable Explicit</button>
             <button class="btn hidden" type="button" id="enable-explicit-button">Enable Explicit</button>
             <button class="btn btn-primary" type="button" id="end-party-button">End party</button>

@@ -6,7 +6,7 @@ window.addEventListener('load', () => {
       type: 'partyExists',
       hostId: `${getCookie('spotify_user_id')}`
    });
-   fetch(`https://aw1443.brighton.domains/houseparty/assets/php/databasePartyHandlers.php?${urlParams}`, {
+   fetch(`assets/php/databasePartyHandlers.php?${urlParams}`, {
       method: 'GET'
    }).then(response => response.json()).then(data => {
       if (data.partyExists) {
@@ -32,7 +32,7 @@ window.addEventListener('load', () => {
       event.preventDefault();
       const modal = document.querySelector('div#join-party-info');
       modal.style.animation = "modal-open 0.6s forwards";
-      modal.style.display = 'block';
+      modal.style.display = 'flex';
    });
    // Handle the button press for hiding join party info
    this.document.querySelector('span#hide-party-join-info').addEventListener('click', (event) => {
@@ -48,7 +48,7 @@ window.addEventListener('load', () => {
       event.preventDefault();
       const modal = document.querySelector('div#extend-party');
       modal.style.animation = "modal-open 0.6s forwards";
-      modal.style.display = 'block';
+      modal.style.display = 'flex';
    });
    // Handle the button press for closing the extend party modal
    this.document.querySelector('span#hide-extend-party').addEventListener('click', (event) => {
@@ -62,13 +62,71 @@ window.addEventListener('load', () => {
    // Handle the button press for disabling explicit songs
    disableExplicitButton.addEventListener('click', (event) => {
       event.preventDefault();
+      fetch(`assets/php/databasePartyHandlers.php`, {
+         method: 'post',
+         headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+         },
+         body: `type=updatePartyExplicit&hostId=${getCookie('spotify_user_id')}&explicit=0`
+      }).then(response => response.json()).then(data => {
+         if (data.success) {
+            window.location.reload();
+         }
+      });
    });
    // Handle the button press for enabling explicit songs
    enableExplicitButton.addEventListener('click', (event) => {
       event.preventDefault();
+      fetch(`assets/php/databasePartyHandlers.php`, {
+         method: 'post',
+         headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+         },
+         body: `type=updatePartyExplicit&hostId=${getCookie('spotify_user_id')}&explicit=1`
+      }).then(response => response.json()).then(data => {
+         if (data.success) {
+            window.location.reload();
+         }
+      });
    });
    // Handle the button press for ending the party
    this.document.querySelector('button#end-party-button').addEventListener('click', (event) => {
       event.preventDefault();
+      const modal = document.querySelector('div#confirm-end-party');
+      modal.style.animation = "modal-open 0.6s forwards";
+      modal.style.display = 'flex';
+   });
+   // Handle the button press for closing the end party modal
+   this.document.querySelector('span#hide-confirm-end-party').addEventListener('click', (event) => {
+      event.preventDefault();
+      const modal = document.querySelector('div#confirm-end-party');
+      modal.style.animation = "modal-close 0.6s forwards";
+      setTimeout(function () {
+         modal.style.display = 'none';
+      }, 600);
+   });
+   // Handle the button press for confirming the end of the party
+   this.document.querySelector('button#confirm-end-party-button').addEventListener('click', (event) => {
+      event.preventDefault();
+      fetch(`assets/php/databasePartyHandlers.php`, {
+         method: 'post',
+         headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+         },
+         body: 'type=deleteParty&hostId=' + getCookie('spotify_user_id')
+      }).then(response => response.json()).then(data => {
+         if (data.success) {
+            window.location.reload();
+         }
+      });
+   });
+   // Handle the button press for cancelling the end of the party
+   this.document.querySelector('button#cancel-end-party-button').addEventListener('click', (event) => {
+      event.preventDefault();
+      const modal = document.querySelector('div#confirm-end-party');
+      modal.style.animation = "modal-close 0.6s forwards";
+      setTimeout(function () {
+         modal.style.display = 'none';
+      }, 600);
    });
 });

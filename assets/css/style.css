@@ -262,6 +262,8 @@ select:focus {
 .modal-background {
    display: none;
    position: fixed;
+   justify-content: center;
+   align-items: center;
    z-index: 1;
    left: 0;
    top: 0;
@@ -275,9 +277,11 @@ select:focus {
 
 .modal-body {
    background-color: var(--secondary-color);
-   margin: 15% auto;
+   margin: 2rem;
    padding: 20px;
+   width: 100%;
    max-width: 500px;
+   height: fit-content;
    color: white;
    border-radius: 20px;
 }
