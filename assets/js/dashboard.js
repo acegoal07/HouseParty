@@ -10,6 +10,9 @@ window.addEventListener('load', () => {
       method: 'GET'
    }).then(response => response.json()).then(data => {
       if (data.partyExists) {
+         this.document.querySelector('span#party-code').textContent = data.partyId;
+         new QRCode(document.querySelector('div#party-qrcode'), 'https://aw1443.brighton.domains/houseparty/party.html?session_code=' + data.partyId);
+         this.document.querySelector('span#party-qr-code');
          if (data.explicit) {
             document.querySelector('button#disable-explicit-button').classList.remove('hidden');
          } else {
@@ -42,6 +45,12 @@ window.addEventListener('load', () => {
       setTimeout(function () {
          modal.style.display = 'none';
       }, 600);
+   });
+   // Handle the button press for copying the party code
+   this.document.querySelector('button#copy-party-code').addEventListener('click', (event) => {
+      event.preventDefault();
+      const partyCode = document.querySelector('span#party-code').textContent;
+      navigator.clipboard.writeText(partyCode);
    });
    // Handle the button press for extending the party modal
    this.document.querySelector('button#extend-party-button').addEventListener('click', (event) => {

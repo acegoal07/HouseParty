@@ -10,8 +10,9 @@
    <link
       href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
       rel="stylesheet">
-   <link rel="stylesheet" href="assets/css/style.css">
+   <link rel="stylesheet" href="assets/css/style-min.css">
    <script src="assets/js/cookies-min.js"></script>
+   <script src="assets/js/qrcode.min.js"></script>
    <script src="assets/js/dashboard.js"></script>
 </head>
 
@@ -20,6 +21,12 @@
       <div class="modal-body">
          <span class="modal-close" id="hide-party-join-info">&times;</span>
          <h1>Party join info</h1>
+         <p>Share this code with your friends to join the party</p>
+         <div class="party-code-container">
+            <span id="party-code"></span>
+            <button class="btn btn-primary" id="copy-party-code" type="button">Copy</button>
+         </div>
+         <div id="party-qrcode"></div>
       </div>
    </div>
    <div class="modal-background" id="extend-party">
@@ -56,7 +63,7 @@
             </div>
             <button class="btn btn-primary m-top-15" type="submit">Create party</button>
          </form>
-         <div class="button-container hidden" id="manage-party-buttons">
+         <div class="button-container" id="manage-party-buttons">
             <button class="btn" type="button" id="show-party-join-info">Show join info</button>
             <button class="btn btn-primary hidden" type="button" id="extend-party-button">Extend party</button>
             <button class="btn hidden" type="button" id="disable-explicit-button">Disable Explicit</button>

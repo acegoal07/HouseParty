@@ -334,3 +334,29 @@ select:focus {
       backdrop-filter: blur(0);
    }
 }
+
+/* Party join info */
+.party-code-container {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   background-color: var(--background-color);
+   padding: 15px;
+   margin-top: 10px;
+   border-radius: 20px;
+}
+
+.party-code-container #party-code {
+   font-size: 18px;
+   font-weight: bold;
+   color: white;
+   margin-right: 10px;
+}
+
+div#party-qrcode {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   margin-top: 20px;
+   padding: 10px;
+}
