@@ -13,7 +13,7 @@ function generatePartyId()
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-   if ($_GET['type'] === 'partyExists') {
+   if ($_GET['type'] === 'partyExistsByHostId') {
       if (!isset($_GET['hostId'])) {
          http_response_code(400);
          exit();
@@ -31,7 +31,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       } else {
          echo json_encode(array('partyExists' => false));
       }
-   } elseif ($_GET['type'] === 'getPartyId') {
+   } elseif ($_GET['type'] === 'partyExistsById') {
+      if (!isset($_GET['partyId'])) {
+         http_response_code(400);
+         exit();
+      }
+      $stmt = $conn->prepare("SELECT explicit FROM parties WHERE party_id = ?");
+      $stmt->bind_param("s", $_GET['partyId']);
+      $stmt->execute();
+
+      $result = $stmt->get_result();
+
+      http_response_code(200);
+      if ($result->num_rows > 0) {
+         $row = $result->fetch_assoc();
+         echo json_encode(array('partyExists' => true, 'explicit' => $row['explicit']));
+      } else {
+         echo json_encode(array('partyExists' => false));
+      }
+   } elseif ($_GET['type'] === 'getPartyIdByHostId') {
       if (!isset($_GET['hostId'])) {
          http_response_code(400);
          exit();
@@ -86,6 +104,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       $stmt = $conn->prepare("UPDATE parties SET explicit = ? WHERE host_spotify_id = ?");
       $stmt->bind_param("ss", $_POST['explicit'], $_POST['hostId']);
       $stmt->execute();
+
+      if ($stmt->affected_rows === 0) {
+         http_response_code(400);
+         exit();
+      }
 
       http_response_code(200);
       echo json_encode(array('success' => true));

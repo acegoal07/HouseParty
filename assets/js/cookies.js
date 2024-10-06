@@ -6,7 +6,7 @@
  * @param {"Strict" | "Lax" | "None"} SameSite The type of SameSite to use
  * @param {Number} expires The number of days until the cookie expires
  */
-function setCookie(name, value, SameSite = "Strict", expires = 1) {
+function setCookie({ name, value, SameSite = "Strict", expires = 1 }) {
    const date = new Date();
    date.setTime(date.getTime() + (expires * 24 * 60 * 60 * 1000));
    document.cookie = `${name}=${value || ""}; expires=${date.toString()}; SameSite=${SameSite}; secure=true; path=/`;
@@ -17,7 +17,7 @@ function setCookie(name, value, SameSite = "Strict", expires = 1) {
  * @param {String} name The name of the cookie
  * @param {"Strict" | "Lax" | "None"} SameSite The type of SameSite to use
  */
-function deleteCookie(name, SameSite = "Strict") {
+function deleteCookie({ name, SameSite = "Strict" }) {
    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=${SameSite}; secure=true; path=/;`;
 }
 /**
