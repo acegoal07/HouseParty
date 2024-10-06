@@ -21,6 +21,7 @@ window.addEventListener('load', () => {
    this.document.querySelector('button#logout-button').addEventListener('click', () => {
       deleteCookie({ name: 'refresh_token' });
       deleteCookie({ name: 'access_token' });
+      deleteCookie({ name: 'spotify_user_id' });
       window.location.reload();
    });
 });

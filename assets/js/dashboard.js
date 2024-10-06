@@ -1,4 +1,7 @@
 window.addEventListener('load', () => {
+   if (!getCookie('spotify_user_id')) {
+      window.location.href = '/houseparty/';
+   }
    const disableExplicitButton = this.document.querySelector('button#disable-explicit-button');
    const enableExplicitButton = this.document.querySelector('button#enable-explicit-button');
    // Check if the user has an active party and display the appropriate form
