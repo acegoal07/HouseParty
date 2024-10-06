@@ -14,7 +14,11 @@ window.addEventListener('load', () => {
    }).then(response => response.json()).then(data => {
       if (data.partyExists) {
          this.document.querySelector('span#party-code').textContent = data.partyId;
-         new QRCode(document.querySelector('div#party-qrcode'), 'https://aw1443.brighton.domains/houseparty/party.html?session_code=' + data.partyId);
+         new QRCode(document.querySelector('div#party-qrcode'), {
+            text: `https://aw1443.brighton.domains/houseparty/party.html?session_code=${data.partyId}`,
+            width: 150,
+            height: 150
+         });
          this.document.querySelector('span#party-qr-code');
          if (data.explicit) {
             document.querySelector('button#disable-explicit-button').classList.remove('hidden');
