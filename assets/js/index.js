@@ -11,16 +11,17 @@ window.addEventListener('load', () => {
       const queryParams = new URLSearchParams({
          client_id: '67fa8a1f5eec455495394d8429fede37',
          response_type: 'code',
-         redirect_uri: 'http://localhost/houseparty/assets/php/spotifyLogin.php',
+         redirect_uri: 'https://aw1443.brighton.domains/houseparty/assets/php/spotifyLogin.php',
          scope: 'user-read-playback-state user-modify-playback-state user-read-private user-read-email user-read-currently-playing',
          show_dialog: true
-      }).toString();
+      });
       window.location.href = `https://accounts.spotify.com/authorize?${queryParams}`;
    });
    // Add event listener to the logout button
    this.document.querySelector('button#logout-button').addEventListener('click', () => {
-      deleteCookie('refresh_token');
-      deleteCookie('access_token');
+      deleteCookie({ name: 'refresh_token' });
+      deleteCookie({ name: 'access_token' });
+      deleteCookie({ name: 'spotify_user_id' });
       window.location.reload();
    });
 });

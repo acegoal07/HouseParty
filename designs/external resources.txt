@@ -9,3 +9,6 @@ https://developer.spotify.com/documentation/web-api
 
 PHP
 https://www.php.net/manual/en/
+
+QR code generator
+https://cdnjs.com/libraries/qrcodejs
