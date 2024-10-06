@@ -5,3 +5,4 @@ Designing PHP scripts to run on the server automatically to handle refreshing AP
 Im going to build the website with a very basic layout making it easy to use and understand
 Make sure that accessibility is is very high
 I chose to use github projects over an alternative like trello because it keeps the code and all the planning in one place instead on multiple websites making it easier to access all together
+When you join a session the session code is stored in the url so that you can share the url and join a session without having to enter a code yourself

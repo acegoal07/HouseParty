@@ -12,7 +12,7 @@
       rel="stylesheet">
    <link rel="stylesheet" href="assets/css/style.css">
    <script src="assets/js/cookies.js"></script>
-   <script src="assets/js/joinparty.js"></script>
+   <script src="assets/js/join.js"></script>
 </head>
 
 <body>
@@ -23,6 +23,7 @@
          <div class="button-container">
             <form id="join-party-form">
                <label for="party-code" class="label-visually-hidden">Session code</label>
+               <span id="no-session-found-error" class="form-error-message" aria-live="polite">No session with that code found</span>
                <input type="text" id="party-code" name="party-code" placeholder="Session code" aria-label="Session code"
                   required>
                <button class="btn btn-primary" type="submit">Join Party</button>

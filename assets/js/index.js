@@ -19,8 +19,8 @@ window.addEventListener('load', () => {
    });
    // Add event listener to the logout button
    this.document.querySelector('button#logout-button').addEventListener('click', () => {
-      deleteCookie('refresh_token');
-      deleteCookie('access_token');
+      deleteCookie({ name: 'refresh_token' });
+      deleteCookie({ name: 'access_token' });
       window.location.reload();
    });
 });

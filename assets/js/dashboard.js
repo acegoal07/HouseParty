@@ -3,20 +3,20 @@ window.addEventListener('load', () => {
    const enableExplicitButton = this.document.querySelector('button#enable-explicit-button');
    // Check if the user has an active party and display the appropriate form
    const urlParams = new URLSearchParams({
-      type: 'partyExists',
+      type: 'partyExistsByHostId',
       hostId: `${getCookie('spotify_user_id')}`
    });
    fetch(`assets/php/databasePartyHandlers.php?${urlParams}`, {
       method: 'GET'
    }).then(response => response.json()).then(data => {
       if (data.partyExists) {
-         document.querySelector('div#manage-party-buttons').classList.remove('hidden');
-      } else {
          if (data.explicit) {
             document.querySelector('button#disable-explicit-button').classList.remove('hidden');
          } else {
             document.querySelector('button#enable-explicit-button').classList.remove('hidden');
          }
+         document.querySelector('div#manage-party-buttons').classList.remove('hidden');
+      } else {
          document.querySelector('form#start-party-form').classList.remove('hidden');
       }
    });

@@ -190,6 +190,13 @@ select:focus {
    outline-offset: 2px;
 }
 
+.form-error-message {
+   color: red;
+   font-size: 14px;
+   margin-top: 5px;
+   display: none;
+}
+
 /* Checkbox */
 .custom-checkbox-container {
    display: flex;
