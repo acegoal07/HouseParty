@@ -1,5 +1,6 @@
 id - Unique key for the table (auto increment)
 party_id - Id which is going to be used to join the party
+host_id - The id of the spotify user
 access_token - Token used to send api request for the host
 refresh_token - Token used to refresh the access token after it expires after 1 hour
 token_expires_at - Timestamp the access token will expire at used to determine when to refresh the access token

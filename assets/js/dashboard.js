@@ -1,13 +1,15 @@
 window.addEventListener('load', () => {
-   if (!getCookie('refresh_token')) {
+   if (!getCookie('refresh_token') || !getCookie('host_id')) {
+      deleteCookie('refresh_token');
+      deleteCookie('host_id');
       window.location.href = '/houseparty/';
    }
    const disableExplicitButton = this.document.querySelector('button#disable-explicit-button');
    const enableExplicitButton = this.document.querySelector('button#enable-explicit-button');
    // Check if the user has an active party and display the appropriate form
    const urlParams = new URLSearchParams({
-      type: 'partyExistsByRefreshToken',
-      refreshToken: `${getCookie('refresh_token')}`
+      type: 'partyExistsByHostId',
+      hostId: `${getCookie('host_id')}`
    });
    fetch(`assets/php/website/databasePartyHandlers.php?${urlParams}`, {
       method: 'GET'
@@ -33,9 +35,19 @@ window.addEventListener('load', () => {
    // Handle the form submission for creating a new party
    this.document.querySelector('form#start-party-form').addEventListener('submit', (event) => {
       event.preventDefault();
-      const partyDuration = document.querySelector('input#party-duration').value;
-      const explicitAllowed = document.querySelector('input#explicit-allowed').checked;
-      console.log(partyDuration, explicitAllowed);
+      const partyDuration = document.querySelector('input#party-duration').value * 3600;
+      const explicitAllowed = document.querySelector('input#explicit-allowed').checked ? 1 : 0;
+      fetch(`assets/php/website/databasePartyHandlers.php`, {
+         method: 'post',
+         headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+         },
+         body: `type=createParty&hostId=${getCookie('host_id')}&refresh_token=${getCookie('refresh_token')}&party_ends_in=${partyDuration}&explicit=${explicitAllowed}`
+      }).then(response => response.json()).then(data => {
+         if (data.success) {
+            window.location.reload();
+         }
+      });
    });
    // Handle the button press for show join party info
    this.document.querySelector('button#show-party-join-info').addEventListener('click', (event) => {
@@ -129,7 +141,7 @@ window.addEventListener('load', () => {
          headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
          },
-         body: 'type=deleteParty&hostId=' + getCookie('spotify_user_id')
+         body: `type=deleteParty&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}`
       }).then(response => response.json()).then(data => {
          if (data.success) {
             window.location.reload();
