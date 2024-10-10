@@ -1,7 +1,6 @@
 <?php
 header("Access-Control-Allow-Origin: https://aw1443.brighton.domains/");
-include 'databaseConnection.php';
-include 'spotifyAppInformation.php';
+include '../secrets.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
    if ($_GET['type'] === 'getCurrentlyPlaying') {

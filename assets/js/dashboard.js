@@ -1,13 +1,13 @@
 window.addEventListener('load', () => {
-   if (!getCookie('spotify_user_id')) {
+   if (!getCookie('refresh_token')) {
       window.location.href = '/houseparty/';
    }
    const disableExplicitButton = this.document.querySelector('button#disable-explicit-button');
    const enableExplicitButton = this.document.querySelector('button#enable-explicit-button');
    // Check if the user has an active party and display the appropriate form
    const urlParams = new URLSearchParams({
-      type: 'partyExistsByHostId',
-      hostId: `${getCookie('spotify_user_id')}`
+      type: 'partyExistsByRefreshToken',
+      refreshToken: `${getCookie('refresh_token')}`
    });
    fetch(`assets/php/databasePartyHandlers.php?${urlParams}`, {
       method: 'GET'
@@ -78,7 +78,7 @@ window.addEventListener('load', () => {
    // Handle the button press for disabling explicit songs
    disableExplicitButton.addEventListener('click', (event) => {
       event.preventDefault();
-      fetch(`assets/php/databasePartyHandlers.php`, {
+      fetch(`assets/php/website/databasePartyHandlers.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -93,7 +93,7 @@ window.addEventListener('load', () => {
    // Handle the button press for enabling explicit songs
    enableExplicitButton.addEventListener('click', (event) => {
       event.preventDefault();
-      fetch(`assets/php/databasePartyHandlers.php`, {
+      fetch(`assets/php/website/databasePartyHandlers.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -124,7 +124,7 @@ window.addEventListener('load', () => {
    // Handle the button press for confirming the end of the party
    this.document.querySelector('button#confirm-end-party-button').addEventListener('click', (event) => {
       event.preventDefault();
-      fetch(`assets/php/databasePartyHandlers.php`, {
+      fetch(`assets/php/website/databasePartyHandlers.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/x-www-form-urlencoded'

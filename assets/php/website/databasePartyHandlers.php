@@ -1,5 +1,6 @@
 <?php
-include 'databaseConnection.php';
+header("Access-Control-Allow-Origin: https://aw1443.brighton.domains/");
+include '../secrets.php';
 
 function generatePartyId()
 {
@@ -13,13 +14,13 @@ function generatePartyId()
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-   if ($_GET['type'] === 'partyExistsByHostId') {
-      if (!isset($_GET['hostId'])) {
+   if ($_GET['type'] === 'partyExistsByRefreshToken') {
+      if (!isset($_GET['refreshToken'])) {
          http_response_code(400);
          exit();
       }
-      $stmt = $conn->prepare("SELECT explicit, party_id FROM parties WHERE host_spotify_id = ?");
-      $stmt->bind_param("s", $_GET['hostId']);
+      $stmt = $conn->prepare("SELECT explicit, party_id FROM parties WHERE refresh_token = ?");
+      $stmt->bind_param("s", $_GET['refreshToken']);
       $stmt->execute();
 
       $result = $stmt->get_result();
@@ -31,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       } else {
          echo json_encode(array('partyExists' => false));
       }
-   } elseif ($_GET['type'] === 'partyExistsById') {
+   } elseif ($_GET['type'] === 'partyExistsByPartyId') {
       if (!isset($_GET['partyId'])) {
          http_response_code(400);
          exit();
