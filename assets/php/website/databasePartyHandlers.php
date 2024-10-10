@@ -50,24 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       } else {
          echo json_encode(array('partyExists' => false));
       }
-   } elseif ($_GET['type'] === 'getPartyIdByHostId') {
-      if (!isset($_GET['hostId'])) {
-         http_response_code(400);
-         exit();
-      }
-      $stmt = $conn->prepare("SELECT party_id FROM parties WHERE host_spotify_id = ?");
-      $stmt->bind_param("s", $_GET['hostId']);
-      $stmt->execute();
-
-      $result = $stmt->get_result();
-
-      http_response_code(200);
-      if ($result->num_rows > 0) {
-         $row = $result->fetch_assoc();
-         echo json_encode(array('partyId' => $row['party_id']));
-      } else {
-         echo json_encode(array('partyId' => null));
-      }
    } else {
       http_response_code(400);
    }

@@ -8,11 +8,11 @@ window.addEventListener('load', () => {
       noSessionFoundError.style.display = 'none';
 
       const urlParams = new URLSearchParams({
-         type: 'partyExistsById',
+         type: 'partyExistsByPartyId',
          partyId: sessionCode
       });
 
-      fetch(`assets/php/databasePartyHandlers.php?${urlParams}`, {
+      fetch(`assets/php/website/databasePartyHandlers.php?${urlParams}`, {
          method: 'GET'
       }).then(response => response.json()).then(data => {
          if (data.partyExists) {
