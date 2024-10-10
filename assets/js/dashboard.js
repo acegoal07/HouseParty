@@ -9,7 +9,7 @@ window.addEventListener('load', () => {
       type: 'partyExistsByRefreshToken',
       refreshToken: `${getCookie('refresh_token')}`
    });
-   fetch(`assets/php/databasePartyHandlers.php?${urlParams}`, {
+   fetch(`assets/php/website/databasePartyHandlers.php?${urlParams}`, {
       method: 'GET'
    }).then(response => response.json()).then(data => {
       if (data.partyExists) {
