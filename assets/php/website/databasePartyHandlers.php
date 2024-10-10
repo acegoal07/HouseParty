@@ -15,7 +15,7 @@ function generatePartyId()
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
    switch ($_GET['type']) {
-         ////////////////////// partyExistsByRefreshToken //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+         //////////////// partyExistsByRefreshToken //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       case 'partyExistsByRefreshToken':
          if (!isset($_GET['refreshToken'])) {
             http_response_code(400);
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             echo json_encode(array('partyExists' => false));
          }
          break;
-         ////////////////////// partyExistsByHostId //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+         //////////////// partyExistsByHostId //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       case 'partyExistsByHostId':
          if (!isset($_GET['hostId'])) {
             http_response_code(400);
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             echo json_encode(array('partyExists' => false));
          }
          break;
-         ////////////////////// partyExistsByPartyId //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+         //////////////// partyExistsByPartyId //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       case 'partyExistsByPartyId':
          if (!isset($_GET['partyId'])) {
             http_response_code(400);
@@ -75,14 +75,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             echo json_encode(array('partyExists' => false));
          }
          break;
-         ////////////////////// default //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+         //////////////// default //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       default:
          http_response_code(400);
          exit();
    }
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
    switch ($_POST['type']) {
-         //////////// createParty //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+         //////////////// createParty //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       case 'createParty':
          if (!isset($_POST['hostId']) || !isset($_POST['refresh_token']) || !isset($_POST['party_ends_in']) || !isset($_POST['explicit'])) {
             http_response_code(400);
@@ -149,7 +149,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          $partyExpiresAt->setTimestamp($partyExpiresAtSeconds);
          $partyExpiresAtFormatted = $partyExpiresAt->format('Y-m-d H:i:s');
 
-         // insert the party into the database
          $stmt = $conn->prepare("INSERT INTO parties (party_id, host_id, access_token, refresh_token, party_expires_at, token_expires_at, explicit) VALUES (?, ?, ?, ?, ?, ?, ?)");
          $stmt->bind_param("sssssss", $partyId, $_POST['hostId'], $accessToken, $_POST['refresh_token'], $partyExpiresAtFormatted, $tokenExpiresAtFormatted, $_POST['explicit']);
          $stmt->execute();
@@ -162,25 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          http_response_code(200);
          echo json_encode(array('partyId' => $partyId, 'hostId' => $_POST['hostId'], 'accessToken' => $accessToken, 'refreshToken' => $_POST['refresh_token'], 'partyExpiresAt' => $partyExpiresAt, 'tokenExpiresAt' => $tokenExpiresAt, 'explicit' => $_POST['explicit'], 'success' => true));
          break;
-         //////////// updatePartyExplicit //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      case 'updatePartyExplicit':
-         if (!isset($_POST['hostId']) || !isset($_POST['explicit'])) {
-            http_response_code(400);
-            exit();
-         }
-         $stmt = $conn->prepare("UPDATE parties SET explicit = ? WHERE host_id = ?");
-         $stmt->bind_param("ss", $_POST['explicit'], $_POST['hostId']);
-         $stmt->execute();
-
-         if ($stmt->affected_rows === 0) {
-            http_response_code(400);
-            exit();
-         }
-
-         http_response_code(200);
-         echo json_encode(array('success' => true));
-         break;
-         //////////// deleteParty //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+         //////////////// deleteParty //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       case 'deleteParty':
          if (!isset($_POST['hostId']) || !isset($_POST['refreshToken'])) {
             http_response_code(400);
@@ -204,7 +185,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             echo json_encode(array('success' => true));
          }
          break;
-         //////////// default //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+         //////////////// updatePartyExplicit //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      case 'updatePartyExplicit':
+         if (!isset($_POST['hostId']) || !isset($_POST['explicit'])) {
+            http_response_code(400);
+            exit();
+         }
+         $stmt = $conn->prepare("UPDATE parties SET explicit = ? WHERE host_id = ?");
+         $stmt->bind_param("ss", $_POST['explicit'], $_POST['hostId']);
+         $stmt->execute();
+
+         if ($stmt->affected_rows === 0) {
+            http_response_code(400);
+            exit();
+         }
+
+         http_response_code(200);
+         echo json_encode(array('success' => true));
+         break;
+         //////////////// extendPartyDuration //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      case 'extendPartyDuration':
+         if (!isset($_POST['hostId']) || !isset($_POST['party_ends_in'])) {
+            http_response_code(400);
+            exit();
+         }
+         $stmt = $conn->prepare("SELECT party_expires_at FROM parties WHERE host_id = ?");
+         $stmt->bind_param("s", $_POST['hostId']);
+         $stmt->execute();
+
+         $result = $stmt->get_result();
+
+         if ($result->num_rows === 0) {
+            http_response_code(400);
+            exit();
+         }
+
+         $row = $result->fetch_assoc();
+         $partyExpiresAt = new DateTime($row['party_expires_at']);
+         $partyExpiresAtSeconds = $partyExpiresAt->getTimestamp() + $_POST['party_ends_in'];
+         $partyExpiresAt->setTimestamp($partyExpiresAtSeconds);
+         $partyExpiresAtFormatted = $partyExpiresAt->format('Y-m-d H:i:s');
+
+         $stmt = $conn->prepare("UPDATE parties SET party_expires_at = ? WHERE host_id = ?");
+         $stmt->bind_param("ss", $partyExpiresAtFormatted, $_POST['hostId']);
+         $stmt->execute();
+
+         if ($stmt->affected_rows === 0) {
+            http_response_code(400);
+            exit();
+         }
+
+         http_response_code(200);
+         echo json_encode(array('success' => true));
+         break;
+         //////////////// default //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       default:
          http_response_code(400);
          exit();

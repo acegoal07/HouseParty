@@ -48,6 +48,8 @@ body {
    background-color: var(--secondary-color);
    border-radius: 20px;
    padding: 2rem;
+   max-width: 500px;
+   width: 100%;
    box-shadow: 0 0 10px var(--shadow-color);
 }
 

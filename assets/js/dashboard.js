@@ -17,9 +17,11 @@ window.addEventListener('load', () => {
       }).then(response => response.json()).then(data => {
          if (data.partyExists) {
             if (document.querySelector('div#party-qrcode').childElementCount === 0) {
+               const websiteUrl = `https://aw1443.brighton.domains/houseparty/party.html?session_code=`;
                this.document.querySelector('span#party-code').textContent = data.partyId;
+               this.document.querySelector('span#party-url').textContent = `${websiteUrl}${data.partyId}`;
                new QRCode(document.querySelector('div#party-qrcode'), {
-                  text: `https://aw1443.brighton.domains/houseparty/party.html?session_code=${data.partyId}`,
+                  text: `${websiteUrl}${data.partyId}`,
                   width: 150,
                   height: 150
                });
@@ -80,6 +82,12 @@ window.addEventListener('load', () => {
       const partyCode = document.querySelector('span#party-code').textContent;
       navigator.clipboard.writeText(partyCode);
    });
+   // Handle the button press for copying the party URL
+   this.document.querySelector('button#copy-party-url').addEventListener('click', (event) => {
+      event.preventDefault();
+      const partyUrl = document.querySelector('span#party-url').textContent;
+      navigator.clipboard.writeText(partyUrl);
+   });
    // Handle the button press for extending the party modal
    this.document.querySelector('button#extend-party-button').addEventListener('click', (event) => {
       event.preventDefault();
@@ -95,6 +103,26 @@ window.addEventListener('load', () => {
       setTimeout(function () {
          modal.style.display = 'none';
       }, 600);
+   });
+   // Handle the button press for extending the party
+   this.document.querySelector('form#extend-party-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const partyDuration = document.querySelector('input#extend-duration').value * 3600;
+      fetch(`assets/php/website/databasePartyHandlers.php`, {
+         method: 'post',
+         headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+         },
+         body: `type=extendPartyDuration&hostId=${getCookie('host_id')}&party_ends_in=${partyDuration}`
+      }).then(response => response.json()).then(data => {
+         if (data.success) {
+            const modal = document.querySelector('div#extend-party');
+            modal.style.animation = "modal-close 0.6s forwards";
+            setTimeout(function () {
+               modal.style.display = 'none';
+            }, 600);
+         }
+      });
    });
    // Handle the button press for disabling explicit songs
    disableExplicitButton.addEventListener('click', (event) => {
