@@ -11,27 +11,36 @@ window.addEventListener('load', () => {
       type: 'partyExistsByHostId',
       hostId: `${getCookie('host_id')}`
    });
-   fetch(`assets/php/website/databasePartyHandlers.php?${urlParams}`, {
-      method: 'GET'
-   }).then(response => response.json()).then(data => {
-      if (data.partyExists) {
-         this.document.querySelector('span#party-code').textContent = data.partyId;
-         new QRCode(document.querySelector('div#party-qrcode'), {
-            text: `https://aw1443.brighton.domains/houseparty/party.html?session_code=${data.partyId}`,
-            width: 150,
-            height: 150
-         });
-         this.document.querySelector('span#party-qr-code');
-         if (data.explicit) {
-            document.querySelector('button#disable-explicit-button').classList.remove('hidden');
+   function pagePolling() {
+      fetch(`assets/php/website/databasePartyHandlers.php?${urlParams}`, {
+         method: 'GET'
+      }).then(response => response.json()).then(data => {
+         if (data.partyExists) {
+            if (document.querySelector('div#party-qrcode').childElementCount === 0) {
+               this.document.querySelector('span#party-code').textContent = data.partyId;
+               new QRCode(document.querySelector('div#party-qrcode'), {
+                  text: `https://aw1443.brighton.domains/houseparty/party.html?session_code=${data.partyId}`,
+                  width: 150,
+                  height: 150
+               });
+            }
+            if (data.explicit) {
+               if (!document.querySelector('button#enable-explicit-button').classList.contains('hidden')) { document.querySelector('button#enable-explicit-button').classList.add('hidden'); }
+               document.querySelector('button#disable-explicit-button').classList.remove('hidden');
+            } else {
+               if (!document.querySelector('button#disable-explicit-button').classList.contains('hidden')) { document.querySelector('button#disable-explicit-button').classList.add('hidden'); }
+               document.querySelector('button#enable-explicit-button').classList.remove('hidden');
+            }
+            if (!document.querySelector('form#start-party-form').classList.contains('hidden')) { document.querySelector('form#start-party-form').classList.add('hidden'); }
+            document.querySelector('div#manage-party-buttons').classList.remove('hidden');
          } else {
-            document.querySelector('button#enable-explicit-button').classList.remove('hidden');
+            if (!document.querySelector('div#manage-party-buttons').classList.contains('hidden')) { document.querySelector('div#manage-party-buttons').classList.add('hidden'); }
+            document.querySelector('form#start-party-form').classList.remove('hidden');
          }
-         document.querySelector('div#manage-party-buttons').classList.remove('hidden');
-      } else {
-         document.querySelector('form#start-party-form').classList.remove('hidden');
-      }
-   });
+      });
+   }
+   pagePolling();
+   setInterval(() => pagePolling(), 1500);
    // Handle the form submission for creating a new party
    this.document.querySelector('form#start-party-form').addEventListener('submit', (event) => {
       event.preventDefault();
@@ -95,10 +104,11 @@ window.addEventListener('load', () => {
          headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
          },
-         body: `type=updatePartyExplicit&hostId=${getCookie('spotify_user_id')}&explicit=0`
+         body: `type=updatePartyExplicit&hostId=${getCookie('host_id')}&explicit=0`
       }).then(response => response.json()).then(data => {
          if (data.success) {
-            window.location.reload();
+            document.querySelector('button#disable-explicit-button').classList.add('hidden');
+            document.querySelector('button#enable-explicit-button').classList.remove('hidden');
          }
       });
    });
@@ -110,10 +120,11 @@ window.addEventListener('load', () => {
          headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
          },
-         body: `type=updatePartyExplicit&hostId=${getCookie('spotify_user_id')}&explicit=1`
+         body: `type=updatePartyExplicit&hostId=${getCookie('host_id')}&explicit=1`
       }).then(response => response.json()).then(data => {
          if (data.success) {
-            window.location.reload();
+            document.querySelector('button#enable-explicit-button').classList.add('hidden');
+            document.querySelector('button#disable-explicit-button').classList.remove('hidden');
          }
       });
    });
