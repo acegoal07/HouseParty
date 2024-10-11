@@ -6,13 +6,15 @@ window.addEventListener('load', () => {
       window.location.href = '/houseparty/join.html';
    }
 
-   fetch(`assets/php/website/databasePartyHandlers.php?type=partyExistsByPartyId&partyId=${sessionCode}`, {
-      method: 'GET'
-   }).then(response => response.json()).then(data => {
-      if (!data.partyExists) {
-         window.location.href = '/houseparty/join.html';
-      }
-   });
-
-   console.log(sessionCode);
+   function pagePolling() {
+      fetch(`assets/php/website/databasePartyHandlers.php?type=partyExistsByPartyId&partyId=${sessionCode}`, {
+         method: 'GET'
+      }).then(response => response.json()).then(data => {
+         if (!data.partyExists) {
+            window.location.href = '/houseparty/join.html';
+         }
+      });
+   }
+   pagePolling();
+   setInterval(pagePolling, 1500);
 });

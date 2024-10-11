@@ -49,14 +49,12 @@ window.addEventListener('load', () => {
    // Handle the form submission for creating a new party
    this.document.querySelector('form#start-party-form').addEventListener('submit', (event) => {
       event.preventDefault();
-      const partyDuration = document.querySelector('input#party-duration').value * 3600;
-      const explicitAllowed = document.querySelector('input#explicit-allowed').checked ? 1 : 0;
       fetch(`assets/php/website/databasePartyHandlers.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
          },
-         body: `type=createParty&hostId=${getCookie('host_id')}&refresh_token=${getCookie('refresh_token')}&party_ends_in=${partyDuration}&explicit=${explicitAllowed}`
+         body: `type=createParty&hostId=${getCookie('host_id')}&refresh_token=${getCookie('refresh_token')}&party_ends_in=${document.querySelector('input#party-duration').value}&explicit=${document.querySelector('input#explicit-allowed').checked ? 1 : 0}`
       }).then(response => response.json()).then(data => {
          if (data.success) {
             window.location.reload();

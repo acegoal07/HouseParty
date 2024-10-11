@@ -4,6 +4,10 @@ include '../secrets.php';
 if ($conn->connect_error) {
    die("Connection failed: " . $conn->connect_error);
 } else {
-   $sql = 'DELETE FROM parties WHERE party_expires_at < NOW()';
+   $currentDateTime = new DateTime();
+   $currentDateTime->setTimestamp(time());
+   $currentDateTime = $currentDateTime->format('Y-m-d H:i:s');
+   $sql = "DELETE FROM parties WHERE expires_at < '$currentDateTime'";
    $conn->query($sql);
+   $conn->close();
 }

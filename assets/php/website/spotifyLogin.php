@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
       if ($http_code === 403) {
-         unset($_COOKIE['refresh_token']);
+         setcookie("refresh_token", "", time() - 3600, "/", "", true);
          header("Location: /houseparty/indevelopment.html");
       }
 

@@ -139,14 +139,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          $result = json_decode($response, true);
 
          $accessToken = $result['access_token'];
-         $tokenExpiresAtSeconds = time() + 3600;
          $tokenExpiresAt = new DateTime();
-         $tokenExpiresAt->setTimestamp($tokenExpiresAtSeconds);
+         $tokenExpiresAt->setTimestamp(time() + 7200);
          $tokenExpiresAtFormatted = $tokenExpiresAt->format('Y-m-d H:i:s');
 
-         $partyExpiresAtSeconds = time() + $_POST['party_ends_in'];
          $partyExpiresAt = new DateTime();
-         $partyExpiresAt->setTimestamp($partyExpiresAtSeconds);
+         $partyExpiresAt->setTimestamp(time() + $_POST['party_ends_in'] * 3600 + 3600);
          $partyExpiresAtFormatted = $partyExpiresAt->format('Y-m-d H:i:s');
 
          $stmt = $conn->prepare("INSERT INTO parties (party_id, host_id, access_token, refresh_token, party_expires_at, token_expires_at, explicit) VALUES (?, ?, ?, ?, ?, ?, ?)");
@@ -159,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          }
 
          http_response_code(200);
-         echo json_encode(array('partyId' => $partyId, 'hostId' => $_POST['hostId'], 'accessToken' => $accessToken, 'refreshToken' => $_POST['refresh_token'], 'partyExpiresAt' => $partyExpiresAt, 'tokenExpiresAt' => $tokenExpiresAt, 'explicit' => $_POST['explicit'], 'success' => true));
+         echo json_encode(array('success' => true));
          break;
          //////////////// deleteParty //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       case 'deleteParty':

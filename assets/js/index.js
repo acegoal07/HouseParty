@@ -1,6 +1,6 @@
 window.addEventListener('load', () => {
    // Check if the user is already logged in and display the appropriate button
-   if (getCookie('refresh_token') !== null) {
+   if (getCookie('refresh_token') !== null && getCookie('host_id') !== null) {
       this.document.querySelector('a#go-to-dashboard-button').classList.remove('hidden');
       this.document.querySelector('button#logout-button').classList.remove('hidden');
    } else {
