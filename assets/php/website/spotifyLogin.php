@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
       if ($http_code === 403) {
          setcookie("refresh_token", "", time() - 3600, "/", "", true);
-         header("Location: /houseparty/indevelopment.html");
+         header("Location: /houseparty/development.html");
       }
 
       if (curl_errno($ch)) {

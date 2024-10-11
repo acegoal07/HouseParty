@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             http_response_code(400);
             exit();
          }
-         $stmt = $conn->prepare("SELECT explicit, party_id FROM parties WHERE refresh_token = ?");
+         $stmt = $conn->prepare("SELECT explicit, party_id FROM parties WHERE refresh_token = ? COLLATE utf8_bin");
          $stmt->bind_param("s", $_GET['refreshToken']);
          $stmt->execute();
 
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             http_response_code(400);
             exit();
          }
-         $stmt = $conn->prepare("SELECT explicit, party_id FROM parties WHERE host_id = ?");
+         $stmt = $conn->prepare("SELECT explicit, party_id FROM parties WHERE host_id = ? COLLATE utf8_bin");
          $stmt->bind_param("s", $_GET['hostId']);
          $stmt->execute();
 
@@ -61,7 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             http_response_code(400);
             exit();
          }
-         $stmt = $conn->prepare("SELECT explicit FROM parties WHERE party_id = ?");
+
+         // Check if party exists and return explicit setting but make sure the request is case sensitive
+         $stmt = $conn->prepare("SELECT explicit FROM parties WHERE party_id = ? COLLATE utf8_bin");
          $stmt->bind_param("s", $_GET['partyId']);
          $stmt->execute();
 
@@ -90,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          }
 
          $partyId = generatePartyId();
-         $stmt = $conn->prepare("SELECT * FROM parties WHERE party_id = ?");
+         $stmt = $conn->prepare("SELECT * FROM parties WHERE party_id = ? COLLATE utf8_bin");
          $stmt->bind_param("s", $partyId);
          $stmt->execute();
 
@@ -165,11 +167,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             http_response_code(400);
             exit();
          }
-         $stmt = $conn->prepare("DELETE FROM parties WHERE host_id = ?");
+         $stmt = $conn->prepare("DELETE FROM parties WHERE host_id = ? COLLATE utf8_bin");
          $stmt->bind_param("s", $_POST['hostId']);
          $stmt->execute();
 
-         $stmt = $conn->prepare("SELECT * FROM parties WHERE host_id = ?");
+         $stmt = $conn->prepare("SELECT * FROM parties WHERE host_id = ? COLLATE utf8_bin");
          $stmt->bind_param("s", $_POST['hostId']);
          $stmt->execute();
 
@@ -189,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             http_response_code(400);
             exit();
          }
-         $stmt = $conn->prepare("UPDATE parties SET explicit = ? WHERE host_id = ?");
+         $stmt = $conn->prepare("UPDATE parties SET explicit = ? WHERE host_id = ? COLLATE utf8_bin");
          $stmt->bind_param("ss", $_POST['explicit'], $_POST['hostId']);
          $stmt->execute();
 
@@ -207,7 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             http_response_code(400);
             exit();
          }
-         $stmt = $conn->prepare("SELECT party_expires_at FROM parties WHERE host_id = ?");
+         $stmt = $conn->prepare("SELECT party_expires_at FROM parties WHERE host_id = ? COLLATE utf8_bin");
          $stmt->bind_param("s", $_POST['hostId']);
          $stmt->execute();
 
@@ -224,7 +226,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          $partyExpiresAt->setTimestamp($partyExpiresAtSeconds);
          $partyExpiresAtFormatted = $partyExpiresAt->format('Y-m-d H:i:s');
 
-         $stmt = $conn->prepare("UPDATE parties SET party_expires_at = ? WHERE host_id = ?");
+         $stmt = $conn->prepare("UPDATE parties SET party_expires_at = ? WHERE host_id = ? COLLATE utf8_bin");
          $stmt->bind_param("ss", $partyExpiresAtFormatted, $_POST['hostId']);
          $stmt->execute();
 

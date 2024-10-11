@@ -1,13 +1,14 @@
 <?php
+header("Access-Control-Allow-Origin: https://aw1443.brighton.domains/");
 include '../secrets.php';
 
-if ($conn->connect_error) {
-   die("Connection failed: " . $conn->connect_error);
+// SQL statement to delete expired sessions
+$sql = "DELETE FROM parties WHERE party_expires_at <= UTC_TIMESTAMP() + INTERVAL 1 HOUR";
+
+if ($conn->query($sql) === TRUE) {
+   echo "Expired sessions cleared successfully.";
 } else {
-   $currentDateTime = new DateTime();
-   $currentDateTime->setTimestamp(time());
-   $currentDateTime = $currentDateTime->format('Y-m-d H:i:s');
-   $sql = "DELETE FROM parties WHERE expires_at < '$currentDateTime'";
-   $conn->query($sql);
-   $conn->close();
+   echo "Error clearing expired sessions: " . $conn->error;
 }
+
+$conn->close();
