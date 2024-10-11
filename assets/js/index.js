@@ -19,7 +19,10 @@ window.addEventListener('load', () => {
    });
    // Add event listener to the logout button
    this.document.querySelector('button#logout-button').addEventListener('click', () => {
+      deleteCookie({ name: 'host_id' });
       deleteCookie({ name: 'refresh_token' });
       window.location.reload();
    });
+   // Hide the loading icon
+   this.document.querySelector('div#loading-icon').classList.add('hidden');
 });

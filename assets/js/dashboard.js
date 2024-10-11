@@ -39,6 +39,9 @@ window.addEventListener('load', () => {
             if (!document.querySelector('div#manage-party-buttons').classList.contains('hidden')) { document.querySelector('div#manage-party-buttons').classList.add('hidden'); }
             document.querySelector('form#start-party-form').classList.remove('hidden');
          }
+         if (!document.querySelector('div#loading-icon').classList.contains('hidden')) {
+            this.document.querySelector('div#loading-icon').classList.add('hidden');
+         }
       });
    }
    pagePolling();
