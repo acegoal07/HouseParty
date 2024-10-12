@@ -9,12 +9,7 @@ window.addEventListener('load', () => {
       const noSessionFoundError = document.querySelector('span#no-session-found-error');
       noSessionFoundError.style.display = 'none';
 
-      const urlParams = new URLSearchParams({
-         type: 'partyExistsByPartyId',
-         partyId: sessionCode
-      });
-
-      fetch(`assets/php/website/databasePartyHandlers.php?${urlParams}`, {
+      fetch(`assets/php/website/databasePartyHandlers.php?type=checkPartyExistsUser&partyId=${sessionCode}`, {
          method: 'GET'
       }).then(response => response.json()).then(data => {
          if (data.partyExists) {

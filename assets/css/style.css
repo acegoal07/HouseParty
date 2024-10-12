@@ -45,7 +45,7 @@ body {
 }
 
 .body-container {
-   margin: 0.5rem;
+   margin: 1rem;
    background-color: var(--secondary-color);
    border-radius: var(--border-radius);
    padding: 2rem;
@@ -287,7 +287,7 @@ select:focus {
 
 .modal-body {
    background-color: var(--secondary-color);
-   margin: 2rem;
+   margin: 1rem;
    padding: 20px;
    width: 100%;
    max-width: 500px;

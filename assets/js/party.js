@@ -7,7 +7,7 @@ window.addEventListener('load', () => {
    }
 
    function pagePolling() {
-      fetch(`assets/php/website/databasePartyHandlers.php?type=partyExistsByPartyId&partyId=${sessionCode}`, {
+      fetch(`assets/php/website/databasePartyHandlers.php?type=checkPartyExistsUser&partyId=${sessionCode}`, {
          method: 'GET'
       }).then(response => response.json()).then(data => {
          if (!data.partyExists) {

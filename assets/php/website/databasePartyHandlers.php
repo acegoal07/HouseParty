@@ -15,28 +15,8 @@ function generatePartyId()
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
    switch ($_GET['type']) {
-         //////////////// partyExistsByRefreshToken //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      case 'partyExistsByRefreshToken':
-         if (!isset($_GET['refreshToken'])) {
-            http_response_code(400);
-            exit();
-         }
-         $stmt = $conn->prepare("SELECT explicit, party_id FROM parties WHERE refresh_token = ? COLLATE utf8_bin");
-         $stmt->bind_param("s", $_GET['refreshToken']);
-         $stmt->execute();
-
-         $result = $stmt->get_result();
-
-         http_response_code(200);
-         if ($result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-            echo json_encode(array('partyExists' => true, 'explicit' => $row['explicit'], 'partyId' => $row['party_id']));
-         } else {
-            echo json_encode(array('partyExists' => false));
-         }
-         break;
-         //////////////// partyExistsByHostId //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      case 'partyExistsByHostId':
+         //////////////// checkPartyExistsHost //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      case 'checkPartyExistsHost':
          if (!isset($_GET['hostId'])) {
             http_response_code(400);
             exit();
@@ -56,13 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          }
          break;
          //////////////// partyExistsByPartyId //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      case 'partyExistsByPartyId':
+      case 'checkPartyExistsUser':
          if (!isset($_GET['partyId'])) {
             http_response_code(400);
             exit();
          }
 
-         // Check if party exists and return explicit setting but make sure the request is case sensitive
          $stmt = $conn->prepare("SELECT explicit FROM parties WHERE party_id = ? COLLATE utf8_bin");
          $stmt->bind_param("s", $_GET['partyId']);
          $stmt->execute();
@@ -86,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
    switch ($_POST['type']) {
          //////////////// createParty //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       case 'createParty':
-         if (!isset($_POST['hostId']) || !isset($_POST['refresh_token']) || !isset($_POST['party_ends_in']) || !isset($_POST['explicit'])) {
+         if (!isset($_POST['hostId']) || !isset($_POST['refreshToken']) || !isset($_POST['partyEndsIn']) || !isset($_POST['explicit'])) {
             http_response_code(400);
             exit();
          }
@@ -105,19 +84,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          }
 
          $url = "https://accounts.spotify.com/api/token";
-         $client_id = $spotifyClientId;
-         $client_secret = $spotifyClientSecret;
-         $refresh_token = $_POST['refresh_token'];
-
          $data = array(
             'grant_type' => 'refresh_token',
-            'refresh_token' => $refresh_token,
-            'client_id' => $client_id
+            'refresh_token' => $_POST['refreshToken'],
+            'client_id' => $spotifyClientId
          );
-
          $headers = array(
             'Content-Type: application/x-www-form-urlencoded',
-            'Authorization: Basic ' . base64_encode($client_id . ':' . $client_secret)
+            'Authorization: Basic ' . base64_encode($spotifyClientId . ':' .  $spotifyClientSecret)
          );
 
          $ch = curl_init();
@@ -146,11 +120,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          $tokenExpiresAtFormatted = $tokenExpiresAt->format('Y-m-d H:i:s');
 
          $partyExpiresAt = new DateTime();
-         $partyExpiresAt->setTimestamp(time() + $_POST['party_ends_in'] * 3600 + 3600);
+         $partyExpiresAt->setTimestamp(time() + $_POST['partyEndsIn'] * 3600 + 3600);
          $partyExpiresAtFormatted = $partyExpiresAt->format('Y-m-d H:i:s');
 
          $stmt = $conn->prepare("INSERT INTO parties (party_id, host_id, access_token, refresh_token, party_expires_at, token_expires_at, explicit) VALUES (?, ?, ?, ?, ?, ?, ?)");
-         $stmt->bind_param("sssssss", $partyId, $_POST['hostId'], $accessToken, $_POST['refresh_token'], $partyExpiresAtFormatted, $tokenExpiresAtFormatted, $_POST['explicit']);
+         $stmt->bind_param("sssssss", $partyId, $_POST['hostId'], $accessToken, $_POST['refreshToken'], $partyExpiresAtFormatted, $tokenExpiresAtFormatted, $_POST['explicit']);
          $stmt->execute();
 
          if ($stmt->error) {
@@ -167,32 +141,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             http_response_code(400);
             exit();
          }
-         $stmt = $conn->prepare("DELETE FROM parties WHERE host_id = ? COLLATE utf8_bin");
-         $stmt->bind_param("s", $_POST['hostId']);
+         $stmt = $conn->prepare("DELETE FROM parties WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
+         $stmt->bind_param("ss", $_POST['hostId'], $_POST['refreshToken']);
          $stmt->execute();
 
-         $stmt = $conn->prepare("SELECT * FROM parties WHERE host_id = ? COLLATE utf8_bin");
-         $stmt->bind_param("s", $_POST['hostId']);
-         $stmt->execute();
-
-         $result = $stmt->get_result();
-
-         if ($result->num_rows > 0) {
-            http_response_code(200);
-            echo json_encode(array('success' => false));
-         } else {
-            http_response_code(200);
-            echo json_encode(array('success' => true));
-         }
-         break;
-         //////////////// updatePartyExplicit //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      case 'updatePartyExplicit':
-         if (!isset($_POST['hostId']) || !isset($_POST['explicit'])) {
+         if ($stmt->affected_rows === 0) {
             http_response_code(400);
             exit();
          }
-         $stmt = $conn->prepare("UPDATE parties SET explicit = ? WHERE host_id = ? COLLATE utf8_bin");
-         $stmt->bind_param("ss", $_POST['explicit'], $_POST['hostId']);
+
+         http_response_code(200);
+         echo json_encode(array('success' => true));
+         break;
+         //////////////// updatePartyExplicit //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      case 'updatePartyExplicit':
+         if (!isset($_POST['hostId']) || !isset($_POST['refreshToken'])  || !isset($_POST['explicit'])) {
+            http_response_code(400);
+            exit();
+         }
+         $stmt = $conn->prepare("UPDATE parties SET explicit = ? WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
+         $stmt->bind_param("sss", $_POST['explicit'], $_POST['hostId'], $_POST['refreshToken']);
          $stmt->execute();
 
          if ($stmt->affected_rows === 0) {
@@ -205,12 +173,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          break;
          //////////////// extendPartyDuration //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       case 'extendPartyDuration':
-         if (!isset($_POST['hostId']) || !isset($_POST['party_ends_in'])) {
+         if (!isset($_POST['hostId']) || !isset($_POST['refreshToken']) || !isset($_POST['extendBy'])) {
             http_response_code(400);
             exit();
          }
-         $stmt = $conn->prepare("SELECT party_expires_at FROM parties WHERE host_id = ? COLLATE utf8_bin");
-         $stmt->bind_param("s", $_POST['hostId']);
+         $stmt = $conn->prepare("SELECT party_expires_at FROM parties WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
+         $stmt->bind_param("ss", $_POST['hostId'], $_POST['refreshToken']);
          $stmt->execute();
 
          $result = $stmt->get_result();
@@ -222,12 +190,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
          $row = $result->fetch_assoc();
          $partyExpiresAt = new DateTime($row['party_expires_at']);
-         $partyExpiresAtSeconds = $partyExpiresAt->getTimestamp() + $_POST['party_ends_in'];
+         $partyExpiresAtSeconds = $partyExpiresAt->getTimestamp() + $_POST['extendBy'];
          $partyExpiresAt->setTimestamp($partyExpiresAtSeconds);
          $partyExpiresAtFormatted = $partyExpiresAt->format('Y-m-d H:i:s');
 
-         $stmt = $conn->prepare("UPDATE parties SET party_expires_at = ? WHERE host_id = ? COLLATE utf8_bin");
-         $stmt->bind_param("ss", $partyExpiresAtFormatted, $_POST['hostId']);
+         $stmt = $conn->prepare("UPDATE parties SET party_expires_at = ? WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
+         $stmt->bind_param("sss", $partyExpiresAtFormatted, $_POST['hostId'], $_POST['refreshToken']);
          $stmt->execute();
 
          if ($stmt->affected_rows === 0) {

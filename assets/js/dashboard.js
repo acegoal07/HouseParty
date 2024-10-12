@@ -8,7 +8,7 @@ window.addEventListener('load', () => {
    const enableExplicitButton = this.document.querySelector('button#enable-explicit-button');
    // Check if the user has an active party and display the appropriate form
    const urlParams = new URLSearchParams({
-      type: 'partyExistsByHostId',
+      type: 'checkPartyExistsHost',
       hostId: `${getCookie('host_id')}`
    });
    function pagePolling() {
@@ -19,7 +19,7 @@ window.addEventListener('load', () => {
             if (document.querySelector('div#party-qrcode').childElementCount === 0) {
                const websiteUrl = `https://aw1443.brighton.domains/houseparty/party.html?session_code=`;
                this.document.querySelector('span#party-code').textContent = data.partyId;
-               this.document.querySelector('span#party-url').textContent = `${websiteUrl}${data.partyId}`;
+               this.document.querySelector('button#copy-party-url').setAttribute('copy-data', `${websiteUrl}${data.partyId}`);
                new QRCode(document.querySelector('div#party-qrcode'), {
                   text: `${websiteUrl}${data.partyId}`,
                   width: 150,
@@ -45,7 +45,7 @@ window.addEventListener('load', () => {
       });
    }
    pagePolling();
-   setInterval(() => pagePolling(), 1500);
+   setInterval(pagePolling(), 1500);
    // Handle the form submission for creating a new party
    this.document.querySelector('form#start-party-form').addEventListener('submit', (event) => {
       event.preventDefault();
@@ -54,7 +54,7 @@ window.addEventListener('load', () => {
          headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
          },
-         body: `type=createParty&hostId=${getCookie('host_id')}&refresh_token=${getCookie('refresh_token')}&party_ends_in=${document.querySelector('input#party-duration').value}&explicit=${document.querySelector('input#explicit-allowed').checked ? 1 : 0}`
+         body: `type=createParty&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&partyEndsIn=${document.querySelector('input#party-duration').value}&explicit=${document.querySelector('input#explicit-allowed').checked ? 1 : 0}`
       }).then(response => response.json()).then(data => {
          if (data.success) {
             window.location.reload();
@@ -86,7 +86,7 @@ window.addEventListener('load', () => {
    // Handle the button press for copying the party URL
    this.document.querySelector('button#copy-party-url').addEventListener('click', (event) => {
       event.preventDefault();
-      const partyUrl = document.querySelector('span#party-url').textContent;
+      const partyUrl = document.querySelector('button#copy-party-url').getAttribute('copy-data');
       navigator.clipboard.writeText(partyUrl);
    });
    // Handle the button press for extending the party modal
@@ -114,7 +114,7 @@ window.addEventListener('load', () => {
          headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
          },
-         body: `type=extendPartyDuration&hostId=${getCookie('host_id')}&party_ends_in=${partyDuration}`
+         body: `type=extendPartyDuration&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&extendBy=${partyDuration}`
       }).then(response => response.json()).then(data => {
          if (data.success) {
             const modal = document.querySelector('div#extend-party');
@@ -133,7 +133,7 @@ window.addEventListener('load', () => {
          headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
          },
-         body: `type=updatePartyExplicit&hostId=${getCookie('host_id')}&explicit=0`
+         body: `type=updatePartyExplicit&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&explicit=0`
       }).then(response => response.json()).then(data => {
          if (data.success) {
             document.querySelector('button#disable-explicit-button').classList.add('hidden');
@@ -149,7 +149,7 @@ window.addEventListener('load', () => {
          headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
          },
-         body: `type=updatePartyExplicit&hostId=${getCookie('host_id')}&explicit=1`
+         body: `type=updatePartyExplicit&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&explicit=1`
       }).then(response => response.json()).then(data => {
          if (data.success) {
             document.querySelector('button#enable-explicit-button').classList.add('hidden');
