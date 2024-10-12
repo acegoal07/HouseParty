@@ -1,6 +1,18 @@
 <?php
 header("Access-Control-Allow-Origin: https://aw1443.brighton.domains/");
+header("Access-Control-Allow-Methods: POST, GET");
+
 include '../secrets.php';
+
+$referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+
+$allowedDomain = 'https://aw1443.brighton.domains/';
+if (strpos($referer, $allowedDomain) !== 0 && strpos($origin, $allowedDomain) !== 0) {
+   http_response_code(403);
+   echo json_encode(array('error' => 'Forbidden'));
+   exit();
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
    if ($_GET['type'] === 'getCurrentlyPlaying') {
