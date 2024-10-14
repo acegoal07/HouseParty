@@ -29,11 +29,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
    switch ($_GET['type']) {
          //////////////// checkPartyExistsHost //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       case 'checkPartyExistsHost':
-         if (!isset($_GET['hostId'])) {
+         if (!isset($_GET['hostId']) || !isset($_GET['refreshToken'])) {
             http_response_code(400);
             exit();
          }
-         $stmt = $conn->prepare("SELECT explicit, party_id, party_expires_at FROM parties WHERE host_id = ? COLLATE utf8_bin");
+         $stmt = $conn->prepare("SELECT explicit, party_id, party_expires_at, refresh_token FROM parties WHERE host_id = ? COLLATE utf8_bin");
          $stmt->bind_param("s", $_GET['hostId']);
          $stmt->execute();
 
@@ -42,9 +42,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          http_response_code(200);
          if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
-            echo json_encode(array('partyExists' => true, 'explicit' => $row['explicit'], 'partyId' => $row['party_id'], 'partyExpiresAt' => $row['party_expires_at']));
+            if ($row['refresh_token'] !== $_GET['refreshToken']) {
+               echo json_encode(array('partyExists' => true, 'refreshTokenValid' => false));
+               exit();
+            }
+            echo json_encode(array('partyExists' => true, 'refreshTokenValid' => true, 'explicit' => $row['explicit'], 'partyId' => $row['party_id'], 'partyExpiresAt' => $row['party_expires_at']));
          } else {
-            echo json_encode(array('partyExists' => false));
+            echo json_encode(array('partyExists' => false, 'refreshTokenValid' => false));
          }
          break;
          //////////////// partyExistsByPartyId //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

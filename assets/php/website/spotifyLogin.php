@@ -33,7 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
       $result = json_decode($response, true);
 
-      setcookie("refresh_token", $result['refresh_token'], time() + 86400, "/", "", true);
+      $stored_refresh_token = $result['refresh_token'];
+
       // Get user ID
       $url = "https://api.spotify.com/v1/me";
       $headers = array(
@@ -49,12 +50,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
       if ($http_code === 403) {
-         setcookie("refresh_token", "", time() - 3600, "/", "", true);
          header("Location: /houseparty/development.html");
+         exit();
       }
 
       if (curl_errno($ch)) {
-         echo 'Error:' . curl_error($ch);
+         error_log('Error:' . curl_error($ch));
          http_response_code(500);
          exit();
       }
@@ -74,12 +75,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
       if ($result->num_rows > 0) {
          $row = $result->fetch_assoc();
-         if ($row['refresh_token'] !== $_COOKIE['refresh_token']) {
-            setcookie("refresh_token", "", time() - 3600, "/", "", true);
+         if ($row['refresh_token'] !== $stored_refresh_token) {
             setcookie("refresh_token", $row['refresh_token'], time() + 86400, "/", "", true);
          }
       }
 
       header("Location: /houseparty/");
+      exit();
    }
 }

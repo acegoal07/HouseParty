@@ -1,7 +1,7 @@
 window.addEventListener('load', () => {
    if (!getCookie('refresh_token') || !getCookie('host_id')) {
-      deleteCookie('refresh_token');
-      deleteCookie('host_id');
+      deleteCookie({ name: 'refresh_token' });
+      deleteCookie({ name: 'host_id' });
       window.location.href = '/houseparty/';
    }
    document.querySelector('input#extend-duration').value = 4;
@@ -26,11 +26,12 @@ window.addEventListener('load', () => {
          `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
    }
    // Check if the user has an active party and display the appropriate form
-   const urlParams = new URLSearchParams({
-      type: 'checkPartyExistsHost',
-      hostId: `${getCookie('host_id')}`
-   });
    function pagePolling() {
+      const urlParams = new URLSearchParams({
+         type: 'checkPartyExistsHost',
+         hostId: `${getCookie('host_id')}`,
+         refreshToken: `${getCookie('refresh_token')}`
+      });
       fetch(`assets/php/website/databasePartyHandlers.php?${urlParams}`, {
          method: 'GET'
       }).then(response => response.json()).then(data => {
@@ -48,6 +49,14 @@ window.addEventListener('load', () => {
                   height: 150
                });
             }
+            if (data.refreshTokenValid === false) {
+               deleteCookie({ name: 'refresh_token' });
+               deleteCookie({ name: 'host_id' });
+               window.location.href = '/houseparty/';
+            }
+            if (data.partyExpiresAt !== partyExpiresAt) {
+               partyExpiresAt = new Date(data.partyExpiresAt);
+            }
             if (data.explicit) {
                if (!enableExplicitButton.classList.contains('hidden')) { enableExplicitButton.classList.add('hidden'); }
                disableExplicitButton.classList.remove('hidden');
@@ -60,9 +69,6 @@ window.addEventListener('load', () => {
          } else {
             if (!document.querySelector('div#manage-party-buttons').classList.contains('hidden')) { document.querySelector('div#manage-party-buttons').classList.add('hidden'); }
             document.querySelector('form#start-party-form').classList.remove('hidden');
-         }
-         if (data.partyExpiresAt !== partyExpiresAt) {
-            partyExpiresAt = new Date(data.partyExpiresAt);
          }
          if (!document.querySelector('div#loading-icon').classList.contains('hidden')) {
             this.document.querySelector('div#loading-icon').classList.add('hidden');
