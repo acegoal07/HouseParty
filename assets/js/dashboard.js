@@ -4,8 +4,27 @@ window.addEventListener('load', () => {
       deleteCookie('host_id');
       window.location.href = '/houseparty/';
    }
+   document.querySelector('input#extend-duration').value = 4;
+   document.querySelector('input#party-duration').value = 4;
    const disableExplicitButton = this.document.querySelector('button#disable-explicit-button');
    const enableExplicitButton = this.document.querySelector('button#enable-explicit-button');
+   let partyExpiresAt;
+   let countdownInterval;
+   // Countdown timer for the party
+   function updateCountdown() {
+      const now = new Date();
+      const timeDifference = partyExpiresAt - now;
+      if (timeDifference <= 0) {
+         document.getElementById("countdown-timer").innerText = "00:00:00";
+         clearInterval(countdownInterval);
+         return;
+      }
+      const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+      document.getElementById("countdown-timer").innerText =
+         `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+   }
    // Check if the user has an active party and display the appropriate form
    const urlParams = new URLSearchParams({
       type: 'checkPartyExistsHost',
@@ -17,6 +36,9 @@ window.addEventListener('load', () => {
       }).then(response => response.json()).then(data => {
          if (data.partyExists) {
             if (document.querySelector('div#party-qrcode').childElementCount === 0) {
+               partyExpiresAt = new Date(data.partyExpiresAt);
+               countdownInterval = setInterval(updateCountdown, 1000);
+               updateCountdown();
                const websiteUrl = `https://aw1443.brighton.domains/houseparty/party.html?session_code=`;
                this.document.querySelector('span#party-code').textContent = data.partyId;
                this.document.querySelector('button#copy-party-url').setAttribute('copy-data', `${websiteUrl}${data.partyId}`);
@@ -27,11 +49,11 @@ window.addEventListener('load', () => {
                });
             }
             if (data.explicit) {
-               if (!document.querySelector('button#enable-explicit-button').classList.contains('hidden')) { document.querySelector('button#enable-explicit-button').classList.add('hidden'); }
-               document.querySelector('button#disable-explicit-button').classList.remove('hidden');
+               if (!enableExplicitButton.classList.contains('hidden')) { enableExplicitButton.classList.add('hidden'); }
+               disableExplicitButton.classList.remove('hidden');
             } else {
-               if (!document.querySelector('button#disable-explicit-button').classList.contains('hidden')) { document.querySelector('button#disable-explicit-button').classList.add('hidden'); }
-               document.querySelector('button#enable-explicit-button').classList.remove('hidden');
+               if (!disableExplicitButton.classList.contains('hidden')) { disableExplicitButton.classList.add('hidden'); }
+               enableExplicitButton.classList.remove('hidden');
             }
             if (!document.querySelector('form#start-party-form').classList.contains('hidden')) { document.querySelector('form#start-party-form').classList.add('hidden'); }
             document.querySelector('div#manage-party-buttons').classList.remove('hidden');
@@ -45,7 +67,7 @@ window.addEventListener('load', () => {
       });
    }
    pagePolling();
-   setInterval(pagePolling(), 1500);
+   setInterval(pagePolling, 1500);
    // Handle the form submission for creating a new party
    this.document.querySelector('form#start-party-form').addEventListener('submit', (event) => {
       event.preventDefault();
@@ -117,11 +139,7 @@ window.addEventListener('load', () => {
          body: `type=extendPartyDuration&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&extendBy=${partyDuration}`
       }).then(response => response.json()).then(data => {
          if (data.success) {
-            const modal = document.querySelector('div#extend-party');
-            modal.style.animation = "modal-close 0.6s forwards";
-            setTimeout(function () {
-               modal.style.display = 'none';
-            }, 600);
+            window.location.reload();
          }
       });
    });
@@ -136,8 +154,8 @@ window.addEventListener('load', () => {
          body: `type=updatePartyExplicit&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&explicit=0`
       }).then(response => response.json()).then(data => {
          if (data.success) {
-            document.querySelector('button#disable-explicit-button').classList.add('hidden');
-            document.querySelector('button#enable-explicit-button').classList.remove('hidden');
+            disableExplicitButton.classList.add('hidden');
+            enableExplicitButton.classList.remove('hidden');
          }
       });
    });
@@ -152,8 +170,8 @@ window.addEventListener('load', () => {
          body: `type=updatePartyExplicit&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&explicit=1`
       }).then(response => response.json()).then(data => {
          if (data.success) {
-            document.querySelector('button#enable-explicit-button').classList.add('hidden');
-            document.querySelector('button#disable-explicit-button').classList.remove('hidden');
+            enableExplicitButton.classList.add('hidden');
+            disableExplicitButton.classList.remove('hidden');
          }
       });
    });

@@ -23,15 +23,23 @@
 }
 
 /* Body */
-html {
-   font-family: 'Roboto', sans-serif;
-   height: 100%;
-}
-
+html,
 body {
+   font-family: 'Roboto', sans-serif;
    height: 100%;
    margin: 0;
    padding: 0;
+   box-sizing: border-box;
+   overflow: auto;
+   -webkit-user-select: none;
+   user-select: none;
+}
+
+body {
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
    background: linear-gradient(347deg, var(--background-color) 40%, var(--primary-color) 100%);
    -webkit-backdrop-filter: blur(100px);
    backdrop-filter: blur(100px);
@@ -41,16 +49,18 @@ body {
    display: flex;
    justify-content: center;
    align-items: center;
+   flex-wrap: wrap;
    height: 100%;
+   overflow: auto;
 }
 
 .body-container {
    margin: 1rem;
    background-color: var(--secondary-color);
    border-radius: var(--border-radius);
-   padding: 2rem;
+   padding: 1rem;
    max-width: 500px;
-   width: 100%;
+   height: fit-content;
    box-shadow: 0 0 10px var(--shadow-color);
 }
 
@@ -95,6 +105,7 @@ button.btn {
    border-radius: var(--border-radius);
    color: white;
    font-size: 1.2rem;
+   font-weight: bold;
    cursor: pointer;
    box-shadow: 0 0 10px var(--shadow-color);
    background-color: black;
@@ -301,13 +312,13 @@ select:focus {
    float: right;
    font-size: 34px;
    font-weight: bold;
+   cursor: pointer;
 }
 
 .modal-close:hover,
 .modal-close:focus {
    color: var(--primary-color-hover);
    text-decoration: none;
-   cursor: pointer;
 }
 
 @keyframes modal-open {
@@ -382,11 +393,11 @@ div#party-qrcode {
 .loading-icon-container svg {
    width: 50px;
    height: 50px;
-   animation: spin 1s linear infinite;
+   animation: loading-icon-animation 1s linear infinite;
    fill: var(--primary-color);
 }
 
-@keyframes spin {
+@keyframes loading-icon-animation {
    0% {
       transform: rotate(0deg);
    }
@@ -394,4 +405,27 @@ div#party-qrcode {
    100% {
       transform: rotate(360deg);
    }
+}
+
+/* Countdown */
+.countdown-container {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   padding: 0.5rem;
+   border-radius: var(--border-radius);
+   background-color: var(--secondary-color-hover);
+}
+
+.countdown-container h2 {
+   margin: 0;
+   padding-right: 10px;
+   font-size: 1em;
+   color: white;
+}
+
+#countdown-timer {
+   font-size: 1.5em;
+   font-weight: bold;
+   color: white;
 }
