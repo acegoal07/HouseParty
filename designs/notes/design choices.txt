@@ -1,10 +1,32 @@
-Using minified files for the hosted version has they provide some performance benefits
-Using a API to handle sensitive data so that it doesn't get exposed to the wrong people
-Using a different JS file for each page as this will make it easier to find errors due to the file only being specific for that page and containing less content (micro services)
-Designing PHP scripts to run on the server automatically to handle refreshing API tokens and ending expired sessions
-Im going to build the website with a very basic layout making it easy to use and understand
-Make sure that accessibility is is very high
-I chose to use github projects over an alternative like trello because it keeps the code and all the planning in one place instead on multiple websites making it easier to access all together
-When you join a session the session code is stored in the url so that you can share the url and join a session without having to enter a code yourself
-Makes it so when a user logs in it checks if the user already has a session in the database and if it does checks if the refresh token on the login matches the database and if it doesn't changes the login refresh token to match the database
-I wanted to use a websocket to handle database changes to show changes made on different devices but i was not able to found out how to host one on brighton domains so instead decided to use polling system instead
+Using minified files for the hosted version as they provide some performance benefits of the basic files
+
+Going to host as much of the files as possible on brighton domains including third party packages to help with load times and also to make sure they will be available to
+use just in case the hosting service is not working
+
+Using a API to handle sensitive data so that it doesn't get exposed to the wrong people limiting the only person its exposed to if the host who's data it is and the server its self
+keeping it secure
+
+Using a different JS file for each page as this will make it easier to find errors due to the file only being specific for that page and containing
+less content (micro services)
+
+Designing PHP scripts to run on the server automatically to handle refreshing API tokens and ending expired sessions this was going to be handled while sending API requests but i realised
+that it could lead to issues if multiple people tried refreshing to the token at the same time
+
+Im going to build the website with a very basic layout making it easy to use and understand and focus heavily on mobile use as that's the device it'll be used on the most
+
+I chose to use github projects over an alternative like trello because it keeps the code and all the planning in one place instead
+on multiple websites making it easier to access all together
+
+When you join a session the session code is stored in the url so that you can share the url and join a session without having to enter a code yourself, my first idea was to use cookies
+to store the session id but realised that then the link couldn't be used as a way to invite people
+
+Makes it so when a user logs in it checks if the user already has a session in the database and if it does checks if the refresh token on the login matches the
+database and if it doesn't changes the login refresh token to match the database, also made it so if you are on the dashboard with a token that does not match
+the one in the database you will be logged out and sent back to the home screen being forced to sign in again to make sure you have the right refresh token
+
+I wanted to use a websocket to handle database changes to show changes made on different devices but i was not able to found out how to host
+one on brighton domains so instead decided to use polling system instead
+
+Ive decided to offer as many ways as possible to invite people for example code, URL and QR code this was done 
+
+I chose to use font awesome for the icon library as they have a wider range of icons to offer

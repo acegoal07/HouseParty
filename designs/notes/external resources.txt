@@ -12,3 +12,6 @@ https://www.php.net/manual/en/
 
 QR code generator
 https://cdnjs.com/libraries/qrcodejs
+
+Font Awesome
+https://fontawesome.com/
