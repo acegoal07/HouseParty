@@ -6,3 +6,5 @@ Im going to build the website with a very basic layout making it easy to use and
 Make sure that accessibility is is very high
 I chose to use github projects over an alternative like trello because it keeps the code and all the planning in one place instead on multiple websites making it easier to access all together
 When you join a session the session code is stored in the url so that you can share the url and join a session without having to enter a code yourself
+Makes it so when a user logs in it checks if the user already has a session in the database and if it does checks if the refresh token on the login matches the database and if it doesn't changes the login refresh token to match the database
+I wanted to use a websocket to handle database changes to show changes made on different devices but i was not able to found out how to host one on brighton domains so instead decided to use polling system instead

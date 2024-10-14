@@ -61,6 +61,9 @@ window.addEventListener('load', () => {
             if (!document.querySelector('div#manage-party-buttons').classList.contains('hidden')) { document.querySelector('div#manage-party-buttons').classList.add('hidden'); }
             document.querySelector('form#start-party-form').classList.remove('hidden');
          }
+         if (data.partyExpiresAt !== partyExpiresAt) {
+            partyExpiresAt = new Date(data.partyExpiresAt);
+         }
          if (!document.querySelector('div#loading-icon').classList.contains('hidden')) {
             this.document.querySelector('div#loading-icon').classList.add('hidden');
          }
@@ -130,7 +133,7 @@ window.addEventListener('load', () => {
    // Handle the button press for extending the party
    this.document.querySelector('form#extend-party-form').addEventListener('submit', (event) => {
       event.preventDefault();
-      const partyDuration = document.querySelector('input#extend-duration').value * 3600;
+      const partyDuration = document.querySelector('input#extend-duration').value;
       fetch(`assets/php/website/databasePartyHandlers.php`, {
          method: 'post',
          headers: {
@@ -139,7 +142,11 @@ window.addEventListener('load', () => {
          body: `type=extendPartyDuration&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&extendBy=${partyDuration}`
       }).then(response => response.json()).then(data => {
          if (data.success) {
-            window.location.reload();
+            const modal = document.querySelector('div#extend-party');
+            modal.style.animation = "modal-close 0.6s forwards";
+            setTimeout(function () {
+               modal.style.display = 'none';
+            }, 600);
          }
       });
    });

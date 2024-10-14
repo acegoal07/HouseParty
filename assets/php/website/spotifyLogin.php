@@ -65,6 +65,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
       setcookie("host_id", $result['id'], time() + 86400, "/", "", true);
 
+      // Check if user is already in database and changes the refresh token in their cookies to match if they are and the cookies don't match
+      $stmt = $conn->prepare("SELECT refresh_token FROM parties WHERE host_id = ? COLLATE utf8_bin");
+      $stmt->bind_param("s", $result['id']);
+      $stmt->execute();
+
+      $result = $stmt->get_result();
+
+      if ($result->num_rows > 0) {
+         $row = $result->fetch_assoc();
+         if ($row['refresh_token'] !== $_COOKIE['refresh_token']) {
+            setcookie("refresh_token", "", time() - 3600, "/", "", true);
+            setcookie("refresh_token", $row['refresh_token'], time() + 86400, "/", "", true);
+         }
+      }
+
       header("Location: /houseparty/");
    }
 }

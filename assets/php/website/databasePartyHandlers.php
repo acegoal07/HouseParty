@@ -126,14 +126,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
          $result = json_decode($response, true);
 
+         $timezone = new DateTimeZone('Europe/London');
+         date_default_timezone_set($timezone->getName());
+         $timestamp_formatted = 'Y-m-d H:i:s';
+
          $accessToken = $result['access_token'];
+
          $tokenExpiresAt = new DateTime();
-         $tokenExpiresAt->setTimestamp(time() + 7200);
-         $tokenExpiresAtFormatted = $tokenExpiresAt->format('Y-m-d H:i:s');
+         $tokenExpiresAt->setTimezone($timezone);
+         $tokenExpiresAt->setTimestamp(time() + 3600);
+         $tokenExpiresAtFormatted = $tokenExpiresAt->format($timestamp_formatted);
 
          $partyExpiresAt = new DateTime();
-         $partyExpiresAt->setTimestamp(time() + $_POST['partyEndsIn'] * 3600 + 3600);
-         $partyExpiresAtFormatted = $partyExpiresAt->format('Y-m-d H:i:s');
+         $partyExpiresAt->setTimezone($timezone);
+         $partyExpiresAt->setTimestamp(time() + $_POST['partyEndsIn'] * 3600);
+         $partyExpiresAtFormatted = $partyExpiresAt->format($timestamp_formatted);
 
          $stmt = $conn->prepare("INSERT INTO parties (party_id, host_id, access_token, refresh_token, party_expires_at, token_expires_at, explicit) VALUES (?, ?, ?, ?, ?, ?, ?)");
          $stmt->bind_param("sssssss", $partyId, $_POST['hostId'], $accessToken, $_POST['refreshToken'], $partyExpiresAtFormatted, $tokenExpiresAtFormatted, $_POST['explicit']);
@@ -187,6 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       case 'extendPartyDuration':
          if (!isset($_POST['hostId']) || !isset($_POST['refreshToken']) || !isset($_POST['extendBy'])) {
             http_response_code(400);
+            error_log('Missing parameters');
             exit();
          }
          $stmt = $conn->prepare("SELECT party_expires_at FROM parties WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
@@ -197,12 +205,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
          if ($result->num_rows === 0) {
             http_response_code(400);
+            error_log('No party found with the given hostId and refreshToken');
             exit();
          }
 
          $row = $result->fetch_assoc();
          $partyExpiresAt = new DateTime($row['party_expires_at']);
-         $partyExpiresAtSeconds = $partyExpiresAt->getTimestamp() + $_POST['extendBy'];
+         $partyExpiresAtSeconds = $partyExpiresAt->getTimestamp() + $_POST['extendBy'] * 3600;
          $partyExpiresAt->setTimestamp($partyExpiresAtSeconds);
          $partyExpiresAtFormatted = $partyExpiresAt->format('Y-m-d H:i:s');
 
@@ -212,6 +221,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
          if ($stmt->affected_rows === 0) {
             http_response_code(400);
+            error_log('No party found with the given hostId and refreshToken so nothing updated');
             exit();
          }
 
@@ -221,6 +231,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          //////////////// default //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       default:
          http_response_code(400);
+         error_log('invalid function');
          exit();
    }
 } else {
