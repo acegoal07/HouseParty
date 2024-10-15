@@ -4,7 +4,7 @@ include '../secrets.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
    if (isset($_GET['error'])) {
-      header("Location: /houseparty/");
+      header("Location: /houseparty/loginerror.html?error=1");
    } else {
       // Get access token
       $ch = curl_init();
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       curl_close($ch);
 
       if ($http_code === 403) {
-         header("Location: /houseparty/development.html");
+         header("Location: /houseparty/loginerror.html?error=2");
          exit();
       }
 
@@ -69,6 +69,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       if (!isset($result['id'])) {
          error_log('Error: Missing host_id in response');
          http_response_code(500);
+         exit();
+      }
+
+      if ($result['product'] !== 'premium') {
+         header("Location: /houseparty/loginerror.html?error=3");
          exit();
       }
 
