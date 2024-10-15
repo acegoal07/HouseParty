@@ -4,6 +4,8 @@ window.addEventListener('load', () => {
       this.document.querySelector('a#go-to-dashboard-button').classList.remove('hidden');
       this.document.querySelector('button#logout-button').classList.remove('hidden');
    } else {
+      deleteCookie({ name: 'host_id' });
+      deleteCookie({ name: 'refresh_token' });
       this.document.querySelector('button#spotify-login-button').classList.remove('hidden');
    }
    // Add event listener to the Spotify login button
