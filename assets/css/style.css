@@ -60,6 +60,7 @@ body {
    border-radius: var(--border-radius);
    padding: 1rem;
    max-width: 500px;
+   width: 100%;
    height: fit-content;
    box-shadow: 0 0 10px var(--shadow-color);
 }
