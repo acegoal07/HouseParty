@@ -111,22 +111,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          );
 
          $ch = curl_init();
-
          curl_setopt($ch, CURLOPT_URL, $url);
          curl_setopt($ch, CURLOPT_POST, true);
          curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
          curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
          $response = curl_exec($ch);
+         curl_close($ch);
 
          if (curl_errno($ch)) {
             echo 'Error:' . curl_error($ch);
             http_response_code(500);
             exit();
          }
-
-         curl_close($ch);
 
          $result = json_decode($response, true);
 
