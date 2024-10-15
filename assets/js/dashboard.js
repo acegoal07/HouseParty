@@ -37,7 +37,20 @@ window.addEventListener('load', () => {
       }).then(response => response.json()).then(data => {
          if (data.partyExists) {
             if (document.querySelector('div#party-qrcode').childElementCount === 0) {
+               // Get the party details and display them 
                partyExpiresAt = new Date(data.partyExpiresAt);
+               // const options = {
+               //    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+               //    year: 'numeric',
+               //    month: 'long',
+               //    day: 'numeric',
+               //    hour: 'numeric',
+               //    minute: 'numeric',
+               //    second: 'numeric',
+               //    hour12: true
+               // };
+               // const formatter = new Intl.DateTimeFormat('en-US', options);
+               // const localPartyExpiresAt = formatter.format(partyExpiresAt);
                countdownInterval = setInterval(updateCountdown, 1000);
                updateCountdown();
                const websiteUrl = `https://aw1443.brighton.domains/houseparty/party.html?session_code=`;
@@ -80,6 +93,7 @@ window.addEventListener('load', () => {
    // Handle the form submission for creating a new party
    this.document.querySelector('form#start-party-form').addEventListener('submit', (event) => {
       event.preventDefault();
+      this.document.querySelector('div#loading-icon').classList.remove('hidden');
       fetch(`assets/php/website/databasePartyHandlers.php`, {
          method: 'post',
          headers: {
@@ -89,6 +103,7 @@ window.addEventListener('load', () => {
       }).then(response => response.json()).then(data => {
          if (data.success) {
             window.location.reload();
+            this.document.querySelector('div#loading-icon').classList.add('hidden');
          }
       });
    });
@@ -139,6 +154,7 @@ window.addEventListener('load', () => {
    // Handle the button press for extending the party
    this.document.querySelector('form#extend-party-form').addEventListener('submit', (event) => {
       event.preventDefault();
+      this.document.querySelector('div#loading-icon').classList.remove('hidden');
       const partyDuration = document.querySelector('input#extend-duration').value;
       fetch(`assets/php/website/databasePartyHandlers.php`, {
          method: 'post',
@@ -153,12 +169,14 @@ window.addEventListener('load', () => {
             setTimeout(function () {
                modal.style.display = 'none';
             }, 600);
+            this.document.querySelector('div#loading-icon').classList.remove('hidden');
          }
       });
    });
    // Handle the button press for disabling explicit songs
    disableExplicitButton.addEventListener('click', (event) => {
       event.preventDefault();
+      this.document.querySelector('div#loading-icon').classList.remove('hidden');
       fetch(`assets/php/website/databasePartyHandlers.php`, {
          method: 'post',
          headers: {
@@ -169,12 +187,14 @@ window.addEventListener('load', () => {
          if (data.success) {
             disableExplicitButton.classList.add('hidden');
             enableExplicitButton.classList.remove('hidden');
+            this.document.querySelector('div#loading-icon').classList.add('hidden');
          }
       });
    });
    // Handle the button press for enabling explicit songs
    enableExplicitButton.addEventListener('click', (event) => {
       event.preventDefault();
+      this.document.querySelector('div#loading-icon').classList.remove('hidden');
       fetch(`assets/php/website/databasePartyHandlers.php`, {
          method: 'post',
          headers: {
@@ -185,6 +205,7 @@ window.addEventListener('load', () => {
          if (data.success) {
             enableExplicitButton.classList.add('hidden');
             disableExplicitButton.classList.remove('hidden');
+            this.document.querySelector('div#loading-icon').classList.add('hidden');
          }
       });
    });
@@ -207,6 +228,7 @@ window.addEventListener('load', () => {
    // Handle the button press for confirming the end of the party
    this.document.querySelector('button#confirm-end-party-button').addEventListener('click', (event) => {
       event.preventDefault();
+      this.document.querySelector('div#loading-icon').classList.remove('hidden');
       fetch(`assets/php/website/databasePartyHandlers.php`, {
          method: 'post',
          headers: {
@@ -216,6 +238,7 @@ window.addEventListener('load', () => {
       }).then(response => response.json()).then(data => {
          if (data.success) {
             window.location.reload();
+            this.document.querySelector('div#loading-icon').classList.add('hidden');
          }
       });
    });
