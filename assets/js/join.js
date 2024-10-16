@@ -1,6 +1,6 @@
 window.addEventListener('load', () => {
    const loadingIcon = document.querySelector('div#loading-icon');
-   // Add event listener to the join party form to prevent default form submission and then handle sending the session code to the server
+   // Add event listener to the join party form
    document.querySelector('form#join-party-form').addEventListener('submit', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove("hidden");

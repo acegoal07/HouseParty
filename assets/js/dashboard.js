@@ -6,11 +6,12 @@ window.addEventListener('load', () => {
    }
    document.querySelector('input#extend-duration').value = 4;
    document.querySelector('input#party-duration').value = 4;
-   const disableExplicitButton = this.document.querySelector('button#disable-explicit-button');
-   const enableExplicitButton = this.document.querySelector('button#enable-explicit-button');
+   const disableExplicitButton = document.querySelector('button#disable-explicit-button');
+   const enableExplicitButton = document.querySelector('button#enable-explicit-button');
+   const loadingIcon = document.querySelector('div#loading-icon');
+   //////////////// Countdown timer //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    let partyExpiresAt;
    let countdownInterval;
-   // Countdown timer for the party
    function updateCountdown() {
       const now = new Date();
       const timeDifference = partyExpiresAt - now;
@@ -25,7 +26,7 @@ window.addEventListener('load', () => {
       document.getElementById("countdown-timer").innerText =
          `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
    }
-   // Check if the user has an active party and display the appropriate form
+   //////////////// Page polling //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    function pagePolling() {
       const urlParams = new URLSearchParams({
          type: 'checkPartyExistsHost',
@@ -37,7 +38,7 @@ window.addEventListener('load', () => {
       }).then(response => response.json()).then(data => {
          if (data.partyExists) {
             if (document.querySelector('div#party-qrcode').childElementCount === 0) {
-               // Get the party details and display them 
+               // Get the party details and display them
                partyExpiresAt = new Date(data.partyExpiresAt);
                // const options = {
                //    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -54,8 +55,8 @@ window.addEventListener('load', () => {
                countdownInterval = setInterval(updateCountdown, 1000);
                updateCountdown();
                const websiteUrl = `https://aw1443.brighton.domains/houseparty/party.html?session_code=`;
-               this.document.querySelector('span#party-code').textContent = data.partyId;
-               this.document.querySelector('button#copy-party-url').setAttribute('copy-data', `${websiteUrl}${data.partyId}`);
+               document.querySelector('span#party-code').textContent = data.partyId;
+               document.querySelector('button#copy-party-url').setAttribute('copy-data', `${websiteUrl}${data.partyId}`);
                new QRCode(document.querySelector('div#party-qrcode'), {
                   text: `${websiteUrl}${data.partyId}`,
                   width: 150,
@@ -83,17 +84,18 @@ window.addEventListener('load', () => {
             if (!document.querySelector('div#manage-party-buttons').classList.contains('hidden')) { document.querySelector('div#manage-party-buttons').classList.add('hidden'); }
             document.querySelector('form#start-party-form').classList.remove('hidden');
          }
-         if (!document.querySelector('div#loading-icon').classList.contains('hidden')) {
-            this.document.querySelector('div#loading-icon').classList.add('hidden');
+         if (!loadingIcon.classList.contains('hidden')) {
+            loadingIcon.classList.add('hidden');
          }
       });
    }
    pagePolling();
    setInterval(pagePolling, 1500);
+   //////////////// Create party //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Handle the form submission for creating a new party
-   this.document.querySelector('form#start-party-form').addEventListener('submit', (event) => {
+   document.querySelector('form#start-party-form').addEventListener('submit', (event) => {
       event.preventDefault();
-      this.document.querySelector('div#loading-icon').classList.remove('hidden');
+      loadingIcon.classList.remove('hidden');
       fetch(`assets/php/website/databasePartyHandlers.php`, {
          method: 'post',
          headers: {
@@ -103,58 +105,74 @@ window.addEventListener('load', () => {
       }).then(response => response.json()).then(data => {
          if (data.success) {
             window.location.reload();
-            this.document.querySelector('div#loading-icon').classList.add('hidden');
+            loadingIcon.classList.add('hidden');
          }
       });
    });
-   // Handle the button press for show join party info
-   this.document.querySelector('button#show-party-join-info').addEventListener('click', (event) => {
+   //////////////// How it works //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   const howItWorksModal = document.querySelector('div#how-it-works-modal');
+   // Handle the button press for showing how this works
+   document.querySelector('button#show-how-it-works-modal').addEventListener('click', (event) => {
       event.preventDefault();
-      const modal = document.querySelector('div#join-party-info');
-      modal.style.animation = "modal-open 0.6s forwards";
-      modal.style.display = 'flex';
+      howItWorksModal.style.animation = "modal-open 0.6s forwards";
+      howItWorksModal.style.display = 'flex';
+   });
+   // Handle the button press for hiding how this works
+   document.querySelector('span#hide-how-it-works-modal').addEventListener('click', (event) => {
+      event.preventDefault();
+      howItWorksModal.style.animation = "modal-close 0.6s forwards";
+      setTimeout(function () {
+         howItWorksModal.style.display = 'none';
+      }, 600);
+   });
+   //////////////// Join party info //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   const joinPartyInfoModal = document.querySelector('div#join-party-info-modal');
+   // Handle the button press for showing join party info modal
+   document.querySelector('button#show-party-join-info-modal').addEventListener('click', (event) => {
+      event.preventDefault();
+      joinPartyInfoModal.style.animation = "modal-open 0.6s forwards";
+      joinPartyInfoModal.style.display = 'flex';
    });
    // Handle the button press for hiding join party info
-   this.document.querySelector('span#hide-party-join-info').addEventListener('click', (event) => {
+   document.querySelector('span#hide-party-join-info-modal').addEventListener('click', (event) => {
       event.preventDefault();
-      const modal = document.querySelector('div#join-party-info');
-      modal.style.animation = "modal-close 0.6s forwards";
+      joinPartyInfoModal.style.animation = "modal-close 0.6s forwards";
       setTimeout(function () {
-         modal.style.display = 'none';
+         joinPartyInfoModal.style.display = 'none';
       }, 600);
    });
    // Handle the button press for copying the party code
-   this.document.querySelector('button#copy-party-code').addEventListener('click', (event) => {
+   document.querySelector('button#copy-party-code').addEventListener('click', (event) => {
       event.preventDefault();
       const partyCode = document.querySelector('span#party-code').textContent;
       navigator.clipboard.writeText(partyCode);
    });
    // Handle the button press for copying the party URL
-   this.document.querySelector('button#copy-party-url').addEventListener('click', (event) => {
+   document.querySelector('button#copy-party-url').addEventListener('click', (event) => {
       event.preventDefault();
       const partyUrl = document.querySelector('button#copy-party-url').getAttribute('copy-data');
       navigator.clipboard.writeText(partyUrl);
    });
-   // Handle the button press for extending the party modal
-   this.document.querySelector('button#extend-party-button').addEventListener('click', (event) => {
+   //////////////// Extend party //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   const extendPartyModal = document.querySelector('div#extend-party-modal');
+   // Handle the button press for showing the extend party modal
+   document.querySelector('button#show-extend-party-modal').addEventListener('click', (event) => {
       event.preventDefault();
-      const modal = document.querySelector('div#extend-party');
-      modal.style.animation = "modal-open 0.6s forwards";
-      modal.style.display = 'flex';
+      extendPartyModal.style.animation = "modal-open 0.6s forwards";
+      extendPartyModal.style.display = 'flex';
    });
    // Handle the button press for closing the extend party modal
-   this.document.querySelector('span#hide-extend-party').addEventListener('click', (event) => {
+   document.querySelector('span#hide-extend-party-modal').addEventListener('click', (event) => {
       event.preventDefault();
-      const modal = document.querySelector('div#extend-party');
-      modal.style.animation = "modal-close 0.6s forwards";
+      extendPartyModal.style.animation = "modal-close 0.6s forwards";
       setTimeout(function () {
-         modal.style.display = 'none';
+         extendPartyModal.style.display = 'none';
       }, 600);
    });
-   // Handle the button press for extending the party
-   this.document.querySelector('form#extend-party-form').addEventListener('submit', (event) => {
+   // Handle the form submission for extending the party
+   document.querySelector('form#extend-party-form').addEventListener('submit', (event) => {
       event.preventDefault();
-      this.document.querySelector('div#loading-icon').classList.remove('hidden');
+      loadingIcon.classList.remove('hidden');
       const partyDuration = document.querySelector('input#extend-duration').value;
       fetch(`assets/php/website/databasePartyHandlers.php`, {
          method: 'post',
@@ -164,19 +182,19 @@ window.addEventListener('load', () => {
          body: `type=extendPartyDuration&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&extendBy=${partyDuration}`
       }).then(response => response.json()).then(data => {
          if (data.success) {
-            const modal = document.querySelector('div#extend-party');
-            modal.style.animation = "modal-close 0.6s forwards";
+            extendPartyModal.style.animation = "modal-close 0.6s forwards";
             setTimeout(function () {
-               modal.style.display = 'none';
+               extendPartyModal.style.display = 'none';
             }, 600);
-            this.document.querySelector('div#loading-icon').classList.remove('hidden');
+            loadingIcon.classList.remove('hidden');
          }
       });
    });
+   //////////////// Explicit enable/disable buttons //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Handle the button press for disabling explicit songs
    disableExplicitButton.addEventListener('click', (event) => {
       event.preventDefault();
-      this.document.querySelector('div#loading-icon').classList.remove('hidden');
+      loadingIcon.classList.remove('hidden');
       fetch(`assets/php/website/databasePartyHandlers.php`, {
          method: 'post',
          headers: {
@@ -187,14 +205,14 @@ window.addEventListener('load', () => {
          if (data.success) {
             disableExplicitButton.classList.add('hidden');
             enableExplicitButton.classList.remove('hidden');
-            this.document.querySelector('div#loading-icon').classList.add('hidden');
+            loadingIcon.classList.add('hidden');
          }
       });
    });
    // Handle the button press for enabling explicit songs
    enableExplicitButton.addEventListener('click', (event) => {
       event.preventDefault();
-      this.document.querySelector('div#loading-icon').classList.remove('hidden');
+      loadingIcon.classList.remove('hidden');
       fetch(`assets/php/website/databasePartyHandlers.php`, {
          method: 'post',
          headers: {
@@ -205,30 +223,30 @@ window.addEventListener('load', () => {
          if (data.success) {
             enableExplicitButton.classList.add('hidden');
             disableExplicitButton.classList.remove('hidden');
-            this.document.querySelector('div#loading-icon').classList.add('hidden');
+            loadingIcon.classList.add('hidden');
          }
       });
    });
-   // Handle the button press for ending the party
-   this.document.querySelector('button#end-party-button').addEventListener('click', (event) => {
+   //////////////// End party //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   const confirmEndPartyModal = document.querySelector('div#confirm-end-party-modal');
+   // Handle the button press for showing the end party confirm modal
+   document.querySelector('button#show-confirm-end-party-modal').addEventListener('click', (event) => {
       event.preventDefault();
-      const modal = document.querySelector('div#confirm-end-party');
-      modal.style.animation = "modal-open 0.6s forwards";
-      modal.style.display = 'flex';
+      confirmEndPartyModal.style.animation = "modal-open 0.6s forwards";
+      confirmEndPartyModal.style.display = 'flex';
    });
-   // Handle the button press for closing the end party modal
-   this.document.querySelector('span#hide-confirm-end-party').addEventListener('click', (event) => {
+   // Handle the button press for closing the end party confirm modal
+   document.querySelector('span#hide-confirm-end-party-modal').addEventListener('click', (event) => {
       event.preventDefault();
-      const modal = document.querySelector('div#confirm-end-party');
-      modal.style.animation = "modal-close 0.6s forwards";
+      confirmEndPartyModal.style.animation = "modal-close 0.6s forwards";
       setTimeout(function () {
-         modal.style.display = 'none';
+         confirmEndPartyModal.style.display = 'none';
       }, 600);
    });
    // Handle the button press for confirming the end of the party
-   this.document.querySelector('button#confirm-end-party-button').addEventListener('click', (event) => {
+   document.querySelector('button#confirm-end-party-button').addEventListener('click', (event) => {
       event.preventDefault();
-      this.document.querySelector('div#loading-icon').classList.remove('hidden');
+      loadingIcon.classList.remove('hidden');
       fetch(`assets/php/website/databasePartyHandlers.php`, {
          method: 'post',
          headers: {
@@ -238,17 +256,16 @@ window.addEventListener('load', () => {
       }).then(response => response.json()).then(data => {
          if (data.success) {
             window.location.reload();
-            this.document.querySelector('div#loading-icon').classList.add('hidden');
+            loadingIcon.classList.add('hidden');
          }
       });
    });
    // Handle the button press for cancelling the end of the party
-   this.document.querySelector('button#cancel-end-party-button').addEventListener('click', (event) => {
+   document.querySelector('button#cancel-end-party-button').addEventListener('click', (event) => {
       event.preventDefault();
-      const modal = document.querySelector('div#confirm-end-party');
-      modal.style.animation = "modal-close 0.6s forwards";
+      confirmEndPartyModal.style.animation = "modal-close 0.6s forwards";
       setTimeout(function () {
-         modal.style.display = 'none';
+         confirmEndPartyModal.style.display = 'none';
       }, 600);
    });
 });

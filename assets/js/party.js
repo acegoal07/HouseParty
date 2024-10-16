@@ -1,7 +1,5 @@
 window.addEventListener('load', () => {
-   const urlParams = new URLSearchParams(window.location.search);
-   const sessionCode = urlParams.get('session_code');
-
+   const sessionCode = new URLSearchParams(window.location.search).get('session_code');
    if (!sessionCode) {
       window.location.href = '/houseparty/join.html';
    }

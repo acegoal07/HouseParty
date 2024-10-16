@@ -3,37 +3,41 @@
  * Stores a cookie with the name and value that's provided
  * @param {String} name The name of the cookie
  * @param {any} value The value of the cookie
- * @param {"Strict" | "Lax" | "None"} SameSite The type of SameSite to use
- * @param {Number} expires The number of days until the cookie expires
+ * @param {"Strict" | "Lax" | "None"} [sameSite="Strict"] The type of SameSite to use
+ * @param {Number} [expires=1] The number of days until the cookie expires
+ * @param {Boolean} [httpOnly=false] Whether the cookie is HttpOnly
  */
-function setCookie({ name, value, SameSite = "Strict", expires = 1 }) {
+function setCookie({ name, value, sameSite = "Strict", expires = 1, httpOnly = false }) {
    const date = new Date();
    date.setTime(date.getTime() + (expires * 24 * 60 * 60 * 1000));
-   document.cookie = `${name}=${value || ""}; expires=${date.toString()}; SameSite=${SameSite}; secure=true; path=/`;
+   const expiresStr = date.toUTCString();
+   const httpOnlyStr = httpOnly ? "; HttpOnly" : "";
+   document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value || "")}; expires=${expiresStr}; SameSite=${sameSite}; Secure; Path=/${httpOnlyStr}`;
 }
+
 /**
- * deleteCookie
- * Deletes the cookie with the provided name
- * @param {String} name The name of the cookie
- * @param {"Strict" | "Lax" | "None"} SameSite The type of SameSite to use
- */
-function deleteCookie({ name, SameSite = "Strict" }) {
-   document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=${SameSite}; secure=true; path=/;`;
+* deleteCookie
+* Deletes the cookie with the provided name
+* @param {String} name The name of the cookie
+* @param {"Strict" | "Lax" | "None"} [sameSite="Strict"] The type of SameSite to use
+*/
+function deleteCookie({ name, sameSite = "Strict" }) {
+   document.cookie = `${encodeURIComponent(name)}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=${sameSite}; Secure; Path=/;`;
 }
+
 /**
- * getCookie
- * Get's the value of the cookie with the provided name
- * @param {String} name The name of the cookie
- * @returns {any} The value of the cookie
- */
+* getCookie
+* Gets the value of the cookie with the provided name
+* @param {String} name The name of the cookie
+* @returns {any} The value of the cookie
+*/
 function getCookie(name) {
-   const nameEQ = name + "=";
-   for (let cookie of document.cookie.split(';')) {
-      while (cookie.startsWith(' ')) {
-         cookie = cookie.substring(1, cookie.length);
-      }
+   const nameEQ = `${encodeURIComponent(name)}=`;
+   const cookies = document.cookie.split(';');
+   for (let cookie of cookies) {
+      cookie = cookie.trim();
       if (cookie.startsWith(nameEQ)) {
-         return cookie.substring(nameEQ.length, cookie.length);
+         return decodeURIComponent(cookie.substring(nameEQ.length));
       }
    }
    return null;
