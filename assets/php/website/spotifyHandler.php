@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             exit();
          }
 
-         $stmt = $conn->prepare("SELECT access_token FROM parties WHERE party_id = ?");
+         $stmt = $conn->prepare("SELECT access_token, explicit FROM parties WHERE party_id = ?");
          $stmt->bind_param("s", $_POST['partyId']);
          $stmt->execute();
 
@@ -80,7 +80,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          $response = curl_exec($curl);
          curl_close($curl);
 
-         echo $response;
+         if ($row['explicit'] == 0) {
+            $response = json_decode($response, true);
+            $response['tracks']['items'] = array_filter($response['tracks']['items'], function ($item) {
+               return $item['explicit'] == false;
+            });
+         }
+
+         http_response_code(200);
+         echo json_encode($response);
          break;
          //////////////// default //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       default:
