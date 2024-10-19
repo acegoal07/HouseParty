@@ -30,3 +30,6 @@ one on brighton domains so instead decided to use polling system instead
 Ive decided to offer as many ways as possible to invite people for example code, URL and QR code this was done 
 
 I chose to use font awesome for the icon library as they have a wider range of icons to offer
+
+I decided to combine all the login errors into one page and then when the php has an error with the login it sends it to the page and displays the correct error to match what has happened
+i did this instead of having multiple html pages that show different errors
