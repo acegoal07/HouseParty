@@ -14,17 +14,6 @@ if (strpos($referer, $allowedDomain) !== 0 && strpos($origin, $allowedDomain) !=
    exit();
 }
 
-function generatePartyId()
-{
-   $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-   $charactersLength = strlen($characters);
-   $randomString = '';
-   for ($i = 0; $i < 6; $i++) {
-      $randomString .= $characters[rand(0, $charactersLength - 1)];
-   }
-   return $randomString;
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
    switch ($_GET['type']) {
          //////////////// checkPartyExistsHost //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,9 +22,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             http_response_code(400);
             exit();
          }
+
          $stmt = $conn->prepare("SELECT explicit, party_id, party_expires_at, refresh_token FROM parties WHERE host_id = ? COLLATE utf8_bin");
          $stmt->bind_param("s", $_GET['hostId']);
          $stmt->execute();
+
+         if ($stmt->error) {
+            http_response_code(500);
+            exit();
+         }
 
          $result = $stmt->get_result();
 
@@ -43,12 +38,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             if ($row['refresh_token'] !== $_GET['refreshToken']) {
-               echo json_encode(array('partyExists' => true, 'refreshTokenValid' => false));
+               echo json_encode([array('partyExists' => true, 'refreshTokenValid' => false)]);
                exit();
             }
-            echo json_encode(array('partyExists' => true, 'refreshTokenValid' => true, 'explicit' => $row['explicit'], 'partyId' => $row['party_id'], 'partyExpiresAt' => $row['party_expires_at']));
+            echo json_encode(['partyExists' => true, 'refreshTokenValid' => true, 'explicit' => $row['explicit'], 'partyId' => $row['party_id'], 'partyExpiresAt' => $row['party_expires_at']]);
          } else {
-            echo json_encode(array('partyExists' => false, 'refreshTokenValid' => false));
+            echo json_encode(['partyExists' => false, 'refreshTokenValid' => false]);
          }
          break;
          //////////////// partyExistsByPartyId //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -62,14 +57,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          $stmt->bind_param("s", $_GET['partyId']);
          $stmt->execute();
 
+         if ($stmt->error) {
+            http_response_code(500);
+            exit();
+         }
+
          $result = $stmt->get_result();
 
          http_response_code(200);
          if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
-            echo json_encode(array('partyExists' => true, 'explicit' => $row['explicit']));
+            echo json_encode(['partyExists' => true, 'explicit' => $row['explicit']]);
          } else {
-            echo json_encode(array('partyExists' => false));
+            echo json_encode(['partyExists' => false]);
          }
          break;
          //////////////// default //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -91,6 +91,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          $stmt->bind_param("s", $partyId);
          $stmt->execute();
 
+         if ($stmt->error) {
+            http_response_code(500);
+            exit();
+         }
+
          $result = $stmt->get_result();
 
          while ($result->num_rows > 0) {
@@ -99,22 +104,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $result = $stmt->get_result();
          }
 
-         $url = "https://accounts.spotify.com/api/token";
-         $data = array(
-            'grant_type' => 'refresh_token',
-            'refresh_token' => $_POST['refreshToken'],
-            'client_id' => $spotifyClientId
-         );
-         $headers = array(
-            'Content-Type: application/x-www-form-urlencoded',
-            'Authorization: Basic ' . base64_encode($spotifyClientId . ':' .  $spotifyClientSecret)
-         );
-
          $ch = curl_init();
-         curl_setopt($ch, CURLOPT_URL, $url);
+         curl_setopt($ch, CURLOPT_URL, "https://accounts.spotify.com/api/token");
          curl_setopt($ch, CURLOPT_POST, true);
-         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(['grant_type' => 'refresh_token', 'refresh_token' => $_POST['refreshToken'], 'client_id' => $spotifyClientId]));
+         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded', 'Authorization: Basic ' . base64_encode($spotifyClientId . ':' .  $spotifyClientSecret)]);
          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
          $response = curl_exec($ch);
          curl_close($ch);
@@ -148,12 +142,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          $stmt->execute();
 
          if ($stmt->error) {
-            echo json_encode(array('error' => $stmt->error));
+            http_response_code(500);
             exit();
          }
 
          http_response_code(200);
-         echo json_encode(array('success' => true));
+         echo json_encode(['success' => true]);
          break;
          //////////////// deleteParty //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       case 'deleteParty':
@@ -161,9 +155,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             http_response_code(400);
             exit();
          }
+
          $stmt = $conn->prepare("DELETE FROM parties WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
          $stmt->bind_param("ss", $_POST['hostId'], $_POST['refreshToken']);
          $stmt->execute();
+
+         if ($stmt->error) {
+            http_response_code(500);
+            exit();
+         }
 
          if ($stmt->affected_rows === 0) {
             http_response_code(400);
@@ -171,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          }
 
          http_response_code(200);
-         echo json_encode(array('success' => true));
+         echo json_encode(['success' => true]);
          break;
          //////////////// updatePartyExplicit //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       case 'updatePartyExplicit':
@@ -179,9 +179,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             http_response_code(400);
             exit();
          }
+
          $stmt = $conn->prepare("UPDATE parties SET explicit = ? WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
          $stmt->bind_param("sss", $_POST['explicit'], $_POST['hostId'], $_POST['refreshToken']);
          $stmt->execute();
+
+         if ($stmt->error) {
+            http_response_code(500);
+            exit();
+         }
 
          if ($stmt->affected_rows === 0) {
             http_response_code(400);
@@ -189,7 +195,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          }
 
          http_response_code(200);
-         echo json_encode(array('success' => true));
+         echo json_encode(['success' => true]);
          break;
          //////////////// extendPartyDuration //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       case 'extendPartyDuration':
@@ -198,15 +204,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             error_log('Missing parameters');
             exit();
          }
+
          $stmt = $conn->prepare("SELECT party_expires_at FROM parties WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
          $stmt->bind_param("ss", $_POST['hostId'], $_POST['refreshToken']);
          $stmt->execute();
+
+         if ($stmt->error) {
+            http_response_code(500);
+            exit();
+         }
 
          $result = $stmt->get_result();
 
          if ($result->num_rows === 0) {
             http_response_code(400);
-            error_log('No party found with the given hostId and refreshToken');
             exit();
          }
 
@@ -222,12 +233,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
          if ($stmt->affected_rows === 0) {
             http_response_code(400);
-            error_log('No party found with the given hostId and refreshToken so nothing updated');
             exit();
          }
 
          http_response_code(200);
-         echo json_encode(array('success' => true));
+         echo json_encode(['success' => true]);
          break;
          //////////////// default //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       default:
@@ -240,3 +250,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 }
 
 $conn->close();
+
+//////////////// generatePartyId //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * Generate a random party ID
+ * @return string The generated party ID
+ */
+function generatePartyId()
+{
+   $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+   $charactersLength = strlen($characters);
+   $randomString = '';
+   for ($i = 0; $i < 6; $i++) {
+      $randomString .= $characters[rand(0, $charactersLength - 1)];
+   }
+   return $randomString;
+}

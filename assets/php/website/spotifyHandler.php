@@ -23,27 +23,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             exit();
          }
 
-         $stmt = $conn->prepare("SELECT access_token FROM parties WHERE party_id = ?");
-         $stmt->bind_param("s", $_GET['partyId']);
-         $stmt->execute();
-
-         $result = $stmt->get_result();
-
-         if ($result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-            $accessToken = $row['access_token'];
-         } else {
+         $party_info = getPartyInfo($conn, $_GET['partyId']);
+         if ($party_info == null) {
             http_response_code(400);
             exit();
          }
 
-         $stmt->close();
-         $conn->close();
-
          $curl = curl_init();
          curl_setopt($curl, CURLOPT_URL, "https://api.spotify.com/v1/me/player/currently-playing");
          curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-         curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $accessToken));
+         curl_setopt($curl, CURLOPT_HTTPHEADER, [$party_info['auth']]);
          $response = curl_exec($curl);
          curl_close($curl);
 
@@ -56,31 +45,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             exit();
          }
 
-         $stmt = $conn->prepare("SELECT access_token FROM parties WHERE party_id = ?");
-         $stmt->bind_param("s", $_POST['partyId']);
-         $stmt->execute();
-
-         $result = $stmt->get_result();
-
-         if ($result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-            $accessToken = $row['access_token'];
-         } else {
+         $party_info = getPartyInfo($conn, $_GET['partyId']);
+         if ($party_info == null) {
             http_response_code(400);
             exit();
          }
 
-         $stmt->close();
-         $conn->close();
-
          $curl = curl_init();
          curl_setopt($curl, CURLOPT_URL, "https://api.spotify.com/v1/search?q=" . $_GET['searchTerm'] . "&type=track&limit=50");
          curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-         curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $accessToken));
+         curl_setopt($curl, CURLOPT_HTTPHEADER, [$party_info['auth']]);
          $response = curl_exec($curl);
          curl_close($curl);
 
-         echo $response;
+         if ($party_info['explicit'] == 0) {
+            $response = json_decode($response, true);
+            $response['tracks']['items'] = array_filter($response['tracks']['items'], function ($item) {
+               return !$item['explicit'];
+            });
+         }
+
+         http_response_code(200);
+         echo json_encode($response);
          break;
          //////////////// default //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       default:
@@ -96,27 +82,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             exit();
          }
 
-         $stmt = $conn->prepare("SELECT access_token FROM parties WHERE party_id = ?");
-         $stmt->bind_param("s", $_POST['partyId']);
-         $stmt->execute();
-
-         $result = $stmt->get_result();
-
-         if ($result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-            $accessToken = $row['access_token'];
-         } else {
+         $party_info = getPartyInfo($conn, $_GET['partyId']);
+         if ($party_info == null) {
             http_response_code(400);
             exit();
          }
 
-         $stmt->close();
-         $conn->close();
-
          $curl = curl_init();
          curl_setopt($curl, CURLOPT_URL, "https://api.spotify.com/v1/me/player/queue?uri=" . $_POST['songId']);
          curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-         curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $accessToken));
+         curl_setopt($curl, CURLOPT_HTTPHEADER, [$party_info['auth']]);
          curl_setopt($curl, CURLOPT_POST, true);
          $response = curl_exec($curl);
          curl_close($curl);
@@ -130,4 +105,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
    }
 } else {
    http_response_code(405);
+}
+
+
+//////////////// get_authorisation //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * Get the authorisation token for a party from the database
+ * @param mixed $conn The database connection
+ * @param mixed $partyId The party ID
+ * @return mixed The authorisation token and explicit setting
+ */
+function getPartyInfo($conn, $partyId)
+{
+   $stmt = $conn->prepare("SELECT access_token, explicit FROM parties WHERE party_id = ?");
+   $stmt->bind_param("s", $partyId);
+   $stmt->execute();
+
+   if ($stmt->error) {
+      http_response_code(500);
+      exit();
+   }
+
+   $result = $stmt->get_result();
+
+   if ($result->num_rows === 0) {
+      http_response_code(400);
+      exit();
+   }
+
+   $row = $result->fetch_assoc();
+
+   $stmt->close();
+   $conn->close();
+   return ['auth' => "Authorization: Bearer " . $row['access_token'], 'explicit' => $row['explicit']];
 }
