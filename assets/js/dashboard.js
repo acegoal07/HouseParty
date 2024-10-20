@@ -6,9 +6,14 @@ window.addEventListener('load', () => {
    }
    document.querySelector('input#extend-duration').value = 4;
    document.querySelector('input#party-duration').value = 4;
+   //////////////// Variables //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    const disableExplicitButton = document.querySelector('button#disable-explicit-button');
    const enableExplicitButton = document.querySelector('button#enable-explicit-button');
    const loadingIcon = document.querySelector('div#loading-icon');
+   const howItWorksModal = document.querySelector('div#how-it-works-modal');
+   const joinPartyInfoModal = document.querySelector('div#join-party-info-modal');
+   const extendPartyModal = document.querySelector('div#extend-party-modal');
+   const confirmEndPartyModal = document.querySelector('div#confirm-end-party-modal');
    //////////////// Countdown timer //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    let partyExpiresAt;
    let countdownInterval;
@@ -81,6 +86,11 @@ window.addEventListener('load', () => {
             if (!document.querySelector('form#start-party-form').classList.contains('hidden')) { document.querySelector('form#start-party-form').classList.add('hidden'); }
             document.querySelector('div#manage-party-buttons').classList.remove('hidden');
          } else {
+            if (howItWorksModal.style.display === 'flex') { howItWorksModal.style.display = 'none'; }
+            if (joinPartyInfoModal.style.display === 'flex') { joinPartyInfoModal.style.display = 'none'; }
+            if (extendPartyModal.style.display === 'flex') { extendPartyModal.style.display = 'none'; }
+            if (confirmEndPartyModal.style.display === 'flex') { confirmEndPartyModal.style.display = 'none'; }
+
             if (!document.querySelector('div#manage-party-buttons').classList.contains('hidden')) { document.querySelector('div#manage-party-buttons').classList.add('hidden'); }
             document.querySelector('form#start-party-form').classList.remove('hidden');
          }
@@ -110,7 +120,6 @@ window.addEventListener('load', () => {
       });
    });
    //////////////// How it works //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   const howItWorksModal = document.querySelector('div#how-it-works-modal');
    // Handle the button press for showing how this works
    document.querySelector('button#show-how-it-works-modal').addEventListener('click', (event) => {
       event.preventDefault();
@@ -126,7 +135,6 @@ window.addEventListener('load', () => {
       }, 600);
    });
    //////////////// Join party info //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   const joinPartyInfoModal = document.querySelector('div#join-party-info-modal');
    // Handle the button press for showing join party info modal
    document.querySelector('button#show-party-join-info-modal').addEventListener('click', (event) => {
       event.preventDefault();
@@ -154,7 +162,6 @@ window.addEventListener('load', () => {
       navigator.clipboard.writeText(partyUrl);
    });
    //////////////// Extend party //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   const extendPartyModal = document.querySelector('div#extend-party-modal');
    // Handle the button press for showing the extend party modal
    document.querySelector('button#show-extend-party-modal').addEventListener('click', (event) => {
       event.preventDefault();
@@ -228,7 +235,6 @@ window.addEventListener('load', () => {
       });
    });
    //////////////// End party //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   const confirmEndPartyModal = document.querySelector('div#confirm-end-party-modal');
    // Handle the button press for showing the end party confirm modal
    document.querySelector('button#show-confirm-end-party-modal').addEventListener('click', (event) => {
       event.preventDefault();
