@@ -1,4 +1,5 @@
 window.addEventListener('load', () => {
+   const modalHandler = new ModalHandler();
    if (!getCookie('refresh_token') || !getCookie('host_id')) {
       deleteCookie({ name: 'refresh_token' });
       deleteCookie({ name: 'host_id' });
@@ -10,26 +11,26 @@ window.addEventListener('load', () => {
    const disableExplicitButton = document.querySelector('button#disable-explicit-button');
    const enableExplicitButton = document.querySelector('button#enable-explicit-button');
    const loadingIcon = document.querySelector('div#loading-icon');
-   const howItWorksModal = document.querySelector('div#how-it-works-modal');
-   const joinPartyInfoModal = document.querySelector('div#join-party-info-modal');
    const extendPartyModal = document.querySelector('div#extend-party-modal');
    const confirmEndPartyModal = document.querySelector('div#confirm-end-party-modal');
    //////////////// Countdown timer //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    let partyExpiresAt;
-   let countdownInterval;
-   function updateCountdown() {
-      const now = new Date();
-      const timeDifference = partyExpiresAt - now;
-      if (timeDifference <= 0) {
-         document.getElementById("countdown-timer").innerText = "00:00:00";
-         clearInterval(countdownInterval);
+   function updateTimestamp() {
+      if (!partyExpiresAt) {
          return;
       }
-      const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-      document.getElementById("countdown-timer").innerText =
-         `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      const timeOptions = {
+         hour: '2-digit',
+         minute: '2-digit'
+      };
+      const dateOptions = {
+         year: 'numeric',
+         month: 'numeric',
+         day: 'numeric'
+      };
+      const timeString = partyExpiresAt.toLocaleTimeString(undefined, timeOptions);
+      const dateString = partyExpiresAt.toLocaleDateString(undefined, dateOptions);
+      document.querySelector("div#expires-at").innerText = `${timeString} ${dateString}`;
    }
    //////////////// Page polling //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    function pagePolling() {
@@ -43,22 +44,8 @@ window.addEventListener('load', () => {
       }).then(response => response.json()).then(data => {
          if (data.partyExists) {
             if (document.querySelector('div#party-qrcode').childElementCount === 0) {
-               // Get the party details and display them
                partyExpiresAt = new Date(data.partyExpiresAt);
-               // const options = {
-               //    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-               //    year: 'numeric',
-               //    month: 'long',
-               //    day: 'numeric',
-               //    hour: 'numeric',
-               //    minute: 'numeric',
-               //    second: 'numeric',
-               //    hour12: true
-               // };
-               // const formatter = new Intl.DateTimeFormat('en-US', options);
-               // const localPartyExpiresAt = formatter.format(partyExpiresAt);
-               countdownInterval = setInterval(updateCountdown, 1000);
-               updateCountdown();
+               updateTimestamp();
                const websiteUrl = `https://aw1443.brighton.domains/houseparty/party.html?session_code=`;
                document.querySelector('span#party-code').textContent = data.partyId;
                document.querySelector('button#copy-party-url').setAttribute('copy-data', `${websiteUrl}${data.partyId}`);
@@ -75,6 +62,7 @@ window.addEventListener('load', () => {
             }
             if (data.partyExpiresAt !== partyExpiresAt) {
                partyExpiresAt = new Date(data.partyExpiresAt);
+               updateTimestamp();
             }
             if (data.explicit) {
                if (!enableExplicitButton.classList.contains('hidden')) { enableExplicitButton.classList.add('hidden'); }
@@ -86,11 +74,7 @@ window.addEventListener('load', () => {
             if (!document.querySelector('form#start-party-form').classList.contains('hidden')) { document.querySelector('form#start-party-form').classList.add('hidden'); }
             document.querySelector('div#manage-party-buttons').classList.remove('hidden');
          } else {
-            if (howItWorksModal.style.display === 'flex') { howItWorksModal.style.display = 'none'; }
-            if (joinPartyInfoModal.style.display === 'flex') { joinPartyInfoModal.style.display = 'none'; }
-            if (extendPartyModal.style.display === 'flex') { extendPartyModal.style.display = 'none'; }
-            if (confirmEndPartyModal.style.display === 'flex') { confirmEndPartyModal.style.display = 'none'; }
-
+            modalHandler.close();
             if (!document.querySelector('div#manage-party-buttons').classList.contains('hidden')) { document.querySelector('div#manage-party-buttons').classList.add('hidden'); }
             document.querySelector('form#start-party-form').classList.remove('hidden');
          }
@@ -123,31 +107,23 @@ window.addEventListener('load', () => {
    // Handle the button press for showing how this works
    document.querySelector('button#show-how-it-works-modal').addEventListener('click', (event) => {
       event.preventDefault();
-      howItWorksModal.style.animation = "modal-open 0.6s forwards";
-      howItWorksModal.style.display = 'flex';
+      modalHandler.open('div#how-it-works-modal');
    });
    // Handle the button press for hiding how this works
    document.querySelector('span#hide-how-it-works-modal').addEventListener('click', (event) => {
       event.preventDefault();
-      howItWorksModal.style.animation = "modal-close 0.6s forwards";
-      setTimeout(function () {
-         howItWorksModal.style.display = 'none';
-      }, 600);
+      modalHandler.close();
    });
    //////////////// Join party info //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Handle the button press for showing join party info modal
    document.querySelector('button#show-party-join-info-modal').addEventListener('click', (event) => {
       event.preventDefault();
-      joinPartyInfoModal.style.animation = "modal-open 0.6s forwards";
-      joinPartyInfoModal.style.display = 'flex';
+      modalHandler.open('div#join-party-info-modal');
    });
    // Handle the button press for hiding join party info
    document.querySelector('span#hide-party-join-info-modal').addEventListener('click', (event) => {
       event.preventDefault();
-      joinPartyInfoModal.style.animation = "modal-close 0.6s forwards";
-      setTimeout(function () {
-         joinPartyInfoModal.style.display = 'none';
-      }, 600);
+      modalHandler.close();
    });
    // Handle the button press for copying the party code
    document.querySelector('button#copy-party-code').addEventListener('click', (event) => {
@@ -165,16 +141,12 @@ window.addEventListener('load', () => {
    // Handle the button press for showing the extend party modal
    document.querySelector('button#show-extend-party-modal').addEventListener('click', (event) => {
       event.preventDefault();
-      extendPartyModal.style.animation = "modal-open 0.6s forwards";
-      extendPartyModal.style.display = 'flex';
+      modalHandler.open('div#extend-party-modal');
    });
    // Handle the button press for closing the extend party modal
    document.querySelector('span#hide-extend-party-modal').addEventListener('click', (event) => {
       event.preventDefault();
-      extendPartyModal.style.animation = "modal-close 0.6s forwards";
-      setTimeout(function () {
-         extendPartyModal.style.display = 'none';
-      }, 600);
+      modalHandler.close();
    });
    // Handle the form submission for extending the party
    document.querySelector('form#extend-party-form').addEventListener('submit', (event) => {
@@ -238,16 +210,12 @@ window.addEventListener('load', () => {
    // Handle the button press for showing the end party confirm modal
    document.querySelector('button#show-confirm-end-party-modal').addEventListener('click', (event) => {
       event.preventDefault();
-      confirmEndPartyModal.style.animation = "modal-open 0.6s forwards";
-      confirmEndPartyModal.style.display = 'flex';
+      modalHandler.open('div#confirm-end-party-modal');
    });
    // Handle the button press for closing the end party confirm modal
    document.querySelector('span#hide-confirm-end-party-modal').addEventListener('click', (event) => {
       event.preventDefault();
-      confirmEndPartyModal.style.animation = "modal-close 0.6s forwards";
-      setTimeout(function () {
-         confirmEndPartyModal.style.display = 'none';
-      }, 600);
+      modalHandler.close();
    });
    // Handle the button press for confirming the end of the party
    document.querySelector('button#confirm-end-party-button').addEventListener('click', (event) => {
