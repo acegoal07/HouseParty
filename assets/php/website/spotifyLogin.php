@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
       $response = curl_exec($ch);
+      $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
       curl_close($ch);
 
       if (curl_errno($ch)) {
@@ -31,12 +32,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          exit();
       }
 
-      $result = json_decode($response, true);
-      if (json_last_error() !== JSON_ERROR_NONE) {
-         error_log('JSON Decode Error: ' . json_last_error_msg());
-         http_response_code(500);
+      if ($http_code !== 200) {
+         header("Location: /houseparty/loginerror.html?error=1");
          exit();
       }
+
+      $result = json_decode($response, true);
 
       $stored_refresh_token = $result['refresh_token'];
 
@@ -49,23 +50,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
       curl_close($ch);
 
-      if ($http_code === 403) {
-         header("Location: /houseparty/loginerror.html?error=2");
-         exit();
-      }
-
       if (curl_errno($ch)) {
          error_log('cURL Error: ' . curl_error($ch));
          http_response_code(500);
          exit();
       }
 
-      $result = json_decode($response, true);
-      if (json_last_error() !== JSON_ERROR_NONE) {
-         error_log('JSON Decode Error: ' . json_last_error_msg());
-         http_response_code(500);
+      if ($http_code === 403) {
+         header("Location: /houseparty/loginerror.html?error=2");
          exit();
       }
+
+      if ($http_code !== 200) {
+         header("Location: /houseparty/loginerror.html?error=1");
+         exit();
+      }
+
+      $result = json_decode($response, true);
 
       if (!isset($result['id'])) {
          error_log('Error: Missing host_id in response');

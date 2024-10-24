@@ -13,15 +13,16 @@
       href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
       rel="stylesheet">
    <link rel="stylesheet" href="assets/css/style-min.css">
-   <script src="assets/js/cookies-min.js"></script>
-   <script src="assets/js/qrcode.min.js"></script>
-   <script src="assets/js/dashboard.js"></script>
+   <script src="assets/js/util/cookies-min.js"></script>
+   <script src="assets/js/util/modalHandler-min.js"></script>
+   <script src="assets/js/util/qrcode.min.js"></script>
+   <script src="assets/js/pages/dashboard.js"></script>
 </head>
 
 <body>
    <div class="modal-background" id="how-it-works-modal">
       <div class="modal-body">
-         <span class="modal-close" id="hide-how-it-works-modal">&times;</span>
+         <span class="modal-close modal-closer" modal-target="how-it-works-modal">&times;</span>
          <h1>How this works</h1>
          <ol>
             <li>Open spotify, press play and then leave the app running in the background like usual</li>
@@ -33,7 +34,7 @@
    </div>
    <div class="modal-background" id="join-party-info-modal">
       <div class="modal-body">
-         <span class="modal-close" id="hide-party-join-info-modal">&times;</span>
+         <span class="modal-close modal-closer" modal-target="join-party-info-modal">&times;</span>
          <h1>Party join info</h1>
          <p>Bellow are different ways to allow people to join</p>
          <div class="party-code-container">
@@ -42,13 +43,13 @@
          </div>
          <div id="party-qrcode"></div>
          <div class="button-container">
-            <button class="btn btn-primary" id="copy-party-url" type="button" copy-data="">Copy URL</button>
+            <button class="btn btn-primary" id="copy-party-url" type="button">Copy URL</button>
          </div>
       </div>
    </div>
    <div class="modal-background" id="extend-party-modal">
       <div class="modal-body">
-         <span class="modal-close" id="hide-extend-party-modal">&times;</span>
+         <span class="modal-close modal-closer" modal-target="extend-party-modal">&times;</span>
          <h1>Extend party</h1>
          <p>How many hours do you want to extend the party?</p>
          <form id="extend-party-form">
@@ -63,12 +64,12 @@
    </div>
    <div class="modal-background" id="confirm-end-party-modal">
       <div class="modal-body">
-         <span class="modal-close" id="hide-confirm-end-party-modal">&times;</span>
+         <span class="modal-close modal-closer" modal-target="confirm-end-party-modal">&times;</span>
          <h1>End party</h1>
          <p>Are you sure you want to end the party?</p>
          <div class="button-container">
             <button class="btn btn-primary" id="confirm-end-party-button" type="button">Yes</button>
-            <button class="btn" id="cancel-end-party-button" type="button">No</button>
+            <button class="btn modal-closer" modal-target="confirm-end-party-modal" type="button">No</button>
          </div>
       </div>
    </div>
@@ -97,16 +98,19 @@
             <button class="btn btn-primary m-top-15" type="submit">Create party</button>
          </form>
          <div class="button-container hidden" id="manage-party-buttons">
-            <div class="countdown-container" id="countdown-container">
-               <h2>Time Remaining:</h2>
-               <div id="countdown-timer">00:00:00</div>
+            <div class="expires-at-container">
+               <h2>Expires at:</h2>
+               <div id="expires-at"></div>
             </div>
-            <button class="btn btn-primary" type="button" id="show-how-it-works-modal">How this works</button>
-            <button class="btn" type="button" id="show-party-join-info-modal">Show join info</button>
-            <button class="btn btn-primary" type="button" id="show-extend-party-modal">Extend party</button>
+            <button class="btn btn-primary modal-opener" modal-target="how-it-works-modal" type="button">How this
+               works</button>
+            <button class="btn modal-opener" modal-target="join-party-info-modal" type="button">Show join info</button>
+            <button class="btn btn-primary modal-opener" modal-target="extend-party-modal" type="button">Extend
+               party</button>
             <button class="btn hidden" type="button" id="disable-explicit-button">Disable Explicit</button>
             <button class="btn hidden" type="button" id="enable-explicit-button">Enable Explicit</button>
-            <button class="btn btn-primary" type="button" id="show-confirm-end-party-modal">End party</button>
+            <button class="btn btn-primary modal-opener" modal-target="confirm-end-party-modal" type="button">End
+               party</button>
          </div>
          <div class="button-container">
             <a class="btn" href="./">Back to home screen</a>

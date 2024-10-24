@@ -4,10 +4,10 @@ window.addEventListener('load', () => {
    document.querySelector('form#join-party-form').addEventListener('submit', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove("hidden");
-      const sessionCodeInput = event.target.querySelector('input#party-code');
-      const sessionCode = sessionCodeInput.value;
       const noSessionFoundError = document.querySelector('span#no-session-found-error');
       noSessionFoundError.style.display = 'none';
+      const sessionCodeInput = event.target.querySelector('input#party-code');
+      const sessionCode = sessionCodeInput.value;
 
       fetch(`assets/php/website/databasePartyHandlers.php?type=checkPartyExistsUser&partyId=${sessionCode}`, {
          method: 'GET'

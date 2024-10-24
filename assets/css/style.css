@@ -40,6 +40,7 @@ body {
    justify-content: center;
    align-items: center;
    background: linear-gradient(347deg, var(--background-color) 40%, var(--primary-color) 100%);
+   background-color: var(--background-color);
    -webkit-backdrop-filter: blur(100px);
    backdrop-filter: blur(100px);
 }
@@ -425,8 +426,8 @@ div#party-qrcode {
    }
 }
 
-/* Countdown */
-.countdown-container {
+/* expires at */
+.expires-at-container {
    display: flex;
    align-items: center;
    justify-content: center;
@@ -435,14 +436,14 @@ div#party-qrcode {
    background-color: var(--secondary-color-hover);
 }
 
-.countdown-container h2 {
+.expires-at-container h2 {
    margin: 0;
    padding-right: 10px;
    font-size: 1em;
    color: white;
 }
 
-#countdown-timer {
+#expires-at {
    font-size: 1.5em;
    font-weight: bold;
    color: white;
