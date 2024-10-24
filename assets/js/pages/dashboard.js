@@ -10,7 +10,6 @@ window.addEventListener('load', () => {
    const disableExplicitButton = document.querySelector('button#disable-explicit-button');
    const enableExplicitButton = document.querySelector('button#enable-explicit-button');
    const loadingIcon = document.querySelector('div#loading-icon');
-   const extendPartyModal = document.querySelector('div#extend-party-modal');
    //////////////// Countdown timer //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    let partyExpiresAt;
    function updateTimestamp() {
@@ -100,19 +99,6 @@ window.addEventListener('load', () => {
             loadingIcon.classList.add('hidden');
          }
       });
-   });
-   //////////////// Join party info //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   // Handle the button press for copying the party code
-   document.querySelector('button#copy-party-code').addEventListener('click', (event) => {
-      event.preventDefault();
-      const partyCode = document.querySelector('span#party-code').textContent;
-      navigator.clipboard.writeText(partyCode);
-   });
-   // Handle the button press for copying the party URL
-   document.querySelector('button#copy-party-url').addEventListener('click', (event) => {
-      event.preventDefault();
-      const partyUrl = document.querySelector('button#copy-party-url').getAttribute('copy-data');
-      navigator.clipboard.writeText(partyUrl);
    });
    //////////////// Extend party //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Handle the form submission for extending the party
