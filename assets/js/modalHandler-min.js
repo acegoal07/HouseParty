@@ -1,1 +1,0 @@
-class ModalHandler{constructor(){this.modal=null}open(l){!this.modal&&l&&(this.modal=document.querySelector(l),this.modal.style.animation="modal-open 0.6s forwards",this.modal.style.display="flex")}close(){this.modal&&(this.modal.style.animation="modal-close 0.6s forwards",setTimeout((()=>{this.modal.style.display="none",this.modal=null}),600))}}
