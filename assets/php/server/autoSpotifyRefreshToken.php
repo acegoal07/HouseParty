@@ -18,7 +18,6 @@ $sql = 'SELECT * FROM parties WHERE token_expires_at <= UTC_TIMESTAMP() + INTERV
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-   error_log("Rows found to update");
    while ($row = $result->fetch_assoc()) {
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, "https://accounts.spotify.com/api/token");

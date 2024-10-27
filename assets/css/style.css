@@ -52,7 +52,6 @@ body {
    flex-wrap: wrap;
    height: 100%;
    width: 100%;
-   overflow: auto;
 }
 
 .body-container {
@@ -297,10 +296,10 @@ select:focus {
    top: 0;
    width: 100%;
    height: 100%;
-   overflow: auto;
    background-color: rgba(0, 0, 0, 0.6);
    -webkit-backdrop-filter: blur(100px);
    backdrop-filter: blur(100px);
+   flex-wrap: wrap;
 }
 
 .modal-body {
@@ -400,8 +399,8 @@ div#party-qrcode {
 }
 
 /* Loading icon */
-.loading-icon-container {
-   z-index: 1;
+div.loading-icon-container {
+   z-index: 2;
    position: absolute;
    display: flex;
    justify-content: center;
@@ -414,19 +413,7 @@ div#party-qrcode {
    backdrop-filter: blur(20px);
 }
 
-.loading-icon-container svg {
-   width: 50px;
-   height: 50px;
-   -o-animation: loading-icon-animation 1s linear infinite;
-   -ms-animation: loading-icon-animation 1s linear infinite;
-   -moz-animation: loading-icon-animation 1s linear infinite;
-   -webkit-animation: loading-icon-animation 1s linear infinite;
-   animation: loading-icon-animation 1s linear infinite;
-   fill: var(--primary-color);
-   outline: none;
-}
-
-@keyframes loading-icon-animation {
+@keyframes loadingAnimation {
    0% {
       -o-transform: rotate(0deg);
       -ms-transform: rotate(0deg);
@@ -442,6 +429,17 @@ div#party-qrcode {
       -webkit-transform: rotate(360deg);
       transform: rotate(360deg);
    }
+}
+
+div.loading-icon-container>svg {
+   border-radius: 100%;
+   width: 50px;
+   height: 50px;
+   -o-animation: loadingAnimation 1s linear infinite;
+   -moz-animation: loadingAnimation 1s linear infinite;
+   -webkit-animation: loadingAnimation 1s linear infinite;
+   animation: loadingAnimation 1s linear infinite;
+   fill: var(--primary-color);
 }
 
 /* expires at */
@@ -477,8 +475,9 @@ div#party-qrcode {
    -moz-transform: translateX(-50%);
    -webkit-transform: translateX(-50%);
    transform: translateX(-50%);
-   background-color: var(--secondary-color-hover);
-   color: white;
+   background-color: var(--primary-color);
+   color: black;
+   font-weight: bold;
    padding: 10px 20px;
    border-radius: 5px;
    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
