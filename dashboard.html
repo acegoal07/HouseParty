@@ -49,8 +49,9 @@
             <button class="btn btn-primary click-to-copy-target" copy-target="party-code" type="button">Copy</button>
          </div>
          <div id="party-qrcode"></div>
-         <div class="button-container">
-            <button class="btn btn-primary click-to-copy" copy-data="" id="copy-party-url" type="button">Copy URL</button>
+         <div class="btn-container">
+            <button class="btn btn-primary click-to-copy" copy-data="" id="copy-party-url" type="button">Copy
+               URL</button>
          </div>
       </div>
    </div>
@@ -74,50 +75,48 @@
          <span class="modal-close modal-closer" modal-target="confirm-end-party-modal">&times;</span>
          <h1>End party</h1>
          <p>Are you sure you want to end the party?</p>
-         <div class="button-container">
+         <div class="btn-container">
             <button class="btn btn-primary" id="confirm-end-party-button" type="button">Yes</button>
             <button class="btn modal-closer" modal-target="confirm-end-party-modal" type="button">No</button>
          </div>
       </div>
    </div>
-   <div class="centred-container">
-      <div class="body-container">
-         <h1 class="header">Dashboard</h1>
-         <p class="description">Where to create and manage your parties</p>
-         <form class="m-15 hidden" id="start-party-form">
-            <div class="form-group">
-               <label for="party-duration">Party Duration in hours</label>
-               <input type="number" inputmode="numeric" id="party-duration" name="party-duration" required min="1"
-                  max="24" value="4">
-            </div>
-            <div class="form-group">
-               <label class="custom-checkbox-container">Allow explicit songs
-                  <input type="checkbox" id="explicit-allowed" name="explicit-allowed">
-                  <span class="custom-checkbox"></span>
-               </label>
-            </div>
-            <button class="btn btn-primary m-top-15" type="submit">Create party</button>
-         </form>
-         <div class="button-container hidden" id="manage-party-buttons">
-            <div class="expires-at-container">
-               <h2>Expires at:</h2>
-               <div id="expires-at"></div>
-            </div>
-            <button class="btn btn-primary modal-opener" modal-target="how-it-works-modal" type="button">How this
-               works</button>
-            <button class="btn modal-opener" modal-target="join-party-info-modal" type="button">Show join info</button>
-            <button class="btn btn-primary modal-opener" modal-target="extend-party-modal" type="button">Extend
-               party</button>
-            <button class="btn hidden" type="button" id="disable-explicit-button">Disable Explicit</button>
-            <button class="btn hidden" type="button" id="enable-explicit-button">Enable Explicit</button>
-            <button class="btn btn-primary modal-opener" modal-target="confirm-end-party-modal" type="button">End
-               party</button>
+   <main>
+      <h1 class="header">Dashboard</h1>
+      <p class="description">Where to create and manage your parties</p>
+      <form class="m-15 hidden" id="start-party-form">
+         <div class="form-group">
+            <label for="party-duration">Party Duration in hours</label>
+            <input type="number" inputmode="numeric" id="party-duration" name="party-duration" required min="1" max="24"
+               value="4">
          </div>
-         <div class="button-container">
-            <a class="btn" href="./">Back to home screen</a>
+         <div class="form-group">
+            <label class="custom-checkbox-container">Allow explicit songs
+               <input type="checkbox" id="explicit-allowed" name="explicit-allowed">
+               <span class="custom-checkbox"></span>
+            </label>
          </div>
+         <button class="btn btn-primary m-top-15" type="submit">Create party</button>
+      </form>
+      <div class="btn-container hidden" id="manage-party-buttons">
+         <div class="expires-at-container">
+            <h2>Expires at:</h2>
+            <div id="expires-at"></div>
+         </div>
+         <button class="btn btn-primary modal-opener" modal-target="how-it-works-modal" type="button">How this
+            works</button>
+         <button class="btn modal-opener" modal-target="join-party-info-modal" type="button">Show join info</button>
+         <button class="btn btn-primary modal-opener" modal-target="extend-party-modal" type="button">Extend
+            party</button>
+         <button class="btn hidden" type="button" id="disable-explicit-button">Disable Explicit</button>
+         <button class="btn hidden" type="button" id="enable-explicit-button">Enable Explicit</button>
+         <button class="btn btn-primary modal-opener" modal-target="confirm-end-party-modal" type="button">End
+            party</button>
       </div>
-   </div>
+      <div class="btn-container">
+         <a class="btn" href="./">Back to home screen</a>
+      </div>
+   </main>
 </body>
 
 </html>
