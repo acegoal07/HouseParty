@@ -40,6 +40,11 @@ window.addEventListener('load', () => {
          method: 'GET'
       }).then(response => response.json()).then(data => {
          if (data.partyExists) {
+            if (!data.refreshTokenValid) {
+               deleteCookie({ name: 'refresh_token' });
+               deleteCookie({ name: 'host_id' });
+               window.location.href = '/houseparty/';
+            }
             if (document.querySelector('div#party-qrcode').childElementCount === 0) {
                partyExpiresAt = new Date(data.partyExpiresAt);
                updateTimestamp();
@@ -51,11 +56,6 @@ window.addEventListener('load', () => {
                   width: 150,
                   height: 150
                });
-            }
-            if (data.refreshTokenValid === false) {
-               deleteCookie({ name: 'refresh_token' });
-               deleteCookie({ name: 'host_id' });
-               window.location.href = '/houseparty/';
             }
             if (data.partyExpiresAt !== partyExpiresAt) {
                partyExpiresAt = new Date(data.partyExpiresAt);

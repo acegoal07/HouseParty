@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             if ($row['refresh_token'] !== $_GET['refreshToken']) {
-               echo json_encode([array('partyExists' => true, 'refreshTokenValid' => false)]);
+               echo json_encode(['partyExists' => true, 'refreshTokenValid' => false]);
                exit();
             }
             echo json_encode(['partyExists' => true, 'refreshTokenValid' => true, 'explicit' => $row['explicit'], 'partyId' => $row['party_id'], 'partyExpiresAt' => $row['party_expires_at']]);
