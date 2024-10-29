@@ -1,5 +1,6 @@
 window.addEventListener('load', () => {
    const sessionCode = new URLSearchParams(window.location.search).get('session_code');
+   const loadingIcon = document.querySelector('div#loading-icon');
    if (!sessionCode) {
       window.location.href = '/houseparty/join.html';
    }
@@ -25,4 +26,6 @@ window.addEventListener('load', () => {
          console.log(data);
       });
    });
+
+   loadingIcon.classList.add('hidden');
 });

@@ -27,7 +27,8 @@ window.addEventListener('load', () => {
       };
       const timeString = partyExpiresAt.toLocaleTimeString(undefined, timeOptions);
       const dateString = partyExpiresAt.toLocaleDateString(undefined, dateOptions);
-      document.querySelector("div#expires-at").innerText = `${timeString} ${dateString}`;
+      document.querySelector("div#expires-at-time").textContent = `${timeString}`;
+      document.querySelector("div#expires-at-date").textContent = `${dateString}`;
    }
    //////////////// Page polling //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    function pagePolling() {
@@ -51,6 +52,7 @@ window.addEventListener('load', () => {
                const websiteUrl = `https://aw1443.brighton.domains/houseparty/party.html?session_code=`;
                document.querySelector('span#party-code').textContent = data.partyId;
                document.querySelector('button#copy-party-url').setAttribute('copy-data', `${websiteUrl}${data.partyId}`);
+               document.querySelector('button#share-party-url').setAttribute('data-party-url', `${websiteUrl}${data.partyId}`);
                new QRCode(document.querySelector('div#party-qrcode'), {
                   text: `${websiteUrl}${data.partyId}`,
                   width: 150,

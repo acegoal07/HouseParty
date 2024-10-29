@@ -12,7 +12,7 @@ class ModalHandler {
          return;
       }
       this.modal = document.querySelector(modalId);
-      this.modal.style.animation = "modal-open 0.6s forwards";
+      this.modal.style.animation = "modal-open 0.4s forwards";
       this.modal.style.display = 'flex';
    }
 
@@ -24,14 +24,14 @@ class ModalHandler {
       if (!this.modal) {
          return;
       }
-      this.modal.style.animation = "modal-close 0.6s forwards";
+      this.modal.style.animation = "modal-close 0.4s forwards";
       setTimeout(() => {
          this.modal.style.display = 'none';
          this.modal = null;
          if (callback) {
             callback();
          }
-      }, 600);
+      }, 400);
    }
 }
 
