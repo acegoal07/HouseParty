@@ -21,4 +21,5 @@ window.addEventListener('load', () => {
       });
       sessionCodeInput.value = '';
    });
+   loadingIcon.classList.add("hidden");
 });

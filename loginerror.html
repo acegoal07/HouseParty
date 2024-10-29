@@ -17,14 +17,14 @@
 </head>
 
 <body>
-   <div class="centred-container">
+   <div class="loading-icon-container" id="loading-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+         <path
+            d="M304 48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zm0 416a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM48 304a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm464-48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM142.9 437A48 48 0 1 0 75 369.1 48 48 0 1 0 142.9 437zm0-294.2A48 48 0 1 0 75 75a48 48 0 1 0 67.9 67.9zM369.1 437A48 48 0 1 0 437 369.1 48 48 0 1 0 369.1 437z" />
+      </svg>
+   </div>
+   <main>
       <div class="body-container">
-         <div class="loading-icon-container" id="loading-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-               <path
-                  d="M304 48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zm0 416a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM48 304a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm464-48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM142.9 437A48 48 0 1 0 75 369.1 48 48 0 1 0 142.9 437zm0-294.2A48 48 0 1 0 75 75a48 48 0 1 0 67.9 67.9zM369.1 437A48 48 0 1 0 437 369.1 48 48 0 1 0 369.1 437z" />
-            </svg>
-         </div>
          <div id="main-error" class="hidden">
             <h1 class="header">Login Error</h1>
             <p class="description">An error occurred when logging in</p>
@@ -38,11 +38,11 @@
             <h1 class="header">Premium Required</h1>
             <p class="description">To use this service you require a spotify account with premium</p>
          </div>
-         <div class="button-container">
+         <div class="btn-container">
             <a class="btn btn-primary" href="./">Back to home screen</a>
          </div>
       </div>
-   </div>
+   </main>
 </body>
 
 </html>
