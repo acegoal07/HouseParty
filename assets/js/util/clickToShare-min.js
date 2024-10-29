@@ -1,0 +1,1 @@
+window.addEventListener("load",(()=>{document.querySelectorAll(".click-to-share").forEach((t=>{navigator.userAgent.includes("Mobile")||t.classList.add("hidden"),t.addEventListener("click",(()=>{navigator.share({title:"House Party",text:"Join my party on House Party!",url:t.getAttribute("data-party-url")}).catch((t=>{}))}))}))}));

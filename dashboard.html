@@ -16,6 +16,7 @@
    <script src="assets/js/util/cookies-min.js"></script>
    <script src="assets/js/util/modalHandler-min.js"></script>
    <script src="assets/js/util/clickToCopy-min.js"></script>
+   <script src="assets/js/util/clickToShare-min.js"></script>
    <script src="assets/js/util/qrcode.min.js"></script>
    <script src="assets/js/pages/dashboard.js"></script>
 </head>
@@ -50,8 +51,9 @@
          </div>
          <div id="party-qrcode"></div>
          <div class="btn-container">
-            <button class="btn btn-primary click-to-copy" copy-data="" id="copy-party-url" type="button">Copy
+            <button class="btn btn-primary click-to-copy" id="copy-party-url" type="button">Copy
                URL</button>
+            <button class="btn click-to-share" id="share-party-url" type="button">Share URL</button>
          </div>
       </div>
    </div>
@@ -101,8 +103,11 @@
          </form>
          <div class="btn-container hidden" id="manage-party-buttons">
             <div class="expires-at-container">
-               <h2>Expires at:</h2>
-               <div id="expires-at"></div>
+               <h2>Expires at</h2>
+               <div>
+                  <div id="expires-at-time"></div>
+                  <div id="expires-at-date"></div>
+               </div>
             </div>
             <button class="btn btn-primary modal-opener" modal-target="how-it-works-modal" type="button">How this
                works</button>

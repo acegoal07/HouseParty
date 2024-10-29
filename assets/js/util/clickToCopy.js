@@ -1,8 +1,12 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('load', () => {
    const copyButtons = document.querySelectorAll('.click-to-copy, .click-to-copy-target');
 
    copyButtons.forEach(button => {
       button.addEventListener('click', () => {
+         if (document.querySelector('div.copy-toast') !== null) {
+            return;
+         }
+
          let copyText = '';
          if (button.classList.contains('click-to-copy-target')) {
             const targetId = button.getAttribute('copy-target');
