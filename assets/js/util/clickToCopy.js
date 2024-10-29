@@ -30,6 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       setTimeout(() => {
          message.remove();
-      }, 2000);
+      }, 2500);
    }
 });
