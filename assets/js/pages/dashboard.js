@@ -16,19 +16,17 @@ window.addEventListener('load', () => {
       if (!partyExpiresAt) {
          return;
       }
-      const timeOptions = {
+      const date = new Date(partyExpiresAt);
+      const timeString = date.toLocaleTimeString(undefined, {
          hour: '2-digit',
          minute: '2-digit',
-         hour12: true,
-         
-      };
-      const dateOptions = {
+         hour12: true
+      });
+      const dateString = date.toLocaleDateString(undefined, {
          year: 'numeric',
          month: 'numeric',
          day: 'numeric'
-      };
-      const timeString = partyExpiresAt.toLocaleTimeString(undefined, timeOptions);
-      const dateString = partyExpiresAt.toLocaleDateString(undefined, dateOptions);
+      });
       document.querySelector("div#expires-at-time").textContent = `${timeString}`;
       document.querySelector("div#expires-at-date").textContent = `${dateString}`;
    }
@@ -62,7 +60,7 @@ window.addEventListener('load', () => {
                });
             }
             if (data.partyExpiresAt !== partyExpiresAt) {
-               partyExpiresAt = new Date(data.partyExpiresAt);
+               partyExpiresAt = data.partyExpiresAt;
                updateTimestamp();
             }
             if (data.explicit) {
@@ -118,12 +116,11 @@ window.addEventListener('load', () => {
          body: `type=extendPartyDuration&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&extendBy=${partyDuration}`
       }).then(response => response.json()).then(data => {
          if (data.success) {
-            const onModalClose = () => {
-               loadingIcon.classList.remove('hidden');
-            }
             document.dispatchEvent(new CustomEvent('closeCurrentModal', {
                detail: {
-                  callback: onModalClose
+                  callback: () => {
+                     loadingIcon.classList.remove('hidden');
+                  }
                }
             }));
          }
