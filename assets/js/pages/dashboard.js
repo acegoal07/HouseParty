@@ -18,7 +18,9 @@ window.addEventListener('load', () => {
       }
       const timeOptions = {
          hour: '2-digit',
-         minute: '2-digit'
+         minute: '2-digit',
+         hour12: true,
+         
       };
       const dateOptions = {
          year: 'numeric',

@@ -32,6 +32,7 @@ body {
    box-sizing: border-box;
    -webkit-user-select: none;
    user-select: none;
+   background-color: var(--background-color);
 }
 
 body {
@@ -40,7 +41,6 @@ body {
    justify-content: center;
    align-items: center;
    background: linear-gradient(347deg, var(--background-color) 40%, var(--primary-color) 100%);
-   background-color: var(--background-color);
    -webkit-backdrop-filter: blur(100px);
    backdrop-filter: blur(100px);
 }
