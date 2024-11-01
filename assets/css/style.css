@@ -30,8 +30,6 @@ body {
    margin: 0;
    padding: 0;
    box-sizing: border-box;
-   -webkit-user-select: none;
-   user-select: none;
    background-color: var(--background-color);
 }
 
@@ -55,7 +53,7 @@ main {
    overflow: auto;
 }
 
-.body-container {
+div.body-container {
    margin: 1rem;
    background-color: var(--secondary-color);
    border-radius: var(--border-radius);
