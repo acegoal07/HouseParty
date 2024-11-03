@@ -1,10 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
+   // Loop through all elements with the class 'click-to-copy' or 'click-to-copy-target'
    document.querySelectorAll('.click-to-copy, .click-to-copy-target').forEach(button => {
+      // Add an event listener to the button that copies the text to the clipboard
       button.addEventListener('click', () => {
+         // If a copy toast is already displayed, return
          if (document.querySelector('div.copy-toast') !== null) {
             return;
          }
 
+         // Get the text to copy based on the button's class
          let copyText = '';
          if (button.classList.contains('click-to-copy-target')) {
             const targetId = button.getAttribute('copy-target');
@@ -14,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
             copyText = button.getAttribute('copy-data');
          }
 
+         // If the text exists, copy it to the clipboard and show a copy message
          if (copyText) {
             navigator.clipboard.writeText(copyText).then(() => {
                showCopyMessage();
@@ -24,6 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
       });
    });
 
+   /**
+    * showCopyMessage
+    * Creates a message element and appends it to the body to indicate that the text has been copied
+    */
    function showCopyMessage() {
       const message = document.createElement('div');
       message.className = 'copy-toast';

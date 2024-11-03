@@ -14,7 +14,6 @@ function setCookie({ name, value, sameSite = "Strict", expires = 1, httpOnly = f
    const httpOnlyStr = httpOnly ? "; HttpOnly" : "";
    document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value || "")}; expires=${expiresStr}; SameSite=${sameSite}; Secure; Path=/${httpOnlyStr}`;
 }
-
 /**
 * deleteCookie
 * Deletes the cookie with the provided name
@@ -24,7 +23,6 @@ function setCookie({ name, value, sameSite = "Strict", expires = 1, httpOnly = f
 function deleteCookie({ name, sameSite = "Strict" }) {
    document.cookie = `${encodeURIComponent(name)}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=${sameSite}; Secure; Path=/;`;
 }
-
 /**
 * getCookie
 * Gets the value of the cookie with the provided name
