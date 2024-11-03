@@ -19,7 +19,9 @@ window.addEventListener('load', () => {
 
    document.querySelector('form#join-party-form').addEventListener('submit', (event) => {
       event.preventDefault();
-      const searchInput = document.querySelector('input#search-term').value;
+      const searchInputElement = document.querySelector('input#search-term');
+      const searchInput = searchInputElement.value;
+      searchInputElement.value = '';
       fetch(`assets/php/website/spotifyHandler.php?type=searchSongByName&searchTerm=${searchInput}&partyId=${sessionCode}`, {
          method: 'GET'
       }).then(response => response.json()).then(data => {
