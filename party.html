@@ -13,11 +13,11 @@
       href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
       rel="stylesheet">
    <link rel="stylesheet" href="assets/css/style-min.css">
-   <script src="assets/js/pages/party.js"></script>
+   <!-- <script src="assets/js/pages/party.js"></script> -->
 </head>
 
 <body>
-   <div class="loading-icon-container" id="loading-icon">
+   <div class="loading-icon-container hidden" id="loading-icon">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
          <path
             d="M304 48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zm0 416a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM48 304a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm464-48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM142.9 437A48 48 0 1 0 75 369.1 48 48 0 1 0 142.9 437zm0-294.2A48 48 0 1 0 75 75a48 48 0 1 0 67.9 67.9zM369.1 437A48 48 0 1 0 437 369.1 48 48 0 1 0 369.1 437z" />
@@ -25,11 +25,18 @@
    </div>
    <main>
       <div class="body-container">
-         <form id="join-party-form">
+         <form id="join-party-form" class="search-form">
             <label for="search-term" class="label-visually-hidden">Search name</label>
-            <input type="text" id="search-term" name="search-term" placeholder="What song?" aria-label="What song?"
-               required>
-            <button class="btn btn-primary" type="submit">Search</button>
+            <div class="search-form-input-group">
+               <input type="text" id="search-term" name="search-term" placeholder="What song?" aria-label="What song?"
+                  required>
+               <button class="btn btn-primary" type="submit" title="Search">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="search-icon">
+                     <path
+                        d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+                  </svg>
+               </button>
+            </div>
          </form>
          <div class="btn-container">
             <a class="btn" href="./">Back to home screen</a>
