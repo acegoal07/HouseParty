@@ -58,6 +58,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          $response = curl_exec($curl);
          curl_close($curl);
 
+         if (!isset(json_decode($response, true)['tracks']['total'])) {
+            http_response_code(200);
+            echo json_encode(['tracks' => []]);
+            exit();
+         }
+
          if ($party_info['explicit'] == 0) {
             $response = json_decode($response, true);
             $response['tracks']['items'] = array_filter($response['tracks']['items'], function ($item) {

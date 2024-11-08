@@ -575,6 +575,12 @@ div#party-qrcode {
    border-radius: var(--border-radius);
 }
 
+.search-results-item:focus,
+.search-results-container:focus {
+   outline: 2px solid #2196F3;
+   outline-offset: 2px;
+}
+
 .search-results-title {
    font-size: 1.2rem;
    color: white;
