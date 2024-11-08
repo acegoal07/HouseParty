@@ -32,8 +32,7 @@ window.addEventListener('load', () => {
       fetch(`assets/php/website/spotifyHandler.php?type=searchSongByName&searchTerm=${searchInput}&partyId=${sessionCode}`, {
          method: 'GET'
       }).then(response => response.json()).then(data => {
-         const tracks = data.tracks.items;
-         // Iterate through the tracks object
+         const tracks = data.tracks;
          for (const key in tracks) {
             if (tracks.hasOwnProperty(key)) {
                const song = tracks[key];

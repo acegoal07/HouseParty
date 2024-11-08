@@ -51,28 +51,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             exit();
          }
 
+         $searchTerm = urlencode($_GET['searchTerm']);
+
          $curl = curl_init();
-         curl_setopt($curl, CURLOPT_URL, "https://api.spotify.com/v1/search?q=" . $_GET['searchTerm'] . "&type=track&limit=50");
+         curl_setopt($curl, CURLOPT_URL, "https://api.spotify.com/v1/search?q=" . $searchTerm . "&type=track&limit=50");
          curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
          curl_setopt($curl, CURLOPT_HTTPHEADER, [$party_info['auth']]);
          $response = curl_exec($curl);
          curl_close($curl);
 
-         if (!isset(json_decode($response, true)['tracks']['total'])) {
+         $responseData = json_decode($response, true);
+
+         if (count($responseData['tracks']['items']) === 0) {
             http_response_code(200);
-            echo json_encode(['tracks' => []]);
+            echo json_encode(['totalTracks' => 0, 'tracks' => []]);
             exit();
          }
 
          if ($party_info['explicit'] == 0) {
-            $response = json_decode($response, true);
-            $response['tracks']['items'] = array_filter($response['tracks']['items'], function ($item) {
+            $responseData['tracks']['items'] = array_filter($responseData['tracks']['items'], function ($item) {
                return !$item['explicit'];
             });
          }
 
          http_response_code(200);
-         echo json_encode($response);
+         echo json_encode(['totalTracks' => count($responseData['tracks']['items']), 'tracks' => $responseData['tracks']['items']]);
          break;
          //////////////// default //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       default:
