@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             exit();
          }
 
-         $party_info = getPartyInfo($conn, $_GET['partyId']);
+         $party_info = getPartyInfo($conn, $_POST['partyId']);
          if ($party_info == null) {
             http_response_code(400);
             exit();
@@ -103,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          curl_setopt($curl, CURLOPT_HTTPHEADER, [$party_info['auth']]);
          curl_setopt($curl, CURLOPT_POST, true);
          $response = curl_exec($curl);
+         $responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
          curl_close($curl);
 
          http_response_code(200);

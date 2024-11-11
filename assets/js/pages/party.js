@@ -17,6 +17,7 @@ window.addEventListener('load', () => {
    pagePolling();
    setInterval(pagePolling, 1500);
    //////////////// Search submit //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   document.querySelector('form#search-song-form').submit();
    document.querySelector('form#search-song-form').addEventListener('submit', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hidden');
@@ -40,7 +41,7 @@ window.addEventListener('load', () => {
                // Create the result container
                const resultContainer = document.createElement('div');
                resultContainer.className = 'search-results-item';
-               resultContainer.tabIndex = 0; // Make the result container focusable
+               resultContainer.tabIndex = 0;
 
                // Create the song cover image
                const songCover = document.createElement('img');
@@ -58,6 +59,19 @@ window.addEventListener('load', () => {
                songTitle.className = 'search-results-title';
                songTitle.textContent = song.name;
                resultInfoContainer.appendChild(songTitle);
+
+               // Add the explicit icon if the song is explicit
+               if (song.explicit) {
+                  const explicitIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                  explicitIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                  explicitIcon.setAttribute('class', 'search-results-explicit-icon');
+                  explicitIcon.setAttribute('viewBox', '0 0 16 16');
+
+                  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                  path.setAttribute('d', 'M2.5 0A2.5 2.5 0 0 0 0 2.5v11A2.5 2.5 0 0 0 2.5 16h11a2.5 2.5 0 0 0 2.5-2.5v-11A2.5 2.5 0 0 0 13.5 0zm4.326 10.88H10.5V12h-5V4.002h5v1.12H6.826V7.4h3.457v1.073H6.826z');
+                  explicitIcon.appendChild(path);
+                  songTitle.appendChild(explicitIcon);
+               }
 
                // Create the song artist
                const songArtist = document.createElement('p');
@@ -78,6 +92,17 @@ window.addEventListener('load', () => {
                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                path.setAttribute('d', 'M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z');
                addIcon.appendChild(path);
+
+               addIcon.addEventListener('click', () => {
+                  fetch(`assets/php/website/spotifyHandler.php`, {
+                     method: 'post',
+                     headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                     },
+                     body: `type=addSongToQueue&songId=${song.uri}&partyId=${sessionCode}`
+                  }).then(response => response.json()).then(data => {
+                  });
+               });
 
                // Append the add icon to the result container
                resultContainer.appendChild(addIcon);

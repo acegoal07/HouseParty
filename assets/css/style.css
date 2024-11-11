@@ -64,6 +64,13 @@ div.body-container {
    box-shadow: 0 0 10px var(--shadow-color);
 }
 
+@media screen and (max-width: 600px) {
+   div.body-container {
+      margin: 0.8rem;
+      padding: 0.8rem;
+   }
+}
+
 .header {
    font-size: 2.8rem;
    color: white;
@@ -146,8 +153,6 @@ button.btn {
    background-color: black;
    text-decoration: none;
    border: none;
-   width: max-content;
-   height: max-content;
    -webkit-transition: background-color ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
    -o-transition: background-color ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
    -moz-transition: background-color ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
@@ -332,6 +337,8 @@ select:focus {
    display: flex;
    flex-direction: column;
    align-items: center;
+   width: 100%;
+   max-width: 400px;
    gap: 1rem;
 }
 
@@ -339,7 +346,6 @@ select:focus {
    display: flex;
    align-items: center;
    width: 100%;
-   max-width: 400px;
 }
 
 .input-btn-form-input-group input[type="text"] {
@@ -585,12 +591,14 @@ div#party-qrcode {
    font-size: 1.2rem;
    color: white;
    margin: 0;
+   word-break: break-word;
 }
 
 .search-results-creators {
    font-size: 1rem;
    color: rgb(167, 167, 167);
    margin: 0;
+   word-break: break-word;
 }
 
 .search-results-cover {
@@ -624,4 +632,11 @@ div#party-qrcode {
    -moz-transform: scale(1.03);
    -webkit-transform: scale(1.03);
    transform: scale(1.03);
+}
+
+.search-results-explicit-icon {
+   width: 16px;
+   height: 16px;
+   fill: currentColor;
+   margin-left: 5px;
 }
