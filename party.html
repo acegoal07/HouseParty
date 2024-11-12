@@ -13,6 +13,10 @@
       href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
       rel="stylesheet">
    <link rel="stylesheet" href="assets/css/style-min.css">
+   <script src="assets/js/util/modalHandler-min.js"></script>
+   <script src="assets/js/util/clickToCopy-min.js"></script>
+   <script src="assets/js/util/clickToShare-min.js"></script>
+   <script src="assets/js/util/qrcode.min.js"></script>
    <!-- <script src="assets/js/pages/party-min.js"></script> -->
 </head>
 
@@ -22,6 +26,44 @@
          <path
             d="M304 48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zm0 416a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM48 304a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm464-48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM142.9 437A48 48 0 1 0 75 369.1 48 48 0 1 0 142.9 437zm0-294.2A48 48 0 1 0 75 75a48 48 0 1 0 67.9 67.9zM369.1 437A48 48 0 1 0 437 369.1 48 48 0 1 0 369.1 437z" />
       </svg>
+   </div>
+   <!-- style="display: flex; animation: modal-open 0.4s forwards;" -->
+   <div class="modal-background" id="join-party-info-modal">
+      <div class="modal-body">
+         <span class="modal-close modal-closer" modal-target="join-party-info-modal">&times;</span>
+         <h1>Party join info</h1>
+         <p>Bellow are different ways to allow people to join</p>
+         <div class="party-code-container">
+            <span id="party-code"></span>
+            <button class="btn btn-primary click-to-copy-target" copy-target="party-code" type="button">Copy</button>
+         </div>
+         <div id="party-qrcode"></div>
+         <div class="btn-container">
+            <button class="btn btn-primary click-to-copy" id="copy-party-url" type="button">Copy
+               URL</button>
+            <button class="btn click-to-share" id="share-party-url" type="button">Share URL</button>
+         </div>
+      </div>
+   </div>
+   <div class="modal-background" id="add-to-queue-successfully-modal" style="display: flex; animation: modal-open 0.4s forwards;">
+      <div class="modal-body">
+         <span class="modal-close modal-closer" modal-target="add-to-queue-successfully-modal">&times;</span>
+         <h1>Song added to queue</h1>
+         <p><span class="special-text" id="add-queue-successfully-song-name">test song name</span> Has been added to the song queue</p>
+         <div class="btn-container">
+            <button class="btn btn-primary" type="button">Ok</button>
+         </div>
+      </div>
+   </div>
+   <div class="modal-background" id="add-to-queue-failed-modal">
+      <div class="modal-body">
+         <span class="modal-close modal-closer" modal-target="add-to-queue-failed-modal">&times;</span>
+         <h1>Failed to add song</h1>
+         <p>Tell the host of the party about this error and see if music is still playing</p>
+         <div class="btn-container">
+            <button class="btn btn-primary" type="button">Will do!</button>
+         </div>
+      </div>
    </div>
    <main>
       <div class="body-container">

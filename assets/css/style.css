@@ -22,6 +22,11 @@
    margin-top: 1.5rem;
 }
 
+.special-text {
+   color: var(--primary-color);
+   font-weight: bold;
+}
+
 /* BODY */
 html,
 body {
