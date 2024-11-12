@@ -13,7 +13,7 @@
       href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
       rel="stylesheet">
    <link rel="stylesheet" href="assets/css/style-min.css">
-   <script src="assets/js/pages/party.js"></script>
+   <!-- <script src="assets/js/pages/party-min.js"></script> -->
 </head>
 
 <body>
@@ -31,7 +31,7 @@
                <label for="search-term" class="label-visually-hidden">Search name</label>
                <div class="input-btn-form-input-group">
                   <input type="text" id="search-term" name="search-term" placeholder="What song?"
-                     aria-label="What song?" required>
+                     aria-label="What song?">
                   <button class="btn btn-primary" type="submit" title="Search">
                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="input-btn-form-icon">
                         <path
@@ -40,8 +40,12 @@
                   </button>
                </div>
             </form>
+            <div class="explicit-toggle-container">
+               <p>Explicit content</p>
+               <p class="explicit-indicator">disabled</p>
+            </div>
          </div>
-         <div class="search-results-container" aria-live="polite" id="search-results"></div>
+         <div class="search-results-container" aria-live="polite" data-current-search="" id="search-results"></div>
          <div class="btn-container">
             <a class="btn" href="./">Back to home screen</a>
          </div>

@@ -2,34 +2,48 @@ window.addEventListener('load', () => {
    const sessionCode = new URLSearchParams(window.location.search).get('session_code');
    const loadingIcon = document.querySelector('div#loading-icon');
    if (!sessionCode) {
+      console.log(sessionCode);
       window.location.href = '/houseparty/join.html';
    }
+   const searchForm = document.querySelector('form#search-song-form');
+   const searchResults = document.querySelector('div#search-results');
+   let explicitToggle;
    //////////////// Page polling //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    function pagePolling() {
       fetch(`assets/php/website/databasePartyHandlers.php?type=checkPartyExistsUser&partyId=${sessionCode}`, {
          method: 'GET'
       }).then(response => response.json()).then(data => {
          if (!data.partyExists) {
+            console.log(data);
             window.location.href = '/houseparty/join.html';
+         }
+         if (data.explicit !== explicitToggle) {
+            document.querySelector('p.explicit-indicator').textContent = data.explicit ? 'enabled' : 'disabled';
+            explicitToggle = data.explicit;
+            if (searchResults.hasChildNodes()) {
+               searchFunction();
+            }
          }
       });
    }
    pagePolling();
    setInterval(pagePolling, 1500);
    //////////////// Search submit //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   document.querySelector('form#search-song-form').submit();
-   document.querySelector('form#search-song-form').addEventListener('submit', (event) => {
+   searchForm.addEventListener('submit', (event) => {
       event.preventDefault();
+      searchFunction();
+   });
+   function searchFunction() {
       loadingIcon.classList.remove('hidden');
-      const searchResults = document.querySelector('div#search-results');
       while (searchResults.firstChild) { searchResults.removeChild(searchResults.firstChild); }
       const searchInputElement = document.querySelector('input#search-term');
-      const searchInput = searchInputElement.value;
-      if (!searchInput) {
+      const searchInput = searchInputElement.value || searchResults.getAttribute('data-current-search');
+      searchResults.setAttribute('data-current-search', searchInput);
+      searchInputElement.value = '';
+      if (!searchInput || searchInput.replaceAll(' ', '') === '') {
          loadingIcon.classList.add('hidden');
          return;
       }
-      searchInputElement.value = '';
       fetch(`assets/php/website/spotifyHandler.php?type=searchSongByName&searchTerm=${searchInput}&partyId=${sessionCode}`, {
          method: 'GET'
       }).then(response => response.json()).then(data => {
@@ -101,6 +115,7 @@ window.addEventListener('load', () => {
                      },
                      body: `type=addSongToQueue&songId=${song.uri}&partyId=${sessionCode}`
                   }).then(response => response.json()).then(data => {
+                     console.log(data);
                   });
                });
 
@@ -113,7 +128,7 @@ window.addEventListener('load', () => {
          }
          loadingIcon.classList.add('hidden');
       });
-   });
+   }
 
    loadingIcon.classList.add('hidden');
 });

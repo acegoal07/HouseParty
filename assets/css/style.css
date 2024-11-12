@@ -38,6 +38,7 @@ body {
    justify-content: center;
    align-items: center;
    background: linear-gradient(347deg, var(--background-color) 40%, var(--primary-color) 100%);
+   background-color: var(--background-color);
    -webkit-backdrop-filter: blur(100px);
    backdrop-filter: blur(100px);
 }
@@ -639,4 +640,28 @@ div#party-qrcode {
    height: 16px;
    fill: currentColor;
    margin-left: 5px;
+}
+
+/* EXPLICIT CONTENT ENABLED/DISABLED */
+div.explicit-toggle-container {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   flex-direction: row;
+   gap: 10px;
+   color: white;
+   padding: 10px;
+   border-radius: var(--border-radius);
+   background-color: var(--secondary-color-hover);
+}
+
+div.explicit-toggle-container p {
+   margin: 0;
+}
+
+div.explicit-toggle-container p.explicit-indicator {
+   font-weight: bold;
+   color: var(--primary-color);
+   border-left: var(--secondary-color) 3px solid;
+   padding-left: 10px;
 }
