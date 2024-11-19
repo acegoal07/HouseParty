@@ -10,6 +10,13 @@ window.addEventListener('load', () => {
       deleteCookie({ name: 'refresh_token' });
       spotifyLoginButton.classList.remove('hidden');
    }
+   //Extend cookies periodically
+   function extendCookiesPeriodically() {
+      extendCookie({ name: 'refresh_token', days: 1 });
+      extendCookie({ name: 'host_id', days: 1 });
+   }
+   extendCookiesPeriodically();
+   setInterval(extendCookiesPeriodically, 15 * 60 * 1000);
    // Add event listener to the Spotify login button
    spotifyLoginButton.addEventListener('click', () => {
       const queryParams = new URLSearchParams({
