@@ -49,9 +49,9 @@ window.addEventListener('load', () => {
    //////////////// openModal event //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    document.addEventListener('openModal', (opener) => {
       if (opener.detail.callback) {
-         ModalHandlerInstance.open(opener.detail.target, opener.detail.callback);
+         ModalHandlerInstance.open(`div#${opener.detail.target}`, opener.detail.callback);
       } else {
-         ModalHandlerInstance.open(opener.detail.target);
+         ModalHandlerInstance.open(`div#${opener.detail.target}`);
       }
    });
    //////////////// modalCloser //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

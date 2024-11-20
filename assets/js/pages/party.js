@@ -108,14 +108,24 @@ window.addEventListener('load', () => {
                addIcon.appendChild(path);
 
                addIcon.addEventListener('click', () => {
+                  loadingIcon.classList.remove('hidden');
                   fetch(`assets/php/website/spotifyHandler.php`, {
                      method: 'post',
                      headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                      },
                      body: `type=addSongToQueue&songId=${song.uri}&partyId=${sessionCode}`
-                  }).then(response => response.json()).then(data => {
+                  }).then(response => response.text()).then(data => {
                      console.log(data);
+                     loadingIcon.classList.add('hidden');
+                     document.dispatchEvent(new CustomEvent('openModal', {
+                        detail: {
+                           target: 'add-to-queue-successfully-modal',
+                           callback: () => {
+                              document.querySelector('#add-queue-successfully-song-name').textContent = `${song.name} by ${artistsList.join(', ')}`;
+                           }
+                        }
+                     }));
                   });
                });
 
