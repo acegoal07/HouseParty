@@ -84,6 +84,13 @@ window.addEventListener('load', () => {
    }
    pagePolling();
    setInterval(pagePolling, 1500);
+   //////////////// Extend cookies periodically //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   function extendCookiesPeriodically() {
+      extendCookie({ name: 'refresh_token', days: 1 });
+      extendCookie({ name: 'host_id', days: 1 });
+   }
+   extendCookiesPeriodically();
+   setInterval(extendCookiesPeriodically, 15 * 60 * 1000);
    //////////////// Create party //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Handle the form submission for creating a new party
    document.querySelector('form#start-party-form').addEventListener('submit', (event) => {
@@ -99,6 +106,10 @@ window.addEventListener('load', () => {
          if (data.success) {
             window.location.reload();
             loadingIcon.classList.add('hidden');
+         } else {
+            deleteCookie({ name: 'refresh_token' });
+            deleteCookie({ name: 'host_id' });
+            window.location.href = '/houseparty/';
          }
       });
    });

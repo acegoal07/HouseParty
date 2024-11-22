@@ -40,3 +40,18 @@ function getCookie(name) {
    }
    return null;
 }
+
+/**
+ * extendCookie
+ * Extends the lifespan of the cookie with the provided name
+ * @param {String} name The name of the cookie
+ * @param {Number} days The number of days to extend the cookie's lifespan
+ * @param {"Strict" | "Lax" | "None"} [sameSite="Strict"] The type of SameSite to use
+ * @param {Boolean} [httpOnly=false] Whether the cookie is HttpOnly
+ */
+function extendCookie({ name, days, sameSite = "Strict", httpOnly = false }) {
+   const value = getCookie(name);
+   if (value !== null) {
+      setCookie({ name, value, sameSite, expires: days, httpOnly });
+   }
+}

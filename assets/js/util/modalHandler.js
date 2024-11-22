@@ -8,12 +8,8 @@ class ModalHandler {
     * @param {Function} callback A function to call after the modal
     */
    open(modalId, callback) {
-      if (this.modal || !modalId) {
-         return;
-      }
-      if (callback) {
-         callback();
-      }
+      if (this.modal || !modalId) { return; }
+      if (callback) { callback(); }
       this.modal = document.querySelector(modalId);
       this.modal.style.animation = "modal-open 0.4s forwards";
       this.modal.style.display = 'flex';
@@ -23,49 +19,54 @@ class ModalHandler {
     * @param {Function} callback A function to call after the modal is closed
     */
    close(callback) {
-      if (!this.modal) {
-         return;
-      }
+      if (!this.modal) { return; }
       this.modal.style.animation = "modal-close 0.4s forwards";
       setTimeout(() => {
          this.modal.style.display = 'none';
          this.modal = null;
-         if (callback) {
-            callback();
-         }
+         if (callback) { callback(); }
       }, 400);
+   }
+
+   /**
+    * Get the current modal
+    * @returns {HTMLElement} The current modal
+    */
+   getModal() {
+      return this.modal;
    }
 }
 
 window.addEventListener('load', () => {
-   const modalHandler = new ModalHandler();
+   const ModalHandlerInstance = new ModalHandler();
    //////////////// ModalOpener //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    document.querySelectorAll('.modal-opener').forEach((opener) => {
       opener.addEventListener('click', () => {
          const target = opener.getAttribute('modal-target');
-         modalHandler.open(`div#${target}`);
+         ModalHandlerInstance.open(`div#${target}`);
       });
    });
    //////////////// openModal event //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    document.addEventListener('openModal', (opener) => {
       if (opener.detail.callback) {
-         modalHandler.open(opener.detail.target, opener.detail.callback);
+         ModalHandlerInstance.open(`div#${opener.detail.target}`, opener.detail.callback);
       } else {
-         modalHandler.open(opener.detail.target);
+         ModalHandlerInstance.open(`div#${opener.detail.target}`);
       }
    });
    //////////////// modalCloser //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    document.querySelectorAll('.modal-closer').forEach((closer) => {
       closer.addEventListener('click', () => {
-         modalHandler.close();
+         if (!ModalHandlerInstance.getModal().contains(closer)) { return; }
+         ModalHandlerInstance.close();
       });
    });
    //////////////// closeCurrentModal event //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    document.addEventListener('closeCurrentModal', (closer) => {
       if (closer.detail) {
-         modalHandler.close(closer.detail.callback);
+         ModalHandlerInstance.close(closer.detail.callback);
       } else {
-         modalHandler.close();
+         ModalHandlerInstance.close();
       }
    });
 });

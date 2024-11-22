@@ -106,6 +106,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          $responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
          curl_close($curl);
 
+         if ($responseCode !== 200) {
+            http_response_code(200);
+            exit();
+         }
+
          http_response_code(200);
          break;
          //////////////// default //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
