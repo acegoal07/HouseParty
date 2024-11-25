@@ -1,6 +1,7 @@
 import gulp from 'gulp';
 import clean from 'gulp-clean';
 import zip from 'gulp-zip';
+import chmod from 'gulp-chmod';
 
 const paths = {
    css: {
@@ -42,41 +43,49 @@ const paths = {
 
 function copyCss() {
    return gulp.src(paths.css.src)
+      .pipe(chmod(0o644))
       .pipe(gulp.dest(paths.css.dest));
 }
 
 function copyPagesJs() {
    return gulp.src(paths.pagesjs.src)
+      .pipe(chmod(0o644))
       .pipe(gulp.dest(paths.pagesjs.dest));
 }
 
 function copyUtilJs() {
    return gulp.src(paths.utiljs.src)
+      .pipe(chmod(0o644))
       .pipe(gulp.dest(paths.utiljs.dest));
 }
 
 function copyPhp() {
    return gulp.src(paths.php.src)
+      .pipe(chmod(0o700))
       .pipe(gulp.dest(paths.php.dest));
 }
 
 function copyWebsitePhp() {
    return gulp.src(paths.wesbitephp.src)
+      .pipe(chmod(0o755))
       .pipe(gulp.dest(paths.wesbitephp.dest));
 }
 
 function copyServerPhp() {
    return gulp.src(paths.serverphp.src)
+      .pipe(chmod(0o700))
       .pipe(gulp.dest(paths.serverphp.dest));
 }
 
 function copyImages() {
    return gulp.src(paths.images.src)
+      .pipe(chmod(0o644))
       .pipe(gulp.dest(paths.images.dest));
 }
 
 function copyHtml() {
    return gulp.src(paths.html.src)
+      .pipe(chmod(0o644))
       .pipe(gulp.dest(paths.html.dest));
 }
 

@@ -1,6 +1,10 @@
 {
+  "scripts": {
+    "packageUp": "gulp"
+  },
   "devDependencies": {
     "gulp": "^5.0.0",
+    "gulp-chmod": "^4.0.0",
     "gulp-clean": "^0.4.0",
     "gulp-zip": "^6.0.0"
   }
