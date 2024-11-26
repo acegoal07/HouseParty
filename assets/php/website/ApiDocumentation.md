@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/images/HousePartyLogo.png" width="350" height="350"/>
+  <img src="../../images/HousePartyLogo.png" width="350" height="350"/>
 </p>
 
 # House Party - API Documentation
