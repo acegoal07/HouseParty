@@ -1,6 +1,6 @@
-<div style="text-align: center;">
-  <img src="../../../assets/images/HousePartyLogo.png" alt="House Party Logo">
-</div>
+<p align="center">
+  <img src="assets/images/HousePartyLogo.png" width="350" height="350"/>
+</p>
 
 # House Party - API Documentation
 
