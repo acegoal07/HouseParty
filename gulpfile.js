@@ -2,31 +2,20 @@ import gulp from 'gulp';
 import clean from 'gulp-clean';
 import zip from 'gulp-zip';
 import chmod from 'gulp-chmod';
+import filter from 'gulp-filter';
 
 const paths = {
    css: {
       src: 'assets/css/*-min.css',
       dest: 'houseparty/assets/css/'
    },
-   pagesjs: {
-      src: 'assets/js/pages/*-min.js',
-      dest: 'houseparty/assets/js/pages/'
-   },
-   utiljs: {
-      src: 'assets/js/util/*-min.js',
-      dest: 'houseparty/assets/js/util/'
+   js: {
+      src: 'assets/js/**/*-min.js',
+      dest: 'houseparty/assets/js/'
    },
    php: {
-      src: 'assets/php/*.php',
+      src: 'assets/php/**/*.php',
       dest: 'houseparty/assets/php/'
-   },
-   wesbitephp: {
-      src: 'assets/php/website/*.php',
-      dest: 'houseparty/assets/php/website/'
-   },
-   serverphp: {
-      src: 'assets/php/server/*.php',
-      dest: 'houseparty/assets/php/server/'
    },
    images: {
       src: 'assets/images/*.ico',
@@ -41,52 +30,51 @@ const paths = {
    zip: 'houseparty/**/*'
 };
 
-function copyCss() {
-   return gulp.src(paths.css.src)
+function html() {
+   return gulp.src(paths.html.src)
       .pipe(chmod(0o644))
-      .pipe(gulp.dest(paths.css.dest));
+      .pipe(gulp.dest(paths.html.dest));
 }
 
-function copyPagesJs() {
-   return gulp.src(paths.pagesjs.src)
-      .pipe(chmod(0o644))
-      .pipe(gulp.dest(paths.pagesjs.dest));
-}
-
-function copyUtilJs() {
-   return gulp.src(paths.utiljs.src)
-      .pipe(chmod(0o644))
-      .pipe(gulp.dest(paths.utiljs.dest));
-}
-
-function copyPhp() {
-   return gulp.src(paths.php.src)
-      .pipe(chmod(0o700))
-      .pipe(gulp.dest(paths.php.dest));
-}
-
-function copyWebsitePhp() {
-   return gulp.src(paths.wesbitephp.src)
-      .pipe(chmod(0o755))
-      .pipe(gulp.dest(paths.wesbitephp.dest));
-}
-
-function copyServerPhp() {
-   return gulp.src(paths.serverphp.src)
-      .pipe(chmod(0o700))
-      .pipe(gulp.dest(paths.serverphp.dest));
-}
-
-function copyImages() {
+function images() {
    return gulp.src(paths.images.src)
       .pipe(chmod(0o644))
       .pipe(gulp.dest(paths.images.dest));
 }
 
-function copyHtml() {
-   return gulp.src(paths.html.src)
+function css() {
+   return gulp.src(paths.css.src)
       .pipe(chmod(0o644))
-      .pipe(gulp.dest(paths.html.dest));
+      .pipe(gulp.dest(paths.css.dest));
+}
+
+function js() {
+   return gulp.src(paths.js.src)
+      .pipe(chmod(0o644))
+      .pipe(gulp.dest(paths.js.dest));
+}
+
+function php() {
+   const exampleFilter = filter(['**', '!**/*example*'], { restore: true });
+   const serverFilter = filter(['**/server/**/*'], { restore: true });
+   const websiteFilter = filter(['**/website/**/*'], { restore: true });
+   const secretFilter = filter(['**/secrets.php*'], { restore: true });
+
+   return gulp.src(paths.php.src)
+      .pipe(exampleFilter)
+      .pipe(serverFilter)
+      .pipe(chmod(0o700))
+      .pipe(gulp.dest('houseparty/assets/php/server'))
+      .pipe(serverFilter.restore)
+      .pipe(websiteFilter)
+      .pipe(chmod(0o755))
+      .pipe(gulp.dest('houseparty/assets/php/website'))
+      .pipe(websiteFilter.restore)
+      .pipe(secretFilter)
+      .pipe(chmod(0o700))
+      .pipe(gulp.dest('houseparty/assets/php'))
+      .pipe(secretFilter.restore)
+      .pipe(exampleFilter.restore);
 }
 
 function zipDist() {
@@ -105,17 +93,14 @@ function cleanzip() {
       .pipe(clean());
 }
 
-const build = gulp.series(cleanzip, gulp.parallel(copyCss, copyPagesJs, copyUtilJs, copyPhp, copyWebsitePhp, copyServerPhp, copyImages, copyHtml), zipDist, cleanfolder);
+const build = gulp.series(cleanzip, gulp.parallel(html, css, images, js, php), zipDist, cleanfolder);
 
 export {
-   copyCss,
-   copyPagesJs,
-   copyUtilJs,
-   copyPhp,
-   copyWebsitePhp,
-   copyServerPhp,
-   copyImages,
-   copyHtml,
+   css,
+   js,
+   html,
+   php,
+   images,
    zipDist,
    cleanfolder,
    cleanzip,
