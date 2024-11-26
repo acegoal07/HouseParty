@@ -5,9 +5,21 @@ import chmod from 'gulp-chmod';
 import filter from 'gulp-filter';
 
 const paths = {
+   html: {
+      src: '*.html',
+      dest: 'houseparty/'
+   },
    css: {
       src: 'assets/css/*-min.css',
       dest: 'houseparty/assets/css/'
+   },
+   fonts: {
+      src: 'assets/fonts/**/*',
+      dest: 'houseparty/assets/fonts/'
+   },
+   images: {
+      src: 'assets/images/*.ico',
+      dest: 'houseparty/assets/images/'
    },
    js: {
       src: 'assets/js/**/*-min.js',
@@ -16,14 +28,6 @@ const paths = {
    php: {
       src: 'assets/php/**/*.php',
       dest: 'houseparty/assets/php/'
-   },
-   images: {
-      src: 'assets/images/*.ico',
-      dest: 'houseparty/assets/images/'
-   },
-   html: {
-      src: '*.html',
-      dest: 'houseparty/'
    },
    cleanfolder: 'houseparty',
    cleanzip: 'houseparty.zip',
@@ -36,16 +40,22 @@ function html() {
       .pipe(gulp.dest(paths.html.dest));
 }
 
-function images() {
-   return gulp.src(paths.images.src)
-      .pipe(chmod(0o644))
-      .pipe(gulp.dest(paths.images.dest));
-}
-
 function css() {
    return gulp.src(paths.css.src)
       .pipe(chmod(0o644))
       .pipe(gulp.dest(paths.css.dest));
+}
+
+function fonts() {
+   return gulp.src(paths.fonts.src)
+      .pipe(chmod(0o644))
+      .pipe(gulp.dest(paths.fonts.dest));
+}
+
+function images() {
+   return gulp.src(paths.images.src)
+      .pipe(chmod(0o644))
+      .pipe(gulp.dest(paths.images.dest));
 }
 
 function js() {
@@ -93,14 +103,15 @@ function cleanzip() {
       .pipe(clean());
 }
 
-const build = gulp.series(cleanzip, gulp.parallel(html, css, images, js, php), zipDist, cleanfolder);
+const build = gulp.series(cleanzip, gulp.parallel(html, css, fonts, images, js, php), zipDist, cleanfolder);
 
 export {
-   css,
-   js,
    html,
-   php,
+   css,
+   fonts,
    images,
+   js,
+   php,
    zipDist,
    cleanfolder,
    cleanzip,
