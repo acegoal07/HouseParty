@@ -1,55 +1,173 @@
-<p align="center">
-  <img src="../../../assets/images/HousePartyLogo.png" width="350" height="350"/>
-</p>
+<div style="text-align: center;">
+  <img src="../../../assets/images/HousePartyLogo.png" alt="House Party Logo">
+</div>
 
 # House Party - API Documentation
 
-## Contents:
-- [Database API](#database-api)
-  - [checkPartyExistsHost](#checkpartyexistshost)
-  - [partyExistsByPartyId](#partyexistsbypartyid)
-  - [createParty](#createparty)
-  - [deleteParty](#deleteparty)
-  - [updatePartyExplicit](#updatepartyexplicit)
-  - [extendPartyDuration](#extendpartyduration)
-- [Spotify Middleman API](#spotify-middleman-api)
-  - [getCurrentlyPlaying](#getcurrentlyplaying)
-  - [searchSongByName](#searchsongbyname)
-  - [addSongToQueue](#addsongtoqueue)
+## Contents
+
+- [House Party - API Documentation](#house-party---api-documentation)
+  - [Contents](#contents)
+  - [Database API](#database-api)
+    - [`checkPartyExistsHost`](#checkpartyexistshost)
+    - [`partyExistsByPartyId`](#partyexistsbypartyid)
+    - [`createParty`](#createparty)
+    - [`deleteParty`](#deleteparty)
+    - [`updatePartyExplicit`](#updatepartyexplicit)
+    - [`extendPartyDuration`](#extendpartyduration)
+  - [Spotify Middleman API](#spotify-middleman-api)
+    - [`getCurrentlyPlaying`](#getcurrentlyplaying)
+    - [`searchSongByName`](#searchsongbyname)
+    - [`addSongToQueue`](#addsongtoqueue)
 
 <hr>
 
 ## Database API
+
 This API manages all interactions with the website's database.
 
 ### `checkPartyExistsHost`
-Description of the `checkPartyExistsHost` endpoint.
+
+Checks whether a party exists for a given host ID and returns data about it if it does.
+
+**Request Type:** `GET`
+
+**Inputs:**
+
+- `hostId` - The ID of the host.
+- `refreshToken` - The refresh token for authentication.
+
+**Returns:**
+
+- `partyExists` - Boolean indicating if the party exists.
+- `refreshTokenValid` - Boolean indicating if the refresh token is valid.
+- `explicit` - Boolean indicating if the party has explicit content.
+- `partyId` - The ID of the party.
+- `partyExpiresAt` - The expiration time of the party.
 
 ### `partyExistsByPartyId`
-Description of the `partyExistsByPartyId` endpoint.
+
+Checks whether a party exists for a given party ID and returns data about it if it does.
+
+**Request Type:** `GET`
+
+**Inputs:**
+
+- `partyId` - The ID of the party.
+
+**Returns:**
+
+- `partyExists` - Boolean indicating if the party exists.
+- `explicit` - Boolean indicating if the party has explicit content.
 
 ### `createParty`
-Description of the `createParty` endpoint.
+
+Creates a new party in the database.
+
+**Request Type:** `POST`
+
+**Inputs:**
+
+- `hostId` - The ID of the host.
+- `refreshToken` - The refresh token for authentication.
+- `partyEndsIn` - The duration for which the party will last.
+- `explicit` - Boolean indicating if the party has explicit content.
+
+**Returns:**
+
+- `success` - Boolean indicating if the party was successfully created.
 
 ### `deleteParty`
-Description of the `deleteParty` endpoint.
+
+Deletes a party from the database.
+
+**Request Type:** `POST`
+
+**Inputs:**
+
+- `partyId` - The ID of the party to be deleted.
+- `hostId` - The ID of the host.
+- `refreshToken` - The refresh token for authentication.
+
+**Returns:**
+
+- `success` - Boolean indicating if the party was successfully deleted.
 
 ### `updatePartyExplicit`
-Description of the `updatePartyExplicit` endpoint.
+
+Updates the explicit setting of a party.
+
+**Request Type:** `POST`
+
+**Inputs:**
+
+- `partyId` - The ID of the party.
+- `refreshToken` - The refresh token for authentication.
+- `explicit` - Boolean indicating the new explicit setting.
+
+**Returns:**
+
+- `success` - Boolean indicating if the explicit setting was successfully updated.
 
 ### `extendPartyDuration`
-Description of the `extendPartyDuration` endpoint.
+
+Extends the duration of a party.
+
+**Request Type:** `POST`
+
+**Inputs:**
+
+- `partyId` - The ID of the party.
+- `refreshToken` - The refresh token for authentication.
+- `extendBy` - The amount of time to extend the party by.
+
+**Returns:**
+
+- `success` - Boolean indicating if the party duration was successfully extended.
 
 <hr>
 
 ## Spotify Middleman API
+
 This API facilitates interactions with the Spotify API and manages database operations for specific data requirements.
 
 ### `getCurrentlyPlaying`
-Description of the `getCurrentlyPlaying` endpoint.
+
+Gets the currently playing song on the hosts Spotify.
+
+**Request Type:** `GET`
+
+**Inputs:**
+
+- `partyId` - The ID of the party.
+
+**Returns:**
+
+- `song info` - The song information of the currently playing song.
 
 ### `searchSongByName`
-Description of the `searchSongByName` endpoint.
+
+Searches for a song by name on Spotify.
+
+**Request Type:** `GET`
+
+**Inputs:**
+
+- `partyId` - The ID of the party.
+- `searchTerm` - The name of the song to search for.
+
+**Returns:**
+
+- `totalTracks` - The total number of tracks found.
+- `tracks` - An array of track objects.
 
 ### `addSongToQueue`
-Description of the `addSongToQueue` endpoint.
+
+Adds a song to the queue of the party.
+
+**Request Type:** `POST`
+
+**Inputs:**
+
+- `partyId` - The ID of the party.
+- `songId` - The ID of the song to add.
