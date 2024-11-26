@@ -5,23 +5,19 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Party</title>
+   <meta name="description" content="Add songs to the party queue and enjoy the music with your friends.">
    <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
-   <link rel="preconnect" href="https://fonts.googleapis.com">
-   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-   <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
-      rel="stylesheet">
    <link rel="stylesheet" href="assets/css/style-min.css">
-   <script src="assets/js/util/modalHandler-min.js"></script>
-   <script src="assets/js/util/clickToCopy-min.js"></script>
-   <script src="assets/js/util/clickToShare-min.js"></script>
-   <script src="assets/js/util/qrcode.min.js"></script>
-   <script src="assets/js/pages/party-min.js"></script>
+   <script src="assets/js/util/modalHandler-min.js" defer></script>
+   <script src="assets/js/util/clickToCopy-min.js" defer></script>
+   <script src="assets/js/util/clickToShare-min.js" defer></script>
+   <script src="assets/js/util/qrcode-min.js" defer></script>
+   <script src="assets/js/pages/party-min.js" defer></script>
 </head>
 
 <body>
-   <div class="loading-icon-container hidden" id="loading-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+   <div class="loading-icon-container" id="loading-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-label="Loading">
          <path
             d="M304 48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zm0 416a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM48 304a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm464-48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM142.9 437A48 48 0 1 0 75 369.1 48 48 0 1 0 142.9 437zm0-294.2A48 48 0 1 0 75 75a48 48 0 1 0 67.9 67.9zM369.1 437A48 48 0 1 0 437 369.1 48 48 0 1 0 369.1 437z" />
       </svg>
@@ -47,7 +43,8 @@
       <div class="modal-body">
          <span class="modal-close modal-closer">&times;</span>
          <h1>Song added to queue</h1>
-         <p><span class="special-text" id="add-queue-successfully-song-name"></span> Has been added to the song queue</p>
+         <p><span class="special-text" id="add-queue-successfully-song-name"></span> Has been added to the song queue
+         </p>
          <div class="btn-container">
             <button class="btn btn-primary modal-closer" type="button">Ok</button>
          </div>
