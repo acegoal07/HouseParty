@@ -18,7 +18,7 @@ const paths = {
       dest: 'houseparty/assets/fonts/'
    },
    images: {
-      src: 'assets/images/*.ico',
+      src: 'assets/images/*.{ico,svg,webp}',
       dest: 'houseparty/assets/images/'
    },
    js: {
@@ -53,7 +53,11 @@ function fonts() {
 }
 
 function images() {
-   return gulp.src(paths.images.src)
+   return gulp.src(paths.images.src, {
+      encoding: 'utf8',
+      buffer: true,
+      removeBOM: true
+   })
       .pipe(chmod(0o644))
       .pipe(gulp.dest(paths.images.dest));
 }
