@@ -1,19 +1,38 @@
 class ModalHandler {
    constructor() {
       this.modal = null;
+      this.init();
    }
+
+   /**
+    * Initialize event listeners
+    */
+   init() {
+      window.addEventListener('load', () => {
+         this.setupModalOpeners();
+         this.setupModalClosers();
+         this.setupCustomEvents();
+      });
+   }
+
    /**
     * Open a modal
     * @param {String} modalId The id of the modal to open
-    * @param {Function} callback A function to call after the modal
+    * @param {Function} callback A function to call after the modal is opened
     */
    open(modalId, callback) {
       if (this.modal || !modalId) { return; }
+      const modal = document.querySelector(modalId);
+      if (!modal) {
+         console.error(`Modal with id ${modalId} not found`);
+         return;
+      }
       if (callback) { callback(); }
-      this.modal = document.querySelector(modalId);
+      this.modal = modal;
       this.modal.style.animation = "modal-open 0.4s forwards";
       this.modal.style.display = 'flex';
    }
+
    /**
     * Close the current modal
     * @param {Function} callback A function to call after the modal is closed
@@ -35,38 +54,46 @@ class ModalHandler {
    getModal() {
       return this.modal;
    }
+
+   /**
+    * Setup event listeners for modal openers
+    */
+   setupModalOpeners() {
+      document.body.addEventListener('click', (event) => {
+         const opener = event.target.closest('.modal-opener');
+         if (opener) {
+            const target = opener.getAttribute('modal-target');
+            this.open(`div#${target}`);
+         }
+      });
+   }
+
+   /**
+    * Setup event listeners for modal closers
+    */
+   setupModalClosers() {
+      document.body.addEventListener('click', (event) => {
+         const closer = event.target.closest('.modal-closer');
+         if (closer && this.modal?.contains(closer)) {
+            this.close();
+         }
+      });
+   }
+
+   /**
+    * Setup custom event listeners for opening and closing modals
+    */
+   setupCustomEvents() {
+      document.addEventListener('openModal', (event) => {
+         const { target, callback } = event.detail;
+         this.open(`div#${target}`, callback);
+      });
+
+      document.addEventListener('closeCurrentModal', (event) => {
+         const { callback } = event.detail;
+         this.close(callback);
+      });
+   }
 }
 
-window.addEventListener('load', () => {
-   const ModalHandlerInstance = new ModalHandler();
-   //////////////// ModalOpener //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   document.querySelectorAll('.modal-opener').forEach((opener) => {
-      opener.addEventListener('click', () => {
-         const target = opener.getAttribute('modal-target');
-         ModalHandlerInstance.open(`div#${target}`);
-      });
-   });
-   //////////////// openModal event //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   document.addEventListener('openModal', (opener) => {
-      if (opener.detail.callback) {
-         ModalHandlerInstance.open(`div#${opener.detail.target}`, opener.detail.callback);
-      } else {
-         ModalHandlerInstance.open(`div#${opener.detail.target}`);
-      }
-   });
-   //////////////// modalCloser //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   document.querySelectorAll('.modal-closer').forEach((closer) => {
-      closer.addEventListener('click', () => {
-         if (!ModalHandlerInstance.getModal().contains(closer)) { return; }
-         ModalHandlerInstance.close();
-      });
-   });
-   //////////////// closeCurrentModal event //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   document.addEventListener('closeCurrentModal', (closer) => {
-      if (closer.detail) {
-         ModalHandlerInstance.close(closer.detail.callback);
-      } else {
-         ModalHandlerInstance.close();
-      }
-   });
-});
+const ModalHandlerInstance = new ModalHandler();
