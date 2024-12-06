@@ -97,6 +97,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             exit();
          }
 
+         if ($party_info['duplicateBlocked'] == 1) {
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, "https://api.spotify.com/v1/me/player/queue");
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_HTTPHEADER, [$party_info['auth']]);
+            $response = curl_exec($curl);
+
+            if ($response === false) {
+               http_response_code(200);
+               echo json_encode(['success' => false]);
+               exit();
+            }
+
+            $responseData = json_decode($response, true);
+
+            if (count($responseData['queue']) > 0) {
+               $duplicate = false;
+               foreach ($responseData['queue'] as $item) {
+                  if ($item['uri'] === $_POST['songId']) {
+                     $duplicate = true;
+                     break;
+                  }
+               }
+
+               if ($duplicate) {
+                  http_response_code(200);
+                  echo json_encode(['success' => true, 'duplicate' => true]);
+                  exit();
+               }
+            }
+         }
+
          $curl = curl_init();
          curl_setopt($curl, CURLOPT_URL, "https://api.spotify.com/v1/me/player/queue?uri=" . $_POST['songId']);
          curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -108,10 +140,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
          if ($responseCode !== 200) {
             http_response_code(200);
+            echo json_encode(['success' => false]);
             exit();
          }
 
          http_response_code(200);
+         echo json_encode(['success' => true, 'duplicate' => false]);
          break;
          //////////////// default //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       default:
@@ -132,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
  */
 function getPartyInfo($conn, $partyId)
 {
-   $stmt = $conn->prepare("SELECT access_token, explicit FROM parties WHERE party_id = ?");
+   $stmt = $conn->prepare("SELECT access_token, explicit, duplicate_blocked FROM parties WHERE party_id = ?");
    $stmt->bind_param("s", $partyId);
    $stmt->execute();
 
@@ -152,5 +186,5 @@ function getPartyInfo($conn, $partyId)
 
    $stmt->close();
    $conn->close();
-   return ['auth' => "Authorization: Bearer " . $row['access_token'], 'explicit' => $row['explicit']];
+   return ['auth' => "Authorization: Bearer " . $row['access_token'], 'explicit' => $row['explicit'], 'duplicateBlocked' => $row['duplicate_blocked']];
 }
