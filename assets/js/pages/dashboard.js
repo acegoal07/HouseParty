@@ -110,7 +110,7 @@ window.addEventListener('load', () => {
          headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
          },
-         body: `type=createParty&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&partyEndsIn=${document.querySelector('input#party-duration').value}&explicit=${document.querySelector('input#explicit-allowed').checked ? 1 : 0}$&duplicateBlocker=${document.querySelector('input#duplicate-blocker').checked ? 1 : 0}`
+         body: `type=createParty&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&partyEndsIn=${document.querySelector('input#party-duration').value}&explicit=${document.querySelector('input#explicit-allowed').checked ? 1 : 0}&duplicateBlocker=${document.querySelector('input#duplicate_blocker').checked ? 1 : 0}`
       }).then(response => response.json()).then(data => {
          if (data.success) {
             window.location.reload();

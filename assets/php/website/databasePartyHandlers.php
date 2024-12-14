@@ -224,6 +224,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          http_response_code(200);
          echo json_encode(['success' => true]);
          break;
+         //////////////// updatePartyDuplicateBlocker //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      case 'updatePartyDuplicateBlocker':
+         if (!isset($_POST['hostId']) || !isset($_POST['refreshToken'])  || !isset($_POST['duplicateBlocker'])) {
+            http_response_code(400);
+            exit();
+         }
+
+         $stmt = $conn->prepare("UPDATE parties SET duplicate_blocker = ? WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
+         $stmt->bind_param("sss", $_POST['duplicateBlocker'], $_POST['hostId'], $_POST['refreshToken']);
+         $stmt->execute();
+
+         if ($stmt->error) {
+            http_response_code(500);
+            exit();
+         }
+
+         if ($stmt->affected_rows === 0) {
+            http_response_code(400);
+            exit();
+         }
+
+         http_response_code(200);
+         echo json_encode(['success' => true]);
+         break;
          //////////////// extendPartyDuration //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       case 'extendPartyDuration':
          if (!isset($_POST['hostId']) || !isset($_POST['refreshToken']) || !isset($_POST['extendBy'])) {
