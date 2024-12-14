@@ -96,6 +96,18 @@
                   <span class="custom-checkbox"></span>
                </label>
             </div>
+            <div class="form-group">
+               <label class="custom-checkbox-container">Block duplicate songs
+                  <input type="checkbox" id="duplicate_blocker" name="duplicate-blocker">
+                  <span class="custom-checkbox"></span>
+               </label>
+            </div>
+            <div class="form-group">
+               <label class="custom-checkbox-container">I agree to only use this service for personal use only
+                  <input type="checkbox" name="explicit-allowed" required>
+                  <span class="custom-checkbox"></span>
+               </label>
+            </div>
             <button class="btn btn-primary m-top-15" type="submit">Create party</button>
          </form>
          <div class="btn-container hidden" id="manage-party-buttons">
@@ -112,7 +124,9 @@
             <button class="btn btn-primary modal-opener" modal-target="extend-party-modal" type="button">Extend
                party</button>
             <button class="btn hidden" type="button" id="disable-explicit-button">Disable Explicit</button>
-            <button class="btn hidden" type="button" id="enable-explicit-button">Enable Explicit</button>
+            <button class="btn hidden" type="button" id="enable-explicit-button">Enable Explicit</button> 
+            <button class="btn hidden" type="button" id="disable-duplicate-button">Disable Duplicate Blocker</button>
+            <button class="btn hidden" type="button" id="enable-duplicate-button">Enable Duplicate Blocker</button>
             <button class="btn btn-primary modal-opener" modal-target="confirm-end-party-modal" type="button">End
                party</button>
          </div>

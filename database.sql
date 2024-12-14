@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 06, 2024 at 02:30 AM
+-- Generation Time: Dec 14, 2024 at 12:52 AM
 -- Server version: 8.0.40
 -- PHP Version: 8.3.14
 
@@ -35,7 +35,7 @@ CREATE TABLE `parties` (
   `token_expires_at` datetime NOT NULL,
   `party_expires_at` datetime NOT NULL,
   `explicit` tinyint(1) NOT NULL DEFAULT '0',
-  `duplicate_blocked` tinyint NOT NULL DEFAULT '0'
+  `duplicate_blocker` tinyint NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -47,6 +47,14 @@ CREATE TABLE `parties` (
 --
 ALTER TABLE `parties`
   ADD PRIMARY KEY (`party_id`);
+
+DELIMITER $$
+--
+-- Events
+--
+CREATE DEFINER=`root`@`localhost` EVENT `autoClearExpiredSessions` ON SCHEDULE EVERY 1 SECOND STARTS '2024-10-11 15:10:57' ON COMPLETION NOT PRESERVE ENABLE DO DELETE FROM parties WHERE party_expires_at <= UTC_TIMESTAMP() + INTERVAL 1 HOUR$$
+
+DELIMITER ;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

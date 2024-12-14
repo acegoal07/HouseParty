@@ -298,15 +298,14 @@ select:focus {
 }
 
 .custom-checkbox-container {
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
+   display: block;
    position: relative;
-   padding-left: 0;
+   padding-left: 35px;
+   margin-bottom: 15px;
    cursor: pointer;
+   font-size: 18px;
    -webkit-user-select: none;
    user-select: none;
-   gap: 0.5rem;
 }
 
 .custom-checkbox-container input {
@@ -318,20 +317,27 @@ select:focus {
 }
 
 .custom-checkbox {
-   position: relative;
-   height: 30px;
-   width: 30px;
+   position: absolute;
+   top: 0;
+   left: 0;
+   height: 25px;
+   width: 25px;
    background-color: var(--secondary-color-hover);
-   border-radius: 4px;
    -o-transition: background-color 0.2s ease;
    -ms-transition: background-color 0.2s ease;
    -moz-transition: background-color 0.2s ease;
    -webkit-transition: background-color 0.2s ease;
    transition: background-color 0.2s ease;
+   border-radius: 4px;
 }
 
 .custom-checkbox-container input:checked~.custom-checkbox {
    background-color: var(--primary-color);
+}
+
+.custom-checkbox-container:hover .custom-checkbox::after {
+   display: block;
+   border-color: var(--secondary-color);
 }
 
 .custom-checkbox:after {
@@ -344,28 +350,34 @@ select:focus {
    display: block;
 }
 
-.custom-checkbox-container:hover .custom-checkbox::after {
-   display: block;
-   border-color: var(--secondary-color);
-}
-
 .custom-checkbox-container .custom-checkbox:after {
-   left: 8px;
-   top: 1px;
-   width: 10px;
-   height: 18px;
-   border: solid black;
-   border-width: 0 4px 4px 0;
-   -webkit-transform: rotate(45deg);
-   -ms-transform: rotate(45deg);
-   -moz-transform: rotate(45deg);
-   -o-transform: rotate(45deg);
+   left: 9px;
+   top: 5px;
+   width: 5px;
+   height: 10px;
+   border: solid var(--secondary-color);
+   border-width: 0 3px 3px 0;
    transform: rotate(45deg);
 }
 
-.custom-checkbox-container input:focus+.custom-checkbox {
-   outline: 2px solid #2196F3;
-   outline-offset: 2px;
+@media (max-width: 600px) {
+   .custom-checkbox-container {
+      font-size: 16px;
+      padding-left: 35px;
+   }
+
+   .custom-checkbox {
+      height: 25px;
+      width: 25px;
+   }
+
+   .custom-checkbox-container .custom-checkbox:after {
+      left: 9px;
+      top: 5px;
+      width: 5px;
+      height: 10px;
+      border-width: 0 3px 3px 0;
+   }
 }
 
 .input-btn-form {

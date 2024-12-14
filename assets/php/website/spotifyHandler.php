@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             exit();
          }
 
-         if ($party_info['duplicateBlocked'] == 1) {
+         if ($party_info['duplicateBlocker'] == 1) {
             $curl = curl_init();
             curl_setopt($curl, CURLOPT_URL, "https://api.spotify.com/v1/me/player/queue");
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -166,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
  */
 function getPartyInfo($conn, $partyId)
 {
-   $stmt = $conn->prepare("SELECT access_token, explicit, duplicate_blocked FROM parties WHERE party_id = ?");
+   $stmt = $conn->prepare("SELECT access_token, explicit, duplicate_blocker FROM parties WHERE party_id = ?");
    $stmt->bind_param("s", $partyId);
    $stmt->execute();
 
@@ -186,5 +186,5 @@ function getPartyInfo($conn, $partyId)
 
    $stmt->close();
    $conn->close();
-   return ['auth' => "Authorization: Bearer " . $row['access_token'], 'explicit' => $row['explicit'], 'duplicateBlocked' => $row['duplicate_blocked']];
+   return ['auth' => "Authorization: Bearer " . $row['access_token'], 'explicit' => $row['explicit'], 'duplicateBlocker' => $row['duplicate_blocker']];
 }
