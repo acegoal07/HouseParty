@@ -85,13 +85,21 @@ class ModalHandler {
     */
    setupCustomEvents() {
       document.addEventListener('openModal', (event) => {
-         const { target, callback } = event.detail;
-         this.open(`div#${target}`, callback);
+         if (event.detail) {
+            const { target, callback } = event.detail;
+            this.open(`div#${target}`, callback);
+         } else {
+            this.open(`div#${target}`);
+         }
       });
 
       document.addEventListener('closeCurrentModal', (event) => {
-         const { callback } = event.detail;
-         this.close(callback);
+         if (event.detail) {
+            const { callback } = event.detail;
+            this.close(callback);
+         } else {
+            this.close();
+         }
       });
    }
 }

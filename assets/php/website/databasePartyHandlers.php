@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             exit();
          }
 
-         $stmt = $conn->prepare("SELECT explicit, party_id, party_expires_at, refresh_token FROM parties WHERE host_id = ? COLLATE utf8_bin");
+         $stmt = $conn->prepare("SELECT explicit, duplicate_blocker, party_id, party_expires_at, refresh_token FROM parties WHERE host_id = ? COLLATE utf8_bin");
          $stmt->bind_param("s", $_GET['hostId']);
          $stmt->execute();
 
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                echo json_encode(['partyExists' => true, 'refreshTokenValid' => false]);
                exit();
             }
-            echo json_encode(['partyExists' => true, 'refreshTokenValid' => true, 'explicit' => $row['explicit'], 'partyId' => $row['party_id'], 'partyExpiresAt' => $row['party_expires_at']]);
+            echo json_encode(['partyExists' => true, 'refreshTokenValid' => true, 'explicit' => $row['explicit'], 'duplicateBlocker' => $row['duplicate_blocker'], 'partyId' => $row['party_id'], 'partyExpiresAt' => $row['party_expires_at']]);
          } else {
             echo json_encode(['partyExists' => false, 'refreshTokenValid' => false]);
          }
@@ -81,7 +81,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
    switch ($_POST['type']) {
          //////////////// createParty //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       case 'createParty':
-         if (!isset($_POST['hostId']) || !isset($_POST['refreshToken']) || !isset($_POST['partyEndsIn']) || !isset($_POST['explicit'])) {
+         if (!isset($_POST['hostId']) || !isset($_POST['refreshToken']) || !isset($_POST['partyEndsIn']) || !isset($_POST['explicit']) || !isset($_POST['duplicateBlocker'])) {
+            http_response_code(400);
+            exit();
+         }
+
+         if (!verifyRefreshToken($_POST['refreshToken'])) {
+            http_response_code(400);
+            exit();
+         }
+
+         $stmt = $conn->prepare("SELECT * FROM parties WHERE host_id = ? COLLATE utf8_bin");
+         $stmt->bind_param("s", $_POST['hostId']);
+         $stmt->execute();
+
+         if ($stmt->error) {
+            http_response_code(500);
+            exit();
+         }
+
+         $result = $stmt->get_result();
+
+         if ($result->num_rows > 0) {
             http_response_code(400);
             exit();
          }
@@ -111,7 +132,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded', 'Authorization: Basic ' . base64_encode($spotifyClientId . ':' .  $spotifyClientSecret)]);
          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
          $response = curl_exec($ch);
+         $responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
          curl_close($ch);
+
+         if ($responseCode === 403) {
+            http_response_code(403);
+            exit();
+         }
 
          if (curl_errno($ch)) {
             echo 'Error:' . curl_error($ch);
@@ -137,8 +164,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          $partyExpiresAt->setTimestamp(time() + $_POST['partyEndsIn'] * 3600);
          $partyExpiresAtFormatted = $partyExpiresAt->format($timestamp_formatted);
 
-         $stmt = $conn->prepare("INSERT INTO parties (party_id, host_id, access_token, refresh_token, party_expires_at, token_expires_at, explicit) VALUES (?, ?, ?, ?, ?, ?, ?)");
-         $stmt->bind_param("sssssss", $partyId, $_POST['hostId'], $accessToken, $_POST['refreshToken'], $partyExpiresAtFormatted, $tokenExpiresAtFormatted, $_POST['explicit']);
+         $stmt = $conn->prepare("INSERT INTO parties (party_id, host_id, access_token, refresh_token, party_expires_at, token_expires_at, explicit, duplicate_blocker) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+         $stmt->bind_param("ssssssss", $partyId, $_POST['hostId'], $accessToken, $_POST['refreshToken'], $partyExpiresAtFormatted, $tokenExpiresAtFormatted, $_POST['explicit'], $_POST['duplicateBlocker']);
          $stmt->execute();
 
          if ($stmt->error) {
@@ -182,6 +209,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
          $stmt = $conn->prepare("UPDATE parties SET explicit = ? WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
          $stmt->bind_param("sss", $_POST['explicit'], $_POST['hostId'], $_POST['refreshToken']);
+         $stmt->execute();
+
+         if ($stmt->error) {
+            http_response_code(500);
+            exit();
+         }
+
+         if ($stmt->affected_rows === 0) {
+            http_response_code(400);
+            exit();
+         }
+
+         http_response_code(200);
+         echo json_encode(['success' => true]);
+         break;
+         //////////////// updatePartyDuplicateBlocker //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      case 'updatePartyDuplicateBlocker':
+         if (!isset($_POST['hostId']) || !isset($_POST['refreshToken'])  || !isset($_POST['duplicateBlocker'])) {
+            http_response_code(400);
+            exit();
+         }
+
+         $stmt = $conn->prepare("UPDATE parties SET duplicate_blocker = ? WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
+         $stmt->bind_param("sss", $_POST['duplicateBlocker'], $_POST['hostId'], $_POST['refreshToken']);
          $stmt->execute();
 
          if ($stmt->error) {
@@ -265,4 +316,20 @@ function generatePartyId()
       $randomString .= $characters[rand(0, $charactersLength - 1)];
    }
    return $randomString;
+}
+
+//////////////// verifyRefreshToken //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Verify that the refresh token matches the expected format
+ * @param string $refreshToken The refresh token to verify
+ * @return bool True if the refresh token is valid, false otherwise
+ */
+function verifyRefreshToken($refreshToken)
+{
+   // Define the expected pattern for a refresh token
+   $pattern = '/^[A-Za-z0-9-_]{40,}$/';
+
+   // Check if the refresh token matches the pattern
+   return preg_match($pattern, $refreshToken) === 1;
 }

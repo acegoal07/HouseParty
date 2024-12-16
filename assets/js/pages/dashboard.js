@@ -9,6 +9,8 @@ window.addEventListener('load', () => {
    //////////////// Variables //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    const disableExplicitButton = document.querySelector('button#disable-explicit-button');
    const enableExplicitButton = document.querySelector('button#enable-explicit-button');
+   const disableDuplicateBlockerButton = document.querySelector('button#disable-duplicate-blocker-button');
+   const enableDuplicateBlockerButton = document.querySelector('button#enable-duplicate-blocker-button');
    const loadingIcon = document.querySelector('div#loading-icon');
    //////////////// Countdown timer //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    let partyExpiresAt;
@@ -70,6 +72,13 @@ window.addEventListener('load', () => {
                if (!disableExplicitButton.classList.contains('hidden')) { disableExplicitButton.classList.add('hidden'); }
                enableExplicitButton.classList.remove('hidden');
             }
+            if (data.duplicateBlocker) {
+               if (!enableDuplicateBlockerButton.classList.contains('hidden')) { enableDuplicateBlockerButton.classList.add('hidden'); }
+               disableDuplicateBlockerButton.classList.remove('hidden');
+            } else {
+               if (!disableDuplicateBlockerButton.classList.contains('hidden')) { disableDuplicateBlockerButton.classList.add('hidden'); }
+               enableDuplicateBlockerButton.classList.remove('hidden');
+            }
             if (!document.querySelector('form#start-party-form').classList.contains('hidden')) { document.querySelector('form#start-party-form').classList.add('hidden'); }
             document.querySelector('div#manage-party-buttons').classList.remove('hidden');
          } else {
@@ -101,7 +110,7 @@ window.addEventListener('load', () => {
          headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
          },
-         body: `type=createParty&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&partyEndsIn=${document.querySelector('input#party-duration').value}&explicit=${document.querySelector('input#explicit-allowed').checked ? 1 : 0}`
+         body: `type=createParty&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&partyEndsIn=${document.querySelector('input#party-duration').value}&explicit=${document.querySelector('input#explicit-allowed').checked ? 1 : 0}&duplicateBlocker=${document.querySelector('input#duplicate_blocker').checked ? 1 : 0}`
       }).then(response => response.json()).then(data => {
          if (data.success) {
             window.location.reload();
@@ -170,6 +179,44 @@ window.addEventListener('load', () => {
          if (data.success) {
             enableExplicitButton.classList.add('hidden');
             disableExplicitButton.classList.remove('hidden');
+            loadingIcon.classList.add('hidden');
+         }
+      });
+   });
+
+   //////////////// Duplicate blocker enable/disable buttons //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Handle the button press for disabling duplicate blocker
+   disableDuplicateBlockerButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      loadingIcon.classList.remove('hidden');
+      fetch(`assets/php/website/databasePartyHandlers.php`, {
+         method: 'post',
+         headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+         },
+         body: `type=updatePartyDuplicateBlocker&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&duplicateBlocker=0`
+      }).then(response => response.json()).then(data => {
+         if (data.success) {
+            disableDuplicateBlockerButton.classList.add('hidden');
+            enableDuplicateBlockerButton.classList.remove('hidden');
+            loadingIcon.classList.add('hidden');
+         }
+      });
+   });
+   // Handle the button press for enabling duplicate blocker
+   enableDuplicateBlockerButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      loadingIcon.classList.remove('hidden');
+      fetch(`assets/php/website/databasePartyHandlers.php`, {
+         method: 'post',
+         headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+         },
+         body: `type=updatePartyDuplicateBlocker&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&duplicateBlocker=1`
+      }).then(response => response.json()).then(data => {
+         if (data.success) {
+            enableDuplicateBlockerButton.classList.add('hidden');
+            disableDuplicateBlockerButton.classList.remove('hidden');
             loadingIcon.classList.add('hidden');
          }
       });
