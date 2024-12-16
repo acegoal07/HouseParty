@@ -86,29 +86,31 @@
          <p class="description">Where to create and manage your parties</p>
          <form class="m-15 hidden" id="start-party-form">
             <div class="form-group">
-               <label for="party-duration">Party Duration in hours</label>
                <input type="number" inputmode="numeric" id="party-duration" name="party-duration" required min="1"
                   max="24" value="4">
+               <label for="party-duration">Party Duration in hours</label>
             </div>
             <div class="form-group">
-               <label class="custom-checkbox-container">Allow explicit songs
+               <label class="custom-checkbox-container" for="explicit-allowed">Allow explicit songs
                   <input type="checkbox" id="explicit-allowed" name="explicit-allowed">
                   <span class="custom-checkbox"></span>
                </label>
             </div>
             <div class="form-group">
-               <label class="custom-checkbox-container">Block duplicate songs
+               <label class="custom-checkbox-container" for="duplicate_blocker">Block duplicate songs
                   <input type="checkbox" id="duplicate_blocker" name="duplicate-blocker">
                   <span class="custom-checkbox"></span>
                </label>
             </div>
             <div class="form-group">
-               <label class="custom-checkbox-container">I agree to only use this service for personal use only
-                  <input type="checkbox" name="explicit-allowed" required>
-                  <span class="custom-checkbox"></span>
+               <label class="custom-checkbox-container">
+                  I agree to only use this app for personal use
+                  <input type="checkbox" name="personal-only" id="personal-only" required
+                     title="I agree to only use this app for personal use">
+                  <span class="custom-checkbox" aria-hidden="true"></span>
                </label>
             </div>
-            <button class="btn btn-primary m-top-15" type="submit">Create party</button>
+            <button class="btn btn-primary" type="submit">Create party</button>
          </form>
          <div class="btn-container hidden" id="manage-party-buttons">
             <div class="expires-at-container">
@@ -120,7 +122,8 @@
             </div>
             <button class="btn modal-opener" modal-target="how-it-works-modal" type="button">How this
                works</button>
-            <button class="btn btn-primary modal-opener" modal-target="join-party-info-modal" type="button">Show join info</button>
+            <button class="btn btn-primary modal-opener" modal-target="join-party-info-modal" type="button">Show join
+               info</button>
             <button class="btn modal-opener" modal-target="extend-party-modal" type="button">Extend
                party</button>
             <button class="btn btn-primary hidden" type="button" id="disable-explicit-button">Disable Explicit</button>
