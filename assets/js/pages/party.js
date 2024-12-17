@@ -35,6 +35,8 @@ window.addEventListener('load', () => {
                searchFunction();
             }
          }
+      }).catch(error => {
+         console.error('Page Polling Error:', error);
       });
    }
    pagePolling();
@@ -108,7 +110,7 @@ window.addEventListener('load', () => {
                // Append the result info container to the result container
                resultContainer.appendChild(resultInfoContainer);
 
-               // Create the an svg icon without using inner html
+               // Create the add icon
                const addIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                addIcon.setAttribute('class', 'search-results-add-song-icon');
                addIcon.setAttribute('viewBox', '0 0 512 512');
@@ -118,6 +120,7 @@ window.addEventListener('load', () => {
                path.setAttribute('d', 'M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z');
                addIcon.appendChild(path);
 
+               // Add event listener to the add icon
                addIcon.addEventListener('click', () => {
                   loadingIcon.classList.remove('hidden');
                   fetch(`assets/php/website/spotifyHandler.php`, {
@@ -164,8 +167,9 @@ window.addEventListener('load', () => {
             }
          }
          loadingIcon.classList.add('hidden');
+      }).catch(error => {
+         console.error('Search Error:', error);
       });
    }
-
    loadingIcon.classList.add('hidden');
 });

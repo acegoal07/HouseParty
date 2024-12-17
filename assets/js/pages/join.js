@@ -18,6 +18,8 @@ window.addEventListener('load', () => {
             noSessionFoundError.style.display = 'block';
          }
          loadingIcon.classList.add("hidden");
+      }).catch(error => {
+         console.error('Join Error:', error);
       });
       sessionCodeInput.value = '';
    });

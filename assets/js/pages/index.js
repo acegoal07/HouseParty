@@ -1,15 +1,22 @@
 window.addEventListener('load', () => {
    const spotifyLoginButton = document.querySelector('button#spotify-login-button');
    const logoutButton = document.querySelector('button#logout-button');
+   const goToDashboardButton = document.querySelector('a#go-to-dashboard-button');
    // Check if the user is already logged in and display the appropriate button
-   if (getCookie('refresh_token') !== null && getCookie('host_id') !== null) {
-      document.querySelector('a#go-to-dashboard-button').classList.remove('hidden');
-      logoutButton.classList.remove('hidden');
-   } else {
-      deleteCookie({ name: 'host_id' });
-      deleteCookie({ name: 'refresh_token' });
-      spotifyLoginButton.classList.remove('hidden');
+   function checkCookies() {
+      if (getCookie('refresh_token') !== null && getCookie('host_id') !== null) {
+         goToDashboardButton.classList.remove('hidden');
+         logoutButton.classList.remove('hidden');
+      } else {
+         deleteCookie({ name: 'host_id' });
+         deleteCookie({ name: 'refresh_token' });
+         goToDashboardButton.classList.add('hidden');
+         logoutButton.classList.add('hidden');
+         spotifyLoginButton.classList.remove('hidden');
+      }
    }
+   checkCookies();
+   setInterval(checkCookies, 1000);
    //Extend cookies periodically
    function extendCookiesPeriodically() {
       extendCookie({ name: 'refresh_token', days: 1 });
