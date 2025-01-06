@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="../../images/HousePartyLogo.png" width="350" height="350"/>
-</p>
-
 # House Party - Website API Documentation
 
 Go back to the main [README](../../../README.md)
