@@ -12,15 +12,16 @@ document.addEventListener('DOMContentLoaded', () => {
          } else {
             copyText = button.getAttribute('copy-data');
          }
-
+         // Remove any leading or trailing whitespace
+         copyText = copyText.trim();
          // If the text exists, copy it to the clipboard and show a copy message
-         if (copyText) {
+         if (copyText !== '' && copyText) {
             navigator.clipboard.writeText(copyText).then(() => {
                if (!document.querySelector('div.copy-toast')) {
                   showCopyMessage();
                }
-            }).catch(err => {
-               console.error('Failed to copy: ', err);
+            }).catch(error => {
+               console.error('Failed to copy: ', error);
             });
          }
       });

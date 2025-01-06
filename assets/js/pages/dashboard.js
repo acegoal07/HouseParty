@@ -1,9 +1,5 @@
 window.addEventListener('load', () => {
-   if (!getCookie('refresh_token') || !getCookie('host_id')) {
-      deleteCookie({ name: 'refresh_token' });
-      deleteCookie({ name: 'host_id' });
-      window.location.href = '/houseparty/';
-   }
+   //////////////// Set default values //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    document.querySelector('input#extend-duration').value = 4;
    document.querySelector('input#party-duration').value = 4;
    //////////////// Variables //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,6 +30,13 @@ window.addEventListener('load', () => {
    }
    //////////////// Page polling //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    function pagePolling() {
+      // Check if the user is logged in
+      if (!getCookie('refresh_token') || !getCookie('host_id')) {
+         deleteCookie({ name: 'refresh_token' });
+         deleteCookie({ name: 'host_id' });
+         window.location.href = '/houseparty/';
+      }
+      // Check if the party exists and retrieve the required data
       const urlParams = new URLSearchParams({
          type: 'checkPartyExistsHost',
          hostId: `${getCookie('host_id')}`,
@@ -66,17 +69,17 @@ window.addEventListener('load', () => {
                updateTimestamp();
             }
             if (data.explicit) {
-               if (!enableExplicitButton.classList.contains('hidden')) { enableExplicitButton.classList.add('hidden'); }
+               enableExplicitButton.classList.add('hidden');
                disableExplicitButton.classList.remove('hidden');
             } else {
-               if (!disableExplicitButton.classList.contains('hidden')) { disableExplicitButton.classList.add('hidden'); }
+               disableExplicitButton.classList.add('hidden');
                enableExplicitButton.classList.remove('hidden');
             }
             if (data.duplicateBlocker) {
-               if (!enableDuplicateBlockerButton.classList.contains('hidden')) { enableDuplicateBlockerButton.classList.add('hidden'); }
+               enableDuplicateBlockerButton.classList.add('hidden');
                disableDuplicateBlockerButton.classList.remove('hidden');
             } else {
-               if (!disableDuplicateBlockerButton.classList.contains('hidden')) { disableDuplicateBlockerButton.classList.add('hidden'); }
+               disableDuplicateBlockerButton.classList.add('hidden');
                enableDuplicateBlockerButton.classList.remove('hidden');
             }
             if (!document.querySelector('form#start-party-form').classList.contains('hidden')) { document.querySelector('form#start-party-form').classList.add('hidden'); }
@@ -89,6 +92,8 @@ window.addEventListener('load', () => {
          if (!loadingIcon.classList.contains('hidden')) {
             loadingIcon.classList.add('hidden');
          }
+      }).catch(error => {
+         console.error('Page Polling Error:', error);
       });
    }
    pagePolling();
@@ -113,6 +118,7 @@ window.addEventListener('load', () => {
          body: `type=createParty&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&partyEndsIn=${document.querySelector('input#party-duration').value}&explicit=${document.querySelector('input#explicit-allowed').checked ? 1 : 0}&duplicateBlocker=${document.querySelector('input#duplicate_blocker').checked ? 1 : 0}`
       }).then(response => response.json()).then(data => {
          if (data.success) {
+            event.target.reset();
             window.location.reload();
             loadingIcon.classList.add('hidden');
          } else {
@@ -140,6 +146,7 @@ window.addEventListener('load', () => {
                detail: {
                   callback: () => {
                      loadingIcon.classList.remove('hidden');
+                     event.target.reset();
                   }
                }
             }));
