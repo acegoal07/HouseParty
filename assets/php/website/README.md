@@ -1,12 +1,10 @@
-<p align="center">
-  <img src="../../images/HousePartyLogo.png" width="350" height="350"/>
-</p>
+# House Party - Website API Documentation
 
-# House Party - API Documentation
+Go back to the main [README](../../../README.md)
 
 ## Contents
 
-- [House Party - API Documentation](#house-party---api-documentation)
+- [House Party - Website API Documentation](#house-party---website-api-documentation)
   - [Contents](#contents)
   - [Database API](#database-api)
     - [`checkPartyExistsHost`](#checkpartyexistshost)
@@ -14,6 +12,7 @@
     - [`createParty`](#createparty)
     - [`deleteParty`](#deleteparty)
     - [`updatePartyExplicit`](#updatepartyexplicit)
+    - [`updatePartyDuplicateBlocker`](#updatepartyduplicateblocker)
     - [`extendPartyDuration`](#extendpartyduration)
   - [Spotify Middleman API](#spotify-middleman-api)
     - [`getCurrentlyPlaying`](#getcurrentlyplaying)
@@ -25,6 +24,8 @@
 ## Database API
 
 This API manages all interactions with the website's database.
+
+<hr>
 
 ### `checkPartyExistsHost`
 
@@ -45,6 +46,8 @@ Checks whether a party exists for a given host ID and returns data about it if i
 - `partyId` - The ID of the party.
 - `partyExpiresAt` - The expiration time of the party.
 
+<hr>
+
 ### `partyExistsByPartyId`
 
 Checks whether a party exists for a given party ID and returns data about it if it does.
@@ -59,6 +62,8 @@ Checks whether a party exists for a given party ID and returns data about it if 
 
 - `partyExists` - Boolean indicating if the party exists.
 - `explicit` - Boolean indicating if the party has explicit content.
+
+<hr>
 
 ### `createParty`
 
@@ -77,6 +82,8 @@ Creates a new party in the database.
 
 - `success` - Boolean indicating if the party was successfully created.
 
+<hr>
+
 ### `deleteParty`
 
 Deletes a party from the database.
@@ -93,6 +100,8 @@ Deletes a party from the database.
 
 - `success` - Boolean indicating if the party was successfully deleted.
 
+<hr>
+
 ### `updatePartyExplicit`
 
 Updates the explicit setting of a party.
@@ -108,6 +117,26 @@ Updates the explicit setting of a party.
 **Returns:**
 
 - `success` - Boolean indicating if the explicit setting was successfully updated.
+
+<hr>
+
+### `updatePartyDuplicateBlocker`
+
+Updates the duplicate blocker setting of a party.
+
+**Request Type:** `POST`
+
+**Inputs:**
+
+- `partyId` - The ID of the party.
+- `refreshToken` - The refresh token for authentication.
+- `duplicateBlocker` - Boolean indicating the new duplicate blocker setting.
+
+**Returns:**
+
+- `success` - Boolean indicating if the duplicate blocker setting was successfully updated.
+
+<hr>
 
 ### `extendPartyDuration`
 
@@ -131,6 +160,8 @@ Extends the duration of a party.
 
 This API facilitates interactions with the Spotify API and manages database operations for specific data requirements.
 
+<hr>
+
 ### `getCurrentlyPlaying`
 
 Gets the currently playing song on the hosts Spotify.
@@ -144,6 +175,8 @@ Gets the currently playing song on the hosts Spotify.
 **Returns:**
 
 - `song info` - The song information of the currently playing song.
+
+<hr>
 
 ### `searchSongByName`
 
@@ -161,6 +194,8 @@ Searches for a song by name on Spotify.
 - `totalTracks` - The total number of tracks found.
 - `tracks` - An array of track objects.
 
+<hr>
+
 ### `addSongToQueue`
 
 Adds a song to the queue of the party.
@@ -171,3 +206,8 @@ Adds a song to the queue of the party.
 
 - `partyId` - The ID of the party.
 - `songId` - The ID of the song to add.
+
+**Returns:**
+
+- `success` - Boolean indicating if the song was successfully added to the queue.
+- `duplicate` - Boolean indicating if the song is a duplicate.
