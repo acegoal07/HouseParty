@@ -2,13 +2,13 @@
   <img src="../../images/HousePartyLogo.png" width="350" height="350"/>
 </p>
 
-# House Party - API Documentation
+# House Party - Website API Documentation
 
 Go back to the main [README](../../../README.md)
 
 ## Contents
 
-- [House Party - API Documentation](#house-party---api-documentation)
+- [House Party - Website API Documentation](#house-party---website-api-documentation)
   - [Contents](#contents)
   - [Database API](#database-api)
     - [`checkPartyExistsHost`](#checkpartyexistshost)
