@@ -7,7 +7,7 @@ This is my final year project for computer science in this project I am aiming t
 
 # Documentation
 
-- [Website API documentation](assets/php/website/Readme.md)
+- [Website API documentation](assets/php/website/README.md)
 <!-- - [Server scripts documentation](assets/php/server/Readme.md)
 - [JS utility functions documentation](assets/js/Readme.md) -->
 
