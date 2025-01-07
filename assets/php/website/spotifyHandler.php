@@ -103,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($curl, CURLOPT_HTTPHEADER, [$party_info['auth']]);
             $response = curl_exec($curl);
+            curl_close($curl);
 
             if ($response === false) {
                http_response_code(200);
