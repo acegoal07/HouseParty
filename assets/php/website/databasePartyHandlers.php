@@ -104,6 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
          if ($result->num_rows > 0) {
             http_response_code(400);
+            echo json_encode(['success' => false]);
             exit();
          }
 
@@ -319,7 +320,6 @@ function generatePartyId()
 }
 
 //////////////// verifyRefreshToken //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 /**
  * Verify that the refresh token matches the expected format
  * @param string $refreshToken The refresh token to verify
