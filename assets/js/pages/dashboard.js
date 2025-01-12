@@ -8,6 +8,7 @@ window.addEventListener('load', () => {
    const disableDuplicateBlockerButton = document.querySelector('button#disable-duplicate-blocker-button');
    const enableDuplicateBlockerButton = document.querySelector('button#enable-duplicate-blocker-button');
    const loadingIcon = document.querySelector('div#loading-icon');
+   const startPartyForm = document.querySelector('form#start-party-form');
    //////////////// Countdown timer //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    let partyExpiresAt;
    function updateTimestamp() {
@@ -82,12 +83,12 @@ window.addEventListener('load', () => {
                disableDuplicateBlockerButton.classList.add('hidden');
                enableDuplicateBlockerButton.classList.remove('hidden');
             }
-            if (!document.querySelector('form#start-party-form').classList.contains('hidden')) { document.querySelector('form#start-party-form').classList.add('hidden'); }
+            if (!startPartyForm.classList.contains('hidden')) { startPartyForm.classList.add('hidden'); }
             document.querySelector('div#manage-party-buttons').classList.remove('hidden');
          } else {
             document.dispatchEvent(new Event('closeCurrentModal'));
             if (!document.querySelector('div#manage-party-buttons').classList.contains('hidden')) { document.querySelector('div#manage-party-buttons').classList.add('hidden'); }
-            document.querySelector('form#start-party-form').classList.remove('hidden');
+            startPartyForm.classList.remove('hidden');
          }
          if (!loadingIcon.classList.contains('hidden')) {
             loadingIcon.classList.add('hidden');
@@ -107,7 +108,7 @@ window.addEventListener('load', () => {
    setInterval(extendCookiesPeriodically, 15 * 60 * 1000);
    //////////////// Create party //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Handle the form submission for creating a new party
-   document.querySelector('form#start-party-form').addEventListener('submit', (event) => {
+   startPartyForm.addEventListener('submit', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hidden');
       fetch(`assets/php/website/databasePartyHandlers.php`, {
