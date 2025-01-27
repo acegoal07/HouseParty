@@ -210,4 +210,8 @@ Adds a song to the queue of the party.
 **Returns:**
 
 - `success` - Boolean indicating if the song was successfully added to the queue.
-- `duplicate` - Boolean indicating if the song is a duplicate.
+- `responseCode` - A number that signifies what happened with the function.
+  - `code 0:` function failed
+  - `code 1:` song added to queue
+  - `code 2:` song already in queue
+  - `code 3:` Failed to add due to the music not being played
