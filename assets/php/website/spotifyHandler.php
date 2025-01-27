@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
          $responseData = json_decode($response, true);
 
-         if ($responseData['is_playing'] === false || $responseData === null) {
+         if ($responseData === null || $responseData['is_playing'] === false) {
             http_response_code(200);
             echo json_encode(['success' => true, 'responseCode' => 3]);
             exit();
