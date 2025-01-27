@@ -131,30 +131,43 @@ window.addEventListener('load', () => {
                      body: `type=addSongToQueue&songId=${song.uri}&partyId=${sessionCode}`
                   }).then(response => response.json()).then(data => {
                      loadingIcon.classList.add('hidden');
-                     if (data.duplicate && data.success) {
-                        document.dispatchEvent(new CustomEvent('openModal', {
-                           detail: {
-                              target: 'add-to-queue-duplicate-modal',
-                              callback: () => {
-                                 document.querySelector('#add-queue-duplicate-song-name').textContent = `${song.name} by ${artistsList.join(', ')}`;
-                              }
-                           }
-                        }));
-                     } else if (!data.duplicate && data.success) {
-                        document.dispatchEvent(new CustomEvent('openModal', {
-                           detail: {
-                              target: 'add-to-queue-successfully-modal',
-                              callback: () => {
-                                 document.querySelector('#add-queue-successfully-song-name').textContent = `${song.name} by ${artistsList.join(', ')}`;
-                              }
-                           }
-                        }));
-                     } else {
-                        document.dispatchEvent(new CustomEvent('openModal', {
-                           detail: {
-                              target: 'add-to-queue-failed-modal'
-                           }
-                        }));
+                     if (data.success) {
+                        switch (data.responseCode) {
+                           case 1:
+                              document.dispatchEvent(new CustomEvent('openModal', {
+                                 detail: {
+                                    target: 'add-to-queue-successfully-modal',
+                                    callback: () => {
+                                       document.querySelector('#add-queue-successfully-song-name').textContent = `${song.name} by ${artistsList.join(', ')}`;
+                                    }
+                                 }
+                              }));
+                              break;
+                           case 2:
+                              document.dispatchEvent(new CustomEvent('openModal', {
+                                 detail: {
+                                    target: 'add-to-queue-duplicate-modal',
+                                    callback: () => {
+                                       document.querySelector('#add-queue-duplicate-song-name').textContent = `${song.name} by ${artistsList.join(', ')}`;
+                                    }
+                                 }
+                              }));
+                              break;
+                           case 3:
+                              document.dispatchEvent(new CustomEvent('openModal', {
+                                 detail: {
+                                    target: 'add-to-queue-not-playing-modal'
+                                 }
+                              }));
+                              break;
+                           default:
+                              document.dispatchEvent(new CustomEvent('openModal', {
+                                 detail: {
+                                    target: 'add-to-queue-failed-modal'
+                                 }
+                              }));
+                              break;
+                        }
                      }
                   });
                });

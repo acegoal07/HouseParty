@@ -97,6 +97,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             exit();
          }
 
+         $curl = curl_init();
+         curl_setopt($curl, CURLOPT_URL, "https://api.spotify.com/v1/me/player");
+         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+         curl_setopt($curl, CURLOPT_HTTPHEADER, [$party_info['auth']]);
+         $response = curl_exec($curl);
+         curl_close($curl);
+
+         if ($response === false) {
+            http_response_code(200);
+            echo json_encode(['success' => false, 'responseCode' => 0]);
+            exit();
+         }
+
+         $responseData = json_decode($response, true);
+
+         if ($responseData['is_playing'] === false || $responseData === null) {
+            http_response_code(200);
+            echo json_encode(['success' => true, 'responseCode' => 3]);
+            exit();
+         }
+
          if ($party_info['duplicateBlocker'] == 1) {
             $curl = curl_init();
             curl_setopt($curl, CURLOPT_URL, "https://api.spotify.com/v1/me/player/queue");
@@ -107,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
             if ($response === false) {
                http_response_code(200);
-               echo json_encode(['success' => false]);
+               echo json_encode(['success' => false, 'responseCode' => 0]);
                exit();
             }
 
@@ -124,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
                if ($duplicate) {
                   http_response_code(200);
-                  echo json_encode(['success' => true, 'duplicate' => true]);
+                  echo json_encode(['success' => true, 'responseCode' => 2]);
                   exit();
                }
             }
@@ -141,12 +162,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
          if ($responseCode !== 200) {
             http_response_code(200);
-            echo json_encode(['success' => false]);
+            echo json_encode(['success' => false, 'responseCode' => 0]);
             exit();
          }
 
          http_response_code(200);
-         echo json_encode(['success' => true, 'duplicate' => false]);
+         echo json_encode(['success' => true, 'responseCode' => 1]);
          break;
          //////////////// default //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       default:
