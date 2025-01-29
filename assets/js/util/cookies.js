@@ -91,6 +91,6 @@ function extendCookie({ name, days, sameSite = "Strict", httpOnly = false }) {
 
    const value = getCookie(name);
    if (value !== null) {
-      setCookie({ name, value, sameSite, expires: days, httpOnly });
+      setCookie({ name, value, sameSite, httpOnly, expires: days });
    }
 }
