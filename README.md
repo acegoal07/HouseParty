@@ -4,20 +4,17 @@
 
 # House Party - Opening your Spotify queue to your party
 This is my final year project for computer science in this project I am aiming to make a website that allows people to let other people add songs to their spotify playlist without the person needing a spotify account or app installed. This is done by using the Spotify Web API and the website acts as a middleman between the user and the Spotify API.
-
 # Documentation
-
 - PHP
   - [Website API documentation](assets/php/website/README.md)
   - [Server scripts documentation](assets/php/server/README.md)
 - JS
   - [Pages documentation](assets/js/pages/README.md)
   - [Utility documentation](assets/js/util/README.md)
-
 # External Libraries Used
-
 - [Spotify Web API](https://developer.spotify.com/documentation/web-api/)
 - [qr-code.js](https://davidshimjs.github.io/qrcodejs/)
 - [font-awesome](https://fontawesome.com/)
 - [BootStrap Icons](https://getbootstrap.com/)
 - [google fonts](https://fonts.google.com/specimen/Roboto)
+- [dev tools blocker](https://theajack.github.io/disable-devtool/)
