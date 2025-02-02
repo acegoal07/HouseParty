@@ -5,3 +5,4 @@ refresh_token - Token used to refresh the access token after it expires after 1 
 token_expires_at - Timestamp the access token will expire at used to determine when to refresh the access token
 party_expires_at - Timestamp for when the party expires and needs to be closed 
 explicit - Whether or not to allow explicit songs to be added
+duplicate_blocker - whether or not to allow duplicate songs to be added to the queue

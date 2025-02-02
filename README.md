@@ -18,3 +18,13 @@ This is my final year project for computer science in this project I am aiming t
 - [BootStrap Icons](https://getbootstrap.com/)
 - [google fonts](https://fonts.google.com/specimen/Roboto)
 - [dev tools blocker](https://theajack.github.io/disable-devtool/)
+# Database Layout
+- ```parties```
+  - ```party_id``` - Id which is going to be used to join the party (Primary key)
+  - ```host_id``` - The id of the spotify user
+  - ```access_token``` - Token used to send api request for the host
+  - ```refresh_token``` - Token used to refresh the access token after it expires after 1 hour
+  - ```token_expires_at``` - Timestamp the access token will expire at used to determine when to refresh the access token
+  - ```party_expires_at``` - Timestamp for when the party expires and needs to be closed 
+  - ```explicit - Whether``` or not to allow explicit songs to be added
+  - ```duplicate_blocker``` - whether or not to allow duplicate songs to be added to the queue
