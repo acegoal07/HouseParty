@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 14, 2024 at 12:52 AM
--- Server version: 8.0.40
--- PHP Version: 8.3.14
+-- Generation Time: Feb 02, 2025 at 01:44 PM
+-- Server version: 8.0.41
+-- PHP Version: 8.3.15
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,14 +28,14 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `parties` (
-  `party_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `host_id` text NOT NULL,
+  `party_id` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `host_id` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `access_token` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `refresh_token` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `token_expires_at` datetime NOT NULL,
   `party_expires_at` datetime NOT NULL,
   `explicit` tinyint(1) NOT NULL DEFAULT '0',
-  `duplicate_blocker` tinyint NOT NULL DEFAULT '0'
+  `duplicate_blocker` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
