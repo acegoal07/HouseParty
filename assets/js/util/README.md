@@ -16,13 +16,43 @@ Go back to the main [README](../../../README.md)
 
 ## clickToCopy
 
+This is used to make it so the user can copy something to the clipboard. The event for the button is handled automatically
+
+```html
+  <!-- Copy data stored in the attributes of the button -->
+  <button class="btn btn-primary click-to-copy" id="copy-party-url" type="button" copy-data="url">Copy URL</button>
+
+  <!-- Copy the text contents of a specified target -->
+  <p id="url">url</p>
+  <button class="btn btn-primary click-to-copy-target" copy-target="url" type="button">Copy URL</button>
+```
+
 <hr>
 
 ## clickToShare
 
+This is used to make it so the user if available can share something using the native share functionality of device. The event for the button is handled automatically
+
+```html
+  <button class="click-to-share" id="share-party-url" type="button" data-party-url="url">Share URL</button>
+```
+
 <hr>
 
 ## cookies
+
+This is used to set, get, delete and extended the life of cookies on the website
+
+```javascript
+  // Set cookie
+  setCookie(name, value, sameSite = "Strict" | "Lax" | "None", expires = 1, httpOnly = false);
+  // Get cookie
+  getCookie(name);
+  // Delete cookie
+  deleteCookie(name);
+  // Extend cookie life
+  extendCookie(name, days, sameSite = "Strict" | "Lax" | "None", httpOnly = false);
+```
 
 <hr>
 
