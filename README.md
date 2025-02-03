@@ -17,7 +17,6 @@ This is my final year project for computer science in this project I am aiming t
 - [font-awesome](https://fontawesome.com/)
 - [BootStrap Icons](https://getbootstrap.com/)
 - [google fonts](https://fonts.google.com/specimen/Roboto)
-- [dev tools blocker](https://theajack.github.io/disable-devtool/)
 # Database Layout
 - ```parties```
   - ```party_id``` - Id which is going to be used to join the party (Primary key)
