@@ -26,19 +26,19 @@ document.addEventListener('DOMContentLoaded', () => {
          }
       });
    });
-
-   /**
-    * showCopyMessage
-    * Creates a message element and appends it to the body to indicate that the text has been copied
-    */
-   function showCopyMessage() {
-      const message = document.createElement('div');
-      message.className = 'copy-toast';
-      message.textContent = 'Copied!';
-      document.body.appendChild(message);
-
-      setTimeout(() => {
-         message.remove();
-      }, 2500);
-   }
 });
+
+/**
+ * showCopyMessage
+ * Creates a message element and appends it to the body to indicate that the text has been copied
+ */
+function showCopyMessage() {
+   const message = document.createElement('div');
+   message.className = 'copy-toast';
+   message.textContent = 'Copied!';
+   document.body.appendChild(message);
+
+   setTimeout(() => {
+      message.remove();
+   }, 2500);
+}

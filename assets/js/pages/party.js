@@ -103,8 +103,29 @@ window.addEventListener('load', () => {
                // Create the song artist
                const songArtist = document.createElement('p');
                songArtist.className = 'search-results-creators';
-               const artistsList = song.artists.map(artist => artist.name);
-               songArtist.textContent = artistsList.join(', ');
+
+               const maxChars = 30;
+               let charCount = 0;
+               const artistsList = [];
+               let remainingArtistsCount = 0;
+
+               for (let i = 0; i < song.artists.length; i++) {
+                  const artistName = song.artists[i].name;
+                  if (charCount + artistName.length <= maxChars) {
+                     artistsList.push(artistName);
+                     charCount += artistName.length;
+                  } else {
+                     remainingArtistsCount = song.artists.length - i;
+                     break;
+                  }
+               }
+
+               let artistText = artistsList.join(', ');
+               if (remainingArtistsCount > 0) {
+                  artistText += `, and ${remainingArtistsCount} more`;
+               }
+
+               songArtist.textContent = artistText;
                resultInfoContainer.appendChild(songArtist);
 
                // Append the result info container to the result container
