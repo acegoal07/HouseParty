@@ -56,7 +56,6 @@
 html,
 body {
    font-family: 'Roboto', sans-serif;
-   font-size: 16px;
    height: 100%;
    margin: 0;
    padding: 0;
@@ -72,6 +71,13 @@ body {
    background-color: var(--background-color);
    -webkit-backdrop-filter: blur(100px);
    backdrop-filter: blur(100px);
+   font-size: 18px;
+}
+
+@media screen and (max-width: 600px) {
+   body {
+      font-size: 16px;
+   }
 }
 
 main {
@@ -175,7 +181,7 @@ div.loading-icon-container>svg {
 /* BUTTONS */
 a.btn,
 button.btn {
-   padding: 0.7rem;
+   padding: 1rem;
    border-radius: var(--border-radius);
    color: white;
    font-size: 1.2rem;
@@ -190,6 +196,15 @@ button.btn {
    -moz-transition: background-color ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
    -ms-transition: background-color ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
    transition: background-color ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
+}
+
+@media screen and (max-width: 600px) {
+
+   a.btn,
+   button.btn {
+      padding: 0.7rem;
+   }
+
 }
 
 a.btn:hover,
@@ -258,7 +273,7 @@ input[type="text"],
 input[type="password"],
 input[type="number"] {
    text-align: center;
-   padding: 0.7rem;
+   padding: 1rem;
    border-radius: var(--border-radius);
    border: none;
    background-color: var(--secondary-color-hover);
@@ -266,6 +281,16 @@ input[type="number"] {
    font-size: 1.2rem;
    box-shadow: 0 0 10px var(--shadow-color);
    outline: none;
+}
+
+@media screen and (max-width: 600px) {
+
+   input[type="text"],
+   input[type="password"],
+   input[type="number"] {
+      padding: 0.7rem;
+   }
+
 }
 
 input[type="number"] {
@@ -587,6 +612,7 @@ div#party-qrcode {
 .search-results-container {
    display: flex;
    flex-direction: column;
+   margin: auto;
    margin-top: 1rem;
    padding: 10px;
    width: 100%;
@@ -598,6 +624,12 @@ div#party-qrcode {
    box-sizing: border-box;
    gap: 10px;
    overflow: auto;
+}
+
+@media screen and (max-width: 600px) {
+   .search-results-container {
+      width: 97%;
+   }
 }
 
 .search-results-item {
@@ -636,6 +668,13 @@ div#party-qrcode {
    margin: 0;
 }
 
+@media screen and (max-width: 600px) {
+   .search-results-cover {
+      width: 50px;
+      height: 50px;
+   }
+}
+
 .search-results-add-song-icon {
    width: 40px;
    height: 40px;
@@ -650,6 +689,13 @@ div#party-qrcode {
    -ms-transition: fill ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
    transition: fill ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
    border-radius: 100%;
+}
+
+@media screen and (max-width: 600px) {
+   .search-results-add-song-icon {
+      width: 30px;
+      height: 30px;
+   }
 }
 
 .search-results-add-song-icon:hover {
