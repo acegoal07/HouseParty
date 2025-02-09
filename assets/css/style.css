@@ -487,6 +487,12 @@ div.collapsible-item div.collapsible-content {
    transition: max-height 0.4s ease-in-out;
 }
 
+@media (max-width: 600px) {
+   .collapsible-content ol {
+      padding-left: 25px;
+   }
+}
+
 div.collapsible-item.open div.collapsible-content {
    max-height: 500px
 }
@@ -733,7 +739,7 @@ ol li::marker {
    fill: var(--primary-color);
 }
 
-.search-container button svg:hover {   
+.search-container button svg:hover {
    fill: var(--primary-color-hover);
 }
 
