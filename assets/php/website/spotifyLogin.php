@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       $stmt->close();
       $conn->close();
 
-      header("Location: /houseparty/");
+      header("Location: /houseparty/dashboard.html");
       exit();
    }
 } else {

@@ -9,7 +9,7 @@ This is my final year project for computer science in this project I am aiming t
   - [Website API documentation](assets/php/website/README.md)
   - [Server scripts documentation](assets/php/server/README.md)
 - JS
-  - [Pages documentation](assets/js/pages/README.md)
+  - [Pages documentation](assets/js/page/README.md)
   - [Utility documentation](assets/js/util/README.md)
 # External Libraries Used
 - [Spotify Web API](https://developer.spotify.com/documentation/web-api/)

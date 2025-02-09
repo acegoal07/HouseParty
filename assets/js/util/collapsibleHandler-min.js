@@ -1,0 +1,1 @@
+window.addEventListener("load",(()=>{document.querySelectorAll(".collapsible-item").forEach((s=>{s.addEventListener("click",(t=>{s.classList.contains("open")&&(t.target.classList.contains("collapsible-item")||t.target.classList.contains("collapsible-title")||t.target.classList.contains("collapsible-icon"))?s.classList.remove("open"):s.classList.add("open")}))}))}));
