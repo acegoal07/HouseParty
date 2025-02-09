@@ -5,7 +5,7 @@ include '../secrets.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
    if (isset($_GET['error'])) {
-      header("Location: /housepartyv2/loginerror.html?error=1");
+      header("Location: ../../../loginerror.html?error=1");
    } else {
       //////////////// Get access token //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       $ch = curl_init();
@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       }
 
       if ($http_code !== 200) {
-         header("Location: /housepartyv2/loginerror.html?error=1");
+         header("Location: ../../../loginerror.html?error=1");
          exit();
       }
 
@@ -57,12 +57,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       }
 
       if ($http_code === 403) {
-         header("Location: /housepartyv2/loginerror.html?error=2");
+         header("Location: ../../../loginerror.html?error=2");
          exit();
       }
 
       if ($http_code !== 200) {
-         header("Location: /housepartyv2/loginerror.html?error=1");
+         header("Location: ../../../loginerror.html?error=1");
          exit();
       }
 
@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       }
 
       if ($result['product'] !== 'premium') {
-         header("Location: /housepartyv2/loginerror.html?error=3");
+         header("Location:  ../../../loginerror.html?error=3");
          exit();
       }
 
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       $stmt->close();
       $conn->close();
 
-      header("Location: /housepartyv2/dashboard.html");
+      header("Location: ../../../dashboard.html");
       exit();
    }
 } else {

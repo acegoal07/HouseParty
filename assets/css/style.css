@@ -47,6 +47,11 @@
    overflow: hidden;
 }
 
+.special-text {
+   color: var(--primary-color);
+   font-weight: bold;
+}
+
 /* BODY */
 * {
    box-sizing: border-box;
@@ -148,7 +153,11 @@ button.btn {
    background-color: var(--secondary-body-color);
    text-decoration: none;
    border-radius: var(--border-radius);
-   transition: background-color 0.3s ease;
+   -webkit-transition: background-color ease 0.2s;
+   -o-transition: background-color ease 0.2s;
+   -moz-transition: background-color ease 0.2s;
+   -ms-transition: background-color ease 0.2s;
+   transition: background-color ease 0.2s;
    cursor: pointer;
    border: none;
    font-weight: bold;
@@ -205,10 +214,6 @@ input[type="number"] {
    border-radius: var(--border-radius);
 }
 
-input[type="text"]:focus {
-   outline: var(--primary-color) solid 1px;
-}
-
 span.input-error {
    color: red;
    font-size: 1.2rem;
@@ -224,7 +229,8 @@ input:focus,
 button:focus,
 a:focus,
 select:focus,
-.custom-checkbox-container input:focus~.custom-checkbox {
+.custom-checkbox-container input:focus~.custom-checkbox,
+input[type="text"]:focus {
    outline: 2px solid #2196F3;
    outline-offset: 2px;
 }
@@ -371,6 +377,10 @@ div.custom-checkbox-container label::before {
    position: absolute;
    left: 0;
    top: 50%;
+   -o-transform: translateY(-50%);
+   -ms-transform: translateY(-50%);
+   -moz-transform: translateY(-50%);
+   -webkit-transform: translateY(-50%);
    transform: translateY(-50%);
    width: 25px;
    height: 25px;
@@ -386,6 +396,10 @@ div.custom-checkbox-container input[type="checkbox"] {
    position: absolute;
    left: 0;
    top: 50%;
+   -o-transform: translateY(-50%);
+   -ms-transform: translateY(-50%);
+   -moz-transform: translateY(-50%);
+   -webkit-transform: translateY(-50%);
    transform: translateY(-50%);
    cursor: pointer;
 }
@@ -399,6 +413,10 @@ div.custom-checkbox-container input[type="checkbox"]:checked+label::after {
    position: absolute;
    left: 9px;
    top: 50%;
+   -o-transform: translateY(-65%) rotate(45deg);
+   -ms-transform: translateY(-65%) rotate(45deg);
+   -moz-transform: translateY(-65%) rotate(45deg);
+   -webkit-transform: rotateY(-65%) rotate(45deg);
    transform: translateY(-65%) rotate(45deg);
    width: 8px;
    height: 14px;
@@ -463,6 +481,9 @@ div.collapsible-item.open span.collapsible-icon {
 div.collapsible-item div.collapsible-content {
    max-height: 0;
    overflow: hidden;
+   -webkit-transition: max-height 0.4s ease-in-out;
+   -moz-transition: max-height 0.4s ease-in-out;
+   -o-transition: max-height 0.4s ease-in-out;
    transition: max-height 0.4s ease-in-out;
 }
 
@@ -668,4 +689,151 @@ ol li::marker {
       opacity: 0;
       background-color: rgba(0, 0, 0, 0.0);
    }
+}
+
+/* SEARCH INPUT */
+.search-container {
+   display: flex;
+   align-items: center;
+   width: 100%;
+   max-width: 500px;
+   margin: 20px auto;
+   position: relative;
+}
+
+.search-container input[type="text"] {
+   width: 100%;
+   padding: 15px;
+   padding-right: 60px;
+   border-radius: 15px;
+   text-align: left;
+   margin: 0;
+}
+
+.search-container button {
+   position: absolute;
+   right: 0px;
+   background: none;
+   border: none;
+   cursor: pointer;
+   border-radius: 5px;
+   border-top-right-radius: 15px;
+   border-bottom-right-radius: 15px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   height: 100%;
+}
+
+.search-container button svg {
+   width: 25px;
+   height: 25px;
+   margin-right: 10px;
+   margin-left: 10px;
+   fill: var(--primary-color);
+}
+
+.search-container button svg:hover {   
+   fill: var(--primary-color-hover);
+}
+
+.search-container button:focus {
+   outline: none;
+   box-shadow: 0 0 0 2px #2196F3;
+}
+
+/* SEARCH RESULTS */
+div#search-results {
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   gap: 10px;
+   width: 100%;
+   max-width: 500px;
+   margin: 20px auto;
+}
+
+.search-results-item {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   padding: 10px;
+   background-color: var(--secondary-body-color);
+   border-radius: var(--border-radius);
+   width: 100%;
+}
+
+.search-results-item:focus,
+.search-results-container:focus {
+   outline: 2px solid #2196F3;
+   outline-offset: 2px;
+}
+
+.search-results-title {
+   font-size: 1.2rem;
+   color: white;
+   margin: 0;
+   word-break: break-word;
+}
+
+.search-results-artists {
+   font-size: 1rem;
+   color: rgb(167, 167, 167);
+   margin: 0;
+   word-break: break-word;
+}
+
+.search-results-cover {
+   width: 70px;
+   height: 70px;
+   border-radius: var(--border-radius);
+   margin: 0;
+}
+
+@media screen and (max-width: 600px) {
+   .search-results-cover {
+      width: 50px;
+      height: 50px;
+   }
+}
+
+.search-results-add-song-icon {
+   width: 40px;
+   height: 40px;
+   flex-shrink: 0;
+   fill: var(--primary-color);
+   box-shadow: 0 0 10px var(--shadow-color);
+   margin-left: auto;
+   cursor: pointer;
+   -webkit-transition: fill ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
+   -o-transition: fill ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
+   -moz-transition: fill ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
+   -ms-transition: fill ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
+   transition: fill ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
+   border-radius: 100%;
+}
+
+@media screen and (max-width: 600px) {
+   .search-results-add-song-icon {
+      width: 35px;
+      height: 35px;
+   }
+}
+
+.search-results-add-song-icon:hover {
+   fill: var(--primary-color-hover);
+   box-shadow: 0 0 15px var(--shadow-color-hover);
+   -o-transform: scale(1.03);
+   -ms-transform: scale(1.03);
+   -moz-transform: scale(1.03);
+   -webkit-transform: scale(1.03);
+   transform: scale(1.03);
+}
+
+.search-results-explicit-icon {
+   width: 16px;
+   height: 16px;
+   fill: currentColor;
+   margin-left: 5px;
 }

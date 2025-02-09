@@ -14,7 +14,7 @@ window.addEventListener('load', () => {
          loadingIcon.classList.add('hide');
          break;
       default:
-         window.location.href = '/houseparty/';
+         window.location.href = './';
          return;
    }
 });

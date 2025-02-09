@@ -36,7 +36,7 @@ window.addEventListener('load', () => {
       if (!getCookie('refresh_token') || !getCookie('host_id')) {
          deleteCookie({ name: 'refresh_token' });
          deleteCookie({ name: 'host_id' });
-         window.location.href = '/houseparty/';
+         window.location.href = './';
       }
       // Check if the party exists and retrieve the required data
       const urlParams = new URLSearchParams({
@@ -51,12 +51,12 @@ window.addEventListener('load', () => {
             if (!data.refreshTokenValid) {
                deleteCookie({ name: 'refresh_token' });
                deleteCookie({ name: 'host_id' });
-               window.location.href = '/houseparty/';
+               window.location.href = './';
             }
             if (document.querySelector('div#party-qrcode').childElementCount === 0) {
                partyExpiresAt = new Date(data.partyExpiresAt);
                updateTimestamp();
-               const websiteUrl = `https://aw1443.brighton.domains/houseparty/party.html?session_code=`;
+               const websiteUrl = `${window.location.origin}/houseparty/party.html?session_code=`;
                document.querySelector('span#party-code').textContent = data.partyId;
                document.querySelector('button#copy-party-url').setAttribute('copy-data', `${websiteUrl}${data.partyId}`);
                document.querySelector('button#share-party-url').setAttribute('data-party-url', `${websiteUrl}${data.partyId}`);

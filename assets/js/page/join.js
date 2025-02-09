@@ -23,7 +23,7 @@ window.addEventListener('load', () => {
          method: 'GET'
       }).then(response => response.json()).then(data => {
          if (data.partyExists) {
-            window.location.href = `/houseparty/party.html?session_code=${partyCode}`;
+            window.location.href = `party.html?session_code=${partyCode}`;
          } else {
             noPartyFoundError.classList.remove('hide');
          }
