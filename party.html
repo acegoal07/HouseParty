@@ -17,7 +17,7 @@
 </head>
 
 <body>
-   <div class="loading-icon-container hide" id="loading-icon">
+   <div class="loading-icon-container" id="loading-icon">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-label="Loading">
          <path
             d="M304 48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zm0 416a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM48 304a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm464-48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM142.9 437A48 48 0 1 0 75 369.1 48 48 0 1 0 142.9 437zm0-294.2A48 48 0 1 0 75 75a48 48 0 1 0 67.9 67.9zM369.1 437A48 48 0 1 0 437 369.1 48 48 0 1 0 369.1 437z" />
@@ -70,21 +70,24 @@
       <div class="btns">
          <a class="btn" href="./">Go Back</a>
       </div>
-      <div class="collapsible-item">
-         <span class="collapsible-icon"></span>
-         <span class="collapsible-title">Party join info</span>
-         <div class="collapsible-content collapsed-content">
-            <p>Bellow are different ways to invite people to join</p>
-            <div class="party-code-container">
-               <span id="party-code"></span>
-               <button class="btn btn-primary click-to-copy-target" copy-target="party-code" type="button">Copy</button>
-            </div>
-            <div id="party-qrcode"></div>
-            <div class="btns">
-               <button class="btn btn-primary click-to-copy" id="copy-party-url" type="button">Copy
-                  URL</button>
-               <button class="btn btn-primary click-to-share hide" id="share-party-url" type="button">Share
-                  URL</button>
+      <div class="collapsible-container">
+         <div class="collapsible-item">
+            <span class="collapsible-icon"></span>
+            <span class="collapsible-title">Party join info</span>
+            <div class="collapsible-content collapsed-content">
+               <p>Bellow are different ways to invite people to join</p>
+               <div class="party-code-container">
+                  <span id="party-code"></span>
+                  <button class="btn btn-primary click-to-copy-target" copy-target="party-code"
+                     type="button">Copy</button>
+               </div>
+               <div id="party-qrcode"></div>
+               <div class="btns">
+                  <button class="btn btn-primary click-to-copy" id="copy-party-url" type="button">Copy
+                     URL</button>
+                  <button class="btn btn-primary click-to-share hide" id="share-party-url" type="button">Share
+                     URL</button>
+               </div>
             </div>
          </div>
       </div>
