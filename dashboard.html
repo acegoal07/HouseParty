@@ -130,19 +130,37 @@
             <span class="collapsible-icon"></span>
             <span class="collapsible-title">Explicit content</span>
             <div class="collapsible-content collapsed-content">
-               <p>This setting is still being worked on</p>
+               <p>This setting is used to allow explicit content to be added to the queue</p>
+               <div class="btns">
+                  <button class="btn btn-primary hide" type="button" id="enable-explicit-content">Enable</button>
+                  <button class="btn btn-primary hide" type="button" id="disable-explicit-content">Disable</button>
+               </div>
             </div>
          </div>
          <div class="collapsible-item">
             <span class="collapsible-icon"></span>
             <span class="collapsible-title">Duplicate blocker</span>
             <div class="collapsible-content collapsed-content">
-               <p>This setting is still being worked on</p>
+               <p>This setting is used to prevent the same song from being added to the queue multiple times</p>
+               <div class="btns">
+                  <button class="btn btn-primary hide" type="button" id="enable-duplicate-blocker">Enable</button>
+                  <button class="btn btn-primary hide" type="button" id="disable-duplicate-blocker">Disable</button>
+               </div>
+            </div>
+         </div>
+         <div class="collapsible-item">
+            <span class="collapsible-icon"></span>
+            <span class="collapsible-title">End Party</span>
+            <div class="collapsible-content collapsed-content">
+               <p>This will end the party and close the session stopping anyone from using the party to edit your queue
+               </p>
+               <div class="btns">
+                  <button class="btn btn-primary modal-opener" modal-target="confirm-end-party-modal" type="button">End
+                     party</button>
+               </div>
             </div>
          </div>
          <div class="btns">
-            <button class="btn btn-primary modal-opener" modal-target="confirm-end-party-modal" type="button">End
-               party</button>
             <a class="btn" href="./">Go Back</a>
          </div>
       </div>
