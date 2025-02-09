@@ -153,10 +153,6 @@ button.btn {
    background-color: var(--secondary-body-color);
    text-decoration: none;
    border-radius: var(--border-radius);
-   -webkit-transition: background-color ease 0.2s;
-   -o-transition: background-color ease 0.2s;
-   -moz-transition: background-color ease 0.2s;
-   -ms-transition: background-color ease 0.2s;
    transition: background-color ease 0.2s;
    cursor: pointer;
    border: none;
@@ -165,7 +161,6 @@ button.btn {
 }
 
 @media (max-width: 600px) {
-
    a.btn,
    button.btn {
       font-size: 1.3rem;
@@ -252,27 +247,27 @@ div.loading-icon-container>svg {
    border-radius: 100%;
    width: 50px;
    height: 50px;
-   -o-animation: loadingAnimation 1.5s linear infinite;
-   -moz-animation: loadingAnimation 1.5s linear infinite;
    -webkit-animation: loadingAnimation 1.5s linear infinite;
    animation: loadingAnimation 1.5s linear infinite;
    fill: var(--primary-color);
 }
 
-@keyframes loadingAnimation {
+@-webkit-keyframes loadingAnimation {
    0% {
-      -o-transform: rotate(0deg);
-      -ms-transform: rotate(0deg);
-      -moz-transform: rotate(0deg);
-      -webkit-transform: rotate(0deg);
       transform: rotate(0deg);
    }
 
    100% {
-      -o-transform: rotate(360deg);
-      -ms-transform: rotate(360deg);
-      -moz-transform: rotate(360deg);
-      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
+   }
+}
+
+@keyframes loadingAnimation {
+   0% {
+      transform: rotate(0deg);
+   }
+
+   100% {
       transform: rotate(360deg);
    }
 }
@@ -294,6 +289,7 @@ form label.number-input-secondary {
    width: 100%;
    max-width: 300px;
    height: -moz-fit-content;
+   height: -webkit-fit-content;
    height: fit-content;
 }
 
@@ -304,6 +300,7 @@ form label.number-input-secondary span {
    color: #8b8e98;
    font-weight: 600;
    width: -moz-fit-content;
+   width: -webkit-fit-content;
    width: fit-content;
    top: 14px;
    position: relative;
@@ -368,7 +365,8 @@ div.custom-checkbox-container label {
    cursor: pointer;
    -moz-user-select: none;
    -webkit-user-select: none;
-   user-select: none;
+   -ms-user-select: none;
+       user-select: none;
    font-size: 18px;
    display: flex;
    align-items: center;
@@ -379,10 +377,6 @@ div.custom-checkbox-container label::before {
    position: absolute;
    left: 0;
    top: 50%;
-   -o-transform: translateY(-50%);
-   -ms-transform: translateY(-50%);
-   -moz-transform: translateY(-50%);
-   -webkit-transform: translateY(-50%);
    transform: translateY(-50%);
    width: 25px;
    height: 25px;
@@ -398,10 +392,6 @@ div.custom-checkbox-container input[type="checkbox"] {
    position: absolute;
    left: 0;
    top: 50%;
-   -o-transform: translateY(-50%);
-   -ms-transform: translateY(-50%);
-   -moz-transform: translateY(-50%);
-   -webkit-transform: translateY(-50%);
    transform: translateY(-50%);
    cursor: pointer;
 }
@@ -415,10 +405,6 @@ div.custom-checkbox-container input[type="checkbox"]:checked+label::after {
    position: absolute;
    left: 9px;
    top: 50%;
-   -o-transform: translateY(-65%) rotate(45deg);
-   -ms-transform: translateY(-65%) rotate(45deg);
-   -moz-transform: translateY(-65%) rotate(45deg);
-   -webkit-transform: rotateY(-65%) rotate(45deg);
    transform: translateY(-65%) rotate(45deg);
    width: 8px;
    height: 14px;
@@ -473,32 +459,18 @@ div.collapsible-item span.collapsible-icon {
    border-width: 0 0.25rem 0.25rem 0;
    padding: 0.25rem;
    margin: auto 6px 0.22rem auto;
-   -webkit-transform: rotate(-45deg);
-   -moz-transform: rotate(-45deg);
-   -o-transform: rotate(-45deg);
-   -ms-transform: rotate(-45deg);
    transform: rotate(-45deg);
-   -webkit-transition: 0.5s ease-in-out;
-   -moz-transition: 0.3s ease-in-out;
-   -o-transition: 0.5s ease-in-out;
    transition: 0.5s ease-in-out;
    display: inline-block;
 }
 
 div.collapsible-item.open span.collapsible-icon {
-   -webkit-transform: rotate(45deg);
-   -moz-transform: rotate(45deg);
-   -o-transform: rotate(45deg);
-   -ms-transform: rotate(45deg);
    transform: rotate(45deg);
 }
 
 div.collapsible-item div.collapsible-content {
    max-height: 0;
    overflow: hidden;
-   -webkit-transition: max-height 0.4s ease-in-out;
-   -moz-transition: max-height 0.4s ease-in-out;
-   -o-transition: max-height 0.4s ease-in-out;
    transition: max-height 0.4s ease-in-out;
 }
 
@@ -566,10 +538,6 @@ ol li::marker {
    position: fixed;
    top: -50px;
    left: 50%;
-   -webkit-transform: translateX(-50%);
-   -o-transform: translateX(-50%);
-   -moz-transform: translateX(-50%);
-   -ms-transform: translateX(-50%);
    transform: translateX(-50%);
    background-color: var(--primary-color);
    color: black;
@@ -578,12 +546,29 @@ ol li::marker {
    border-radius: 5px;
    box-shadow: 0 0px 10px var(--shadow-color);
    visibility: hidden;
-   -o-animation: slideInOut 2.5s forwards;
-   -ms-animation: slideInOut 2.5s forwards;
-   -moz-animation: slideInOut 2.5s forwards;
    -webkit-animation: slideInOut 2.5s forwards;
    animation: slideInOut 2.5s forwards;
    z-index: 1;
+}
+
+@-webkit-keyframes slideInOut {
+   0% {
+      top: -50px;
+      visibility: visible;
+   }
+
+   10% {
+      top: 20px;
+   }
+
+   90% {
+      top: 20px;
+   }
+
+   100% {
+      top: -50px;
+      visibility: hidden;
+   }
 }
 
 @keyframes slideInOut {
@@ -614,6 +599,8 @@ ol li::marker {
    padding: 10px 15px;
    border-radius: var(--border-radius);
    background-color: var(--secondary-body-color);
+   width: -webkit-max-content;
+   width: -moz-max-content;
    width: max-content;
    margin: 20px auto;
 }
@@ -659,7 +646,8 @@ ol li::marker {
    opacity: 0;
    flex-wrap: wrap;
    overflow: scroll;
-   backdrop-filter: blur(5px);
+   -webkit-backdrop-filter: blur(5px);
+           backdrop-filter: blur(5px);
 }
 
 .modal-body {
@@ -668,6 +656,8 @@ ol li::marker {
    padding: 20px;
    width: 100%;
    max-width: 500px;
+   height: -webkit-max-content;
+   height: -moz-max-content;
    height: max-content;
    color: white;
    border-radius: var(--border-radius);
@@ -689,6 +679,18 @@ ol li::marker {
    text-decoration: none;
 }
 
+@-webkit-keyframes modal-open {
+   from {
+      opacity: 0;
+      background-color: rgba(0, 0, 0, 0.0);
+   }
+
+   to {
+      opacity: 1;
+      background-color: rgba(0, 0, 0, 0.6);
+   }
+}
+
 @keyframes modal-open {
    from {
       opacity: 0;
@@ -698,6 +700,18 @@ ol li::marker {
    to {
       opacity: 1;
       background-color: rgba(0, 0, 0, 0.6);
+   }
+}
+
+@-webkit-keyframes modal-close {
+   from {
+      opacity: 1;
+      background-color: rgba(0, 0, 0, 0.6);
+   }
+
+   to {
+      opacity: 0;
+      background-color: rgba(0, 0, 0, 0.0);
    }
 }
 
@@ -826,10 +840,6 @@ div#search-results {
    box-shadow: 0 0 10px var(--shadow-color);
    margin-left: auto;
    cursor: pointer;
-   -webkit-transition: fill ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
-   -o-transition: fill ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
-   -moz-transition: fill ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
-   -ms-transition: fill ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
    transition: fill ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
    border-radius: 100%;
 }
@@ -844,10 +854,6 @@ div#search-results {
 .search-results-add-song-icon:hover {
    fill: var(--primary-color-hover);
    box-shadow: 0 0 15px var(--shadow-color-hover);
-   -o-transform: scale(1.03);
-   -ms-transform: scale(1.03);
-   -moz-transform: scale(1.03);
-   -webkit-transform: scale(1.03);
    transform: scale(1.03);
 }
 
