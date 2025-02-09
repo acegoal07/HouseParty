@@ -1,14 +1,15 @@
 window.addEventListener('load', () => {
    //////////////// Set default values //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   document.querySelector('input#extend-duration').value = 4;
    document.querySelector('input#party-duration').value = 4;
    //////////////// Variables //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   const disableExplicitButton = document.querySelector('button#disable-explicit-button');
-   const enableExplicitButton = document.querySelector('button#enable-explicit-button');
-   const disableDuplicateBlockerButton = document.querySelector('button#disable-duplicate-blocker-button');
-   const enableDuplicateBlockerButton = document.querySelector('button#enable-duplicate-blocker-button');
    const loadingIcon = document.querySelector('div#loading-icon');
-   const startPartyForm = document.querySelector('form#start-party-form');
+   const startPartyForm = document.querySelector('form#party-creation-form');
+   const settings = document.querySelector('div#settings');
+   const createParty = document.querySelector('div#create-party');
+   const enableExplicitButton = document.querySelector('button#enable-explicit-content');
+   const disableExplicitButton = document.querySelector('button#disable-explicit-content');
+   const enableDuplicateBlockerButton = document.querySelector('button#enable-duplicate-blocker');
+   const disableDuplicateBlockerButton = document.querySelector('button#disable-duplicate-blocker');
    //////////////// Countdown timer //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    let partyExpiresAt;
    function updateTimestamp() {
@@ -35,7 +36,7 @@ window.addEventListener('load', () => {
       if (!getCookie('refresh_token') || !getCookie('host_id')) {
          deleteCookie({ name: 'refresh_token' });
          deleteCookie({ name: 'host_id' });
-         window.location.href = '/houseparty/';
+         window.location.href = './';
       }
       // Check if the party exists and retrieve the required data
       const urlParams = new URLSearchParams({
@@ -50,12 +51,12 @@ window.addEventListener('load', () => {
             if (!data.refreshTokenValid) {
                deleteCookie({ name: 'refresh_token' });
                deleteCookie({ name: 'host_id' });
-               window.location.href = '/houseparty/';
+               window.location.href = './';
             }
             if (document.querySelector('div#party-qrcode').childElementCount === 0) {
                partyExpiresAt = new Date(data.partyExpiresAt);
                updateTimestamp();
-               const websiteUrl = `https://aw1443.brighton.domains/houseparty/party.html?session_code=`;
+               const websiteUrl = `${window.location.origin}/houseparty/party.html?session_code=`;
                document.querySelector('span#party-code').textContent = data.partyId;
                document.querySelector('button#copy-party-url').setAttribute('copy-data', `${websiteUrl}${data.partyId}`);
                document.querySelector('button#share-party-url').setAttribute('data-party-url', `${websiteUrl}${data.partyId}`);
@@ -70,28 +71,28 @@ window.addEventListener('load', () => {
                updateTimestamp();
             }
             if (data.explicit) {
-               enableExplicitButton.classList.add('hidden');
-               disableExplicitButton.classList.remove('hidden');
+               enableExplicitButton.classList.add('hide');
+               disableExplicitButton.classList.remove('hide');
             } else {
-               disableExplicitButton.classList.add('hidden');
-               enableExplicitButton.classList.remove('hidden');
+               disableExplicitButton.classList.add('hide');
+               enableExplicitButton.classList.remove('hide');
             }
             if (data.duplicateBlocker) {
-               enableDuplicateBlockerButton.classList.add('hidden');
-               disableDuplicateBlockerButton.classList.remove('hidden');
+               enableDuplicateBlockerButton.classList.add('hide');
+               disableDuplicateBlockerButton.classList.remove('hide');
             } else {
-               disableDuplicateBlockerButton.classList.add('hidden');
-               enableDuplicateBlockerButton.classList.remove('hidden');
+               disableDuplicateBlockerButton.classList.add('hide');
+               enableDuplicateBlockerButton.classList.remove('hide');
             }
-            if (!startPartyForm.classList.contains('hidden')) { startPartyForm.classList.add('hidden'); }
-            document.querySelector('div#manage-party-buttons').classList.remove('hidden');
+            if (!createParty.classList.contains('hide')) { createParty.classList.add('hide'); }
+            settings.classList.remove('hide');
          } else {
-            document.dispatchEvent(new Event('closeCurrentModal'));
-            if (!document.querySelector('div#manage-party-buttons').classList.contains('hidden')) { document.querySelector('div#manage-party-buttons').classList.add('hidden'); }
-            startPartyForm.classList.remove('hidden');
+            // document.dispatchEvent(new Event('closeCurrentModal'));
+            if (!settings.classList.contains('hide')) { settings.classList.add('hide'); }
+            createParty.classList.remove('hide');
          }
-         if (!loadingIcon.classList.contains('hidden')) {
-            loadingIcon.classList.add('hidden');
+         if (!loadingIcon.classList.contains('hide')) {
+            loadingIcon.classList.add('hide');
          }
       }).catch(error => {
          console.error('Page Polling Error:', error);
@@ -110,18 +111,18 @@ window.addEventListener('load', () => {
    // Handle the form submission for creating a new party
    startPartyForm.addEventListener('submit', (event) => {
       event.preventDefault();
-      loadingIcon.classList.remove('hidden');
+      loadingIcon.classList.remove('hide');
       fetch(`assets/php/website/databasePartyHandlers.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
          },
-         body: `type=createParty&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&partyEndsIn=${document.querySelector('input#party-duration').value}&explicit=${document.querySelector('input#explicit-allowed').checked ? 1 : 0}&duplicateBlocker=${document.querySelector('input#duplicate_blocker').checked ? 1 : 0}`
+         body: `type=createParty&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&partyEndsIn=${document.querySelector('input#party-duration').value}&explicit=${document.querySelector('input#explicit-checkbox').checked ? 1 : 0}&duplicateBlocker=${document.querySelector('input#duplicate-blocker-checkbox').checked ? 1 : 0}`
       }).then(response => response.json()).then(data => {
          if (data.success) {
             event.target.reset();
             window.location.reload();
-            loadingIcon.classList.add('hidden');
+            loadingIcon.classList.add('hide');
          } else {
             deleteCookie({ name: 'refresh_token' });
             deleteCookie({ name: 'host_id' });
@@ -133,8 +134,8 @@ window.addEventListener('load', () => {
    // Handle the form submission for extending the party
    document.querySelector('form#extend-party-form').addEventListener('submit', (event) => {
       event.preventDefault();
-      loadingIcon.classList.remove('hidden');
-      const partyDuration = document.querySelector('input#extend-duration').value;
+      loadingIcon.classList.remove('hide');
+      const partyDuration = document.querySelector('input#extend-party-duration').value;
       fetch(`assets/php/website/databasePartyHandlers.php`, {
          method: 'post',
          headers: {
@@ -143,14 +144,8 @@ window.addEventListener('load', () => {
          body: `type=extendPartyDuration&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&extendBy=${partyDuration}`
       }).then(response => response.json()).then(data => {
          if (data.success) {
-            document.dispatchEvent(new CustomEvent('closeCurrentModal', {
-               detail: {
-                  callback: () => {
-                     loadingIcon.classList.remove('hidden');
-                     event.target.reset();
-                  }
-               }
-            }));
+            event.target.reset();
+            loadingIcon.classList.remove('hide');
          }
       });
    });
@@ -158,7 +153,7 @@ window.addEventListener('load', () => {
    // Handle the button press for disabling explicit songs
    disableExplicitButton.addEventListener('click', (event) => {
       event.preventDefault();
-      loadingIcon.classList.remove('hidden');
+      loadingIcon.classList.remove('hide');
       fetch(`assets/php/website/databasePartyHandlers.php`, {
          method: 'post',
          headers: {
@@ -167,16 +162,16 @@ window.addEventListener('load', () => {
          body: `type=updatePartyExplicit&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&explicit=0`
       }).then(response => response.json()).then(data => {
          if (data.success) {
-            disableExplicitButton.classList.add('hidden');
-            enableExplicitButton.classList.remove('hidden');
-            loadingIcon.classList.add('hidden');
+            disableExplicitButton.classList.add('hide');
+            enableExplicitButton.classList.remove('hide');
+            loadingIcon.classList.add('hide');
          }
       });
    });
    // Handle the button press for enabling explicit songs
    enableExplicitButton.addEventListener('click', (event) => {
       event.preventDefault();
-      loadingIcon.classList.remove('hidden');
+      loadingIcon.classList.remove('hide');
       fetch(`assets/php/website/databasePartyHandlers.php`, {
          method: 'post',
          headers: {
@@ -185,18 +180,17 @@ window.addEventListener('load', () => {
          body: `type=updatePartyExplicit&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&explicit=1`
       }).then(response => response.json()).then(data => {
          if (data.success) {
-            enableExplicitButton.classList.add('hidden');
-            disableExplicitButton.classList.remove('hidden');
-            loadingIcon.classList.add('hidden');
+            enableExplicitButton.classList.add('hide');
+            disableExplicitButton.classList.remove('hide');
+            loadingIcon.classList.add('hide');
          }
       });
    });
-
    //////////////// Duplicate blocker enable/disable buttons //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Handle the button press for disabling duplicate blocker
    disableDuplicateBlockerButton.addEventListener('click', (event) => {
       event.preventDefault();
-      loadingIcon.classList.remove('hidden');
+      loadingIcon.classList.remove('hide');
       fetch(`assets/php/website/databasePartyHandlers.php`, {
          method: 'post',
          headers: {
@@ -205,16 +199,16 @@ window.addEventListener('load', () => {
          body: `type=updatePartyDuplicateBlocker&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&duplicateBlocker=0`
       }).then(response => response.json()).then(data => {
          if (data.success) {
-            disableDuplicateBlockerButton.classList.add('hidden');
-            enableDuplicateBlockerButton.classList.remove('hidden');
-            loadingIcon.classList.add('hidden');
+            disableDuplicateBlockerButton.classList.add('hide');
+            enableDuplicateBlockerButton.classList.remove('hide');
+            loadingIcon.classList.add('hide');
          }
       });
    });
    // Handle the button press for enabling duplicate blocker
    enableDuplicateBlockerButton.addEventListener('click', (event) => {
       event.preventDefault();
-      loadingIcon.classList.remove('hidden');
+      loadingIcon.classList.remove('hide');
       fetch(`assets/php/website/databasePartyHandlers.php`, {
          method: 'post',
          headers: {
@@ -223,9 +217,9 @@ window.addEventListener('load', () => {
          body: `type=updatePartyDuplicateBlocker&hostId=${getCookie('host_id')}&refreshToken=${getCookie('refresh_token')}&duplicateBlocker=1`
       }).then(response => response.json()).then(data => {
          if (data.success) {
-            enableDuplicateBlockerButton.classList.add('hidden');
-            disableDuplicateBlockerButton.classList.remove('hidden');
-            loadingIcon.classList.add('hidden');
+            enableDuplicateBlockerButton.classList.add('hide');
+            disableDuplicateBlockerButton.classList.remove('hide');
+            loadingIcon.classList.add('hide');
          }
       });
    });
@@ -233,7 +227,7 @@ window.addEventListener('load', () => {
    // Handle the button press for confirming the end of the party
    document.querySelector('button#confirm-end-party-button').addEventListener('click', (event) => {
       event.preventDefault();
-      loadingIcon.classList.remove('hidden');
+      loadingIcon.classList.remove('hide');
       fetch(`assets/php/website/databasePartyHandlers.php`, {
          method: 'post',
          headers: {
@@ -243,7 +237,7 @@ window.addEventListener('load', () => {
       }).then(response => response.json()).then(data => {
          if (data.success) {
             window.location.reload();
-            loadingIcon.classList.add('hidden');
+            loadingIcon.classList.add('hide');
          }
       });
    });

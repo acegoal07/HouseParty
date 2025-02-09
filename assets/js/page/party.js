@@ -2,11 +2,11 @@ window.addEventListener('load', () => {
    const sessionCode = new URLSearchParams(window.location.search).get('session_code');
    const loadingIcon = document.querySelector('div#loading-icon');
    if (!sessionCode) {
-      console.log(sessionCode);
       window.location.href = '/houseparty/join.html';
    }
    const searchForm = document.querySelector('form#search-song-form');
    const searchResults = document.querySelector('div#search-results');
+   const noResults = document.querySelector('span#no-results');
    let explicitToggle;
    //////////////// Page polling //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    function pagePolling() {
@@ -14,7 +14,6 @@ window.addEventListener('load', () => {
          method: 'GET'
       }).then(response => response.json()).then(data => {
          if (!data.partyExists) {
-            console.log(data);
             window.location.href = '/houseparty/join.html';
          }
          if (document.querySelector('div#party-qrcode').childElementCount === 0) {
@@ -29,7 +28,7 @@ window.addEventListener('load', () => {
             });
          }
          if (data.explicit !== explicitToggle) {
-            document.querySelector('p.explicit-indicator').textContent = data.explicit ? 'enabled' : 'disabled';
+            // document.querySelector('p.explicit-indicator').textContent = data.explicit ? 'enabled' : 'disabled';
             explicitToggle = data.explicit;
             if (searchResults.hasChildNodes()) {
                searchFunction();
@@ -47,20 +46,31 @@ window.addEventListener('load', () => {
       searchFunction();
    });
    function searchFunction() {
-      loadingIcon.classList.remove('hidden');
-      while (searchResults.firstChild) { searchResults.removeChild(searchResults.firstChild); }
-      const searchInputElement = document.querySelector('input#search-term');
+      loadingIcon.classList.remove('hide');
+      Array.from(searchResults.children).forEach(child => {
+         if (child.tagName !== 'SPAN') {
+            searchResults.removeChild(child);
+         }
+      });
+      const searchInputElement = searchForm.querySelector('input');
       const searchInput = searchInputElement.value || searchResults.getAttribute('data-current-search');
       searchResults.setAttribute('data-current-search', searchInput);
       searchInputElement.value = '';
       if (!searchInput || searchInput.replaceAll(' ', '') === '') {
-         loadingIcon.classList.add('hidden');
+         console.log("No search input");
+         noResults.classList.remove('hide');
+         loadingIcon.classList.add('hide');
          return;
       }
       fetch(`assets/php/website/spotifyHandler.php?type=searchSongByName&searchTerm=${searchInput}&partyId=${sessionCode}`, {
          method: 'GET'
       }).then(response => response.json()).then(data => {
          const tracks = data.tracks;
+         if (Object.keys(tracks).length !== 0) {
+            noResults.classList.add('hide');
+         } else {
+            noResults.classList.remove('hide');
+         }
          for (const key in tracks) {
             if (tracks.hasOwnProperty(key)) {
                const song = tracks[key];
@@ -102,7 +112,7 @@ window.addEventListener('load', () => {
 
                // Create the song artist
                const songArtist = document.createElement('p');
-               songArtist.className = 'search-results-creators';
+               songArtist.className = 'search-results-artists';
 
                const maxChars = 30;
                let charCount = 0;
@@ -143,7 +153,7 @@ window.addEventListener('load', () => {
 
                // Add event listener to the add icon
                addIcon.addEventListener('click', () => {
-                  loadingIcon.classList.remove('hidden');
+                  loadingIcon.classList.remove('hide');
                   fetch(`assets/php/website/spotifyHandler.php`, {
                      method: 'post',
                      headers: {
@@ -151,7 +161,7 @@ window.addEventListener('load', () => {
                      },
                      body: `type=addSongToQueue&songId=${song.uri}&partyId=${sessionCode}`
                   }).then(response => response.json()).then(data => {
-                     loadingIcon.classList.add('hidden');
+                     loadingIcon.classList.add('hide');
                      if (data.success) {
                         switch (data.responseCode) {
                            case 1:
@@ -200,10 +210,10 @@ window.addEventListener('load', () => {
                searchResults.appendChild(resultContainer);
             }
          }
-         loadingIcon.classList.add('hidden');
+         loadingIcon.classList.add('hide');
       }).catch(error => {
          console.error('Search Error:', error);
       });
    }
-   loadingIcon.classList.add('hidden');
+   loadingIcon.classList.add('hide');
 });
