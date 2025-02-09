@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          [
             'grant_type' => 'authorization_code',
             'code' => $_GET['code'],
-            'redirect_uri' => 'https://aw1443.brighton.domains/housepartyv2/assets/php/website/spotifyLogin.php',
+            'redirect_uri' => 'https://aw1443.brighton.domains/houseparty/assets/php/website/spotifyLogin.php',
             'client_id' => $spotifyClientId,
             'client_secret' => $spotifyClientSecret
          ]
