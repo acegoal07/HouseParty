@@ -27,6 +27,7 @@ class ModalHandler {
          console.error(`Modal with id ${modalId} not found`);
          return;
       }
+      document.body.classList.add('stop-scrolling');
       if (callback) { callback(); }
       this.modal = modal;
       this.modal.style.animation = "modal-open 0.4s forwards";
@@ -40,6 +41,7 @@ class ModalHandler {
    close(callback) {
       if (!this.modal) { return; }
       this.modal.style.animation = "modal-close 0.4s forwards";
+      document.body.classList.remove('stop-scrolling');
       setTimeout(() => {
          this.modal.style.display = 'none';
          this.modal = null;

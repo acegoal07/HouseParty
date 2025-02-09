@@ -1,19 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xml:lang="en">
 
 <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta charset="utf-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <title>Dashboard</title>
-   <meta name="description" content="Manage your party and invite friends to join.">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
-   <link rel="stylesheet" href="assets/css/style-min.css">
-   <script src="assets/js/util/cookies-min.js" defer></script>
+   <link rel="stylesheet" type="text/css" media="screen" href="assets/css/style-min.css">
+   <script src="assets/js/util/collapsibleHandler-min.js" defer></script>
    <script src="assets/js/util/modalHandler-min.js" defer></script>
+   <script src="assets/js/util/cookies-min.js" defer></script>
+   <script src="assets/js/util/qrcode-min.js" defer></script>
    <script src="assets/js/util/clickToCopy-min.js" defer></script>
    <script src="assets/js/util/clickToShare-min.js" defer></script>
-   <script src="assets/js/util/qrcode-min.js" defer></script>
-   <script src="assets/js/pages/dashboard-min.js" defer></script>
+   <script src="assets/js/page/dashboard-min.js" defer></script>
 </head>
 
 <body>
@@ -23,120 +24,144 @@
             d="M304 48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zm0 416a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM48 304a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm464-48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM142.9 437A48 48 0 1 0 75 369.1 48 48 0 1 0 142.9 437zm0-294.2A48 48 0 1 0 75 75a48 48 0 1 0 67.9 67.9zM369.1 437A48 48 0 1 0 437 369.1 48 48 0 1 0 369.1 437z" />
       </svg>
    </div>
-   <div class="modal-background" id="how-it-works-modal">
-      <div class="modal-body">
-         <span class="modal-close modal-closer">&times;</span>
-         <h1>How this works</h1>
-         <ol>
-            <li>Open spotify, press play and then leave the app running in the background like usual</li>
-            <li>Invite your friends to the session using the QR code, invite link or session code which can be found on
-               the dashboard</li>
-            <li>Then sit back and listen to the music you and your party adds to your queue</li>
-         </ol>
-         <p>Participants in the session can only add songs to the queue. Don't worry about songs being skipped or the
-            music being paused those controls are reserved for the host.</p>
-      </div>
-   </div>
-   <div class="modal-background" id="join-party-info-modal">
-      <div class="modal-body">
-         <span class="modal-close modal-closer">&times;</span>
-         <h1>Party join info</h1>
-         <p>Bellow are different ways to allow people to join</p>
-         <div class="party-code-container">
-            <span id="party-code"></span>
-            <button class="btn btn-primary click-to-copy-target" copy-target="party-code" type="button">Copy</button>
-         </div>
-         <div id="party-qrcode"></div>
-         <div class="btn-container">
-            <button class="btn btn-primary click-to-copy" id="copy-party-url" type="button">Copy
-               URL</button>
-            <button class="btn click-to-share hidden" id="share-party-url" type="button">Share URL</button>
-         </div>
-      </div>
-   </div>
-   <div class="modal-background" id="extend-party-modal">
-      <div class="modal-body">
-         <span class="modal-close modal-closer">&times;</span>
-         <h1>Extend party</h1>
-         <p>How many hours do you want to extend the party?</p>
-         <form id="extend-party-form">
-            <div class="form-group">
-               <label for="extend-duration">Extend by in hours</label>
-               <input type="number" inputmode="numeric" id="extend-duration" name="extend-duration" required min="1"
-                  max="24" value="4">
-            </div>
-            <button class="btn btn-primary" type="submit">Extend party</button>
-         </form>
-      </div>
-   </div>
    <div class="modal-background" id="confirm-end-party-modal">
       <div class="modal-body">
          <span class="modal-close modal-closer">&times;</span>
          <h1>End party</h1>
          <p>Are you sure you want to end the party?</p>
-         <div class="btn-container">
+         <div class="btns">
             <button class="btn btn-primary" id="confirm-end-party-button" type="button">Yes</button>
-            <button class="btn modal-closer" type="button">No</button>
+            <button class="btn btn-primary modal-closer" type="button">No</button>
          </div>
       </div>
    </div>
    <main>
-      <div class="body-container">
-         <h1 class="header">Dashboard</h1>
-         <p class="description">Where to create and manage your parties</p>
-         <form class="m-top-15 hidden" id="start-party-form">
-            <div class="form-group">
-               <input type="number" inputmode="numeric" id="party-duration" name="party-duration" required min="1"
-                  max="24" value="4">
-               <label for="party-duration">Party Duration in hours</label>
-            </div>
-            <div class="form-group">
-               <label class="custom-checkbox-container" for="explicit-allowed">Allow explicit songs
-                  <input type="checkbox" id="explicit-allowed" name="explicit-allowed">
-                  <span class="custom-checkbox"></span>
-               </label>
-            </div>
-            <div class="form-group">
-               <label class="custom-checkbox-container" for="duplicate_blocker">Block duplicate songs
-                  <input type="checkbox" id="duplicate_blocker" name="duplicate-blocker">
-                  <span class="custom-checkbox"></span>
-               </label>
-            </div>
-            <div class="form-group">
-               <label class="custom-checkbox-container">
-                  I agree to only use this app for personal use
-                  <input type="checkbox" name="personal-only" id="personal-only" required
-                     title="I agree to only use this app for personal use">
-                  <span class="custom-checkbox" aria-hidden="true"></span>
-               </label>
-            </div>
-            <button class="btn btn-primary" type="submit">Create party</button>
-         </form>
-         <div class="btn-container hidden" id="manage-party-buttons">
-            <div class="expires-at-container">
-               <h2>Expires at</h2>
-               <div>
-                  <div id="expires-at-time"></div>
-                  <div id="expires-at-date"></div>
+      <div class="hide" id="create-party">
+         <h1 class="logo">Create Party</h1>
+         <form id="party-creation-form">
+            <label for="party-duration" class="number-input">
+               <span>Party Duration (hours)</span>
+               <input id="party-duration" type="number" name="party-duration" title="Party Duration" minlength="1"
+                  maxlength="2" min="1" max="24" required value="4" />
+            </label>
+            <div class="checkbox-group">
+               <div class="custom-checkbox-container">
+                  <input type="checkbox" id="explicit-checkbox" name="explicitCheckbox">
+                  <label for="explicit-checkbox">Allow explicit content</label>
+               </div>
+               <div class="custom-checkbox-container">
+                  <input type="checkbox" id="duplicate-blocker-checkbox" name="duplicateCheckbox">
+                  <label for="duplicate-blocker-checkbox">Block duplicate songs</label>
+               </div>
+               <div class="custom-checkbox-container">
+                  <input type="checkbox" id="personal-use-checkbox" name="personalUseCheckbox" required>
+                  <label for="personal-use-checkbox">I agree to only use this for personal use</label>
                </div>
             </div>
-            <button class="btn modal-opener" modal-target="how-it-works-modal" type="button">How this
-               works</button>
-            <button class="btn btn-primary modal-opener" modal-target="join-party-info-modal" type="button">Show join
-               info</button>
-            <button class="btn modal-opener" modal-target="extend-party-modal" type="button">Extend
-               party</button>
-            <button class="btn btn-primary hidden" type="button" id="disable-explicit-button">Disable Explicit</button>
-            <button class="btn btn-primary hidden" type="button" id="enable-explicit-button">Enable Explicit</button>
-            <button class="btn hidden" type="button" id="disable-duplicate-blocker-button">Disable Duplicate
-               Blocker</button>
-            <button class="btn hidden" type="button" id="enable-duplicate-blocker-button">Enable Duplicate
-               Blocker</button>
-            <button class="btn btn-primary modal-opener" modal-target="confirm-end-party-modal" type="button">End
-               party</button>
+            <div class="btns">
+               <button class="btn btn-primary" type="submit">Create Party</button>
+               <a class="btn" href="./">Go Back</a>
+            </div>
+         </form>
+      </div>
+      <div class="hide" id="settings">
+         <h1 class="logo">Party Settings</h1>
+         <div class="expires-at-container">
+            <h2>Expires at</h2>
+            <div>
+               <div id="expires-at-time"></div>
+               <div id="expires-at-date"></div>
+            </div>
          </div>
-         <div class="btn-container">
-            <a class="btn" href="./">Back to home screen</a>
+         <div class="collapsible-item">
+            <span class="collapsible-icon"></span>
+            <span class="collapsible-title">How this works</span>
+            <div class="collapsible-content collapsed-content">
+               <ol>
+                  <li>Open spotify, press play and then leave the app running in the background like usual</li>
+                  <li>Invite your friends to the session using the QR code, invite link or session code which can be
+                     found on
+                     the dashboard</li>
+                  <li>Then sit back and listen to the music you and your party adds to your queue</li>
+               </ol>
+               <p>Participants in the session can only add songs to the queue. Don't worry about songs being skipped or
+                  the
+                  music being paused those controls are reserved for the host in the spotify app only.</p>
+            </div>
+         </div>
+         <div class="collapsible-item">
+            <span class="collapsible-icon"></span>
+            <span class="collapsible-title">Party join info</span>
+            <div class="collapsible-content collapsed-content">
+               <p>Bellow are different ways to invite people to join</p>
+               <div class="party-code-container">
+                  <span id="party-code"></span>
+                  <button class="btn btn-primary click-to-copy-target" copy-target="party-code"
+                     type="button">Copy</button>
+               </div>
+               <div id="party-qrcode"></div>
+               <div class="btns">
+                  <button class="btn btn-primary click-to-copy" id="copy-party-url" type="button">Copy
+                     URL</button>
+                  <button class="btn btn-primary click-to-share hide" id="share-party-url" type="button">Share
+                     URL</button>
+
+               </div>
+            </div>
+         </div>
+         <div class="collapsible-item">
+            <span class="collapsible-icon"></span>
+            <span class="collapsible-title">Extend party duration</span>
+            <div class="collapsible-content collapsed-content">
+               <p>Enter how many hours you would like to extend the party</p>
+               <form id="extend-party-form">
+                  <label for="extend-party-duration" class="number-input-secondary">
+                     <span>Party Duration (hours)</span>
+                     <input id="extend-party-duration" type="number" name="extend-party-duration"
+                        title="Extend Party Duration" minlength="1" maxlength="2" min="1" max="24" required value="4" />
+                  </label>
+                  <div class="btns">
+                     <button class="btn btn-primary" type="submit">Extend Party</button>
+                  </div>
+               </form>
+            </div>
+         </div>
+         <div class="collapsible-item">
+            <span class="collapsible-icon"></span>
+            <span class="collapsible-title">Explicit content</span>
+            <div class="collapsible-content collapsed-content">
+               <p>This setting is used to allow explicit content to be added to the queue</p>
+               <div class="btns">
+                  <button class="btn btn-primary hide" type="button" id="enable-explicit-content">Enable</button>
+                  <button class="btn btn-primary hide" type="button" id="disable-explicit-content">Disable</button>
+               </div>
+            </div>
+         </div>
+         <div class="collapsible-item">
+            <span class="collapsible-icon"></span>
+            <span class="collapsible-title">Duplicate blocker</span>
+            <div class="collapsible-content collapsed-content">
+               <p>This setting is used to prevent the same song from being added to the queue multiple times</p>
+               <div class="btns">
+                  <button class="btn btn-primary hide" type="button" id="enable-duplicate-blocker">Enable</button>
+                  <button class="btn btn-primary hide" type="button" id="disable-duplicate-blocker">Disable</button>
+               </div>
+            </div>
+         </div>
+         <div class="collapsible-item">
+            <span class="collapsible-icon"></span>
+            <span class="collapsible-title">End Party</span>
+            <div class="collapsible-content collapsed-content">
+               <p>This will end the party and close the session stopping anyone from using the party to edit your queue
+               </p>
+               <div class="btns">
+                  <button class="btn btn-primary modal-opener" modal-target="confirm-end-party-modal" type="button">End
+                     party</button>
+               </div>
+            </div>
+         </div>
+         <div class="btns">
+            <a class="btn" href="./">Go Back</a>
          </div>
       </div>
    </main>
