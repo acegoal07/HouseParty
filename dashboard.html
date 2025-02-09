@@ -73,90 +73,96 @@
                <div id="expires-at-date"></div>
             </div>
          </div>
-         <div class="collapsible-item">
-            <span class="collapsible-icon"></span>
-            <span class="collapsible-title">How this works</span>
-            <div class="collapsible-content collapsed-content">
-               <ol>
-                  <li>Open spotify, press play and then leave the app running in the background like usual</li>
-                  <li>Invite your friends to the session using the QR code, invite link or session code which can be
-                     found on
-                     the dashboard</li>
-                  <li>Then sit back and listen to the music you and your party adds to your queue</li>
-               </ol>
-               <p>Participants in the session can only add songs to the queue. Don't worry about songs being skipped or
-                  the
-                  music being paused those controls are reserved for the host in the spotify app only.</p>
-            </div>
-         </div>
-         <div class="collapsible-item">
-            <span class="collapsible-icon"></span>
-            <span class="collapsible-title">Party join info</span>
-            <div class="collapsible-content collapsed-content">
-               <p>Bellow are different ways to invite people to join</p>
-               <div class="party-code-container">
-                  <span id="party-code"></span>
-                  <button class="btn btn-primary click-to-copy-target" copy-target="party-code"
-                     type="button">Copy</button>
-               </div>
-               <div id="party-qrcode"></div>
-               <div class="btns">
-                  <button class="btn btn-primary click-to-copy" id="copy-party-url" type="button">Copy
-                     URL</button>
-                  <button class="btn btn-primary click-to-share hide" id="share-party-url" type="button">Share
-                     URL</button>
-
+         <div class="collapsible-container">
+            <div class="collapsible-item">
+               <span class="collapsible-icon"></span>
+               <span class="collapsible-title">How this works</span>
+               <div class="collapsible-content collapsed-content">
+                  <ol>
+                     <li>Open spotify, press play and then leave the app running in the background like usual</li>
+                     <li>Invite your friends to the session using the QR code, invite link or session code which can be
+                        found on
+                        the dashboard</li>
+                     <li>Then sit back and listen to the music you and your party adds to your queue</li>
+                  </ol>
+                  <p>Participants in the session can only add songs to the queue. Don't worry about songs being skipped
+                     or
+                     the
+                     music being paused those controls are reserved for the host in the spotify app only.</p>
                </div>
             </div>
-         </div>
-         <div class="collapsible-item">
-            <span class="collapsible-icon"></span>
-            <span class="collapsible-title">Extend party duration</span>
-            <div class="collapsible-content collapsed-content">
-               <p>Enter how many hours you would like to extend the party</p>
-               <form id="extend-party-form">
-                  <label for="extend-party-duration" class="number-input-secondary">
-                     <span>Party Duration (hours)</span>
-                     <input id="extend-party-duration" type="number" name="extend-party-duration"
-                        title="Extend Party Duration" minlength="1" maxlength="2" min="1" max="24" required value="4" />
-                  </label>
-                  <div class="btns">
-                     <button class="btn btn-primary" type="submit">Extend Party</button>
+            <div class="collapsible-item">
+               <span class="collapsible-icon"></span>
+               <span class="collapsible-title">Party join info</span>
+               <div class="collapsible-content collapsed-content">
+                  <p>Bellow are different ways to invite people to join</p>
+                  <div class="party-code-container">
+                     <span id="party-code"></span>
+                     <button class="btn btn-primary click-to-copy-target" copy-target="party-code"
+                        type="button">Copy</button>
                   </div>
-               </form>
-            </div>
-         </div>
-         <div class="collapsible-item">
-            <span class="collapsible-icon"></span>
-            <span class="collapsible-title">Explicit content</span>
-            <div class="collapsible-content collapsed-content">
-               <p>This setting is used to allow explicit content to be added to the queue</p>
-               <div class="btns">
-                  <button class="btn btn-primary hide" type="button" id="enable-explicit-content">Enable</button>
-                  <button class="btn btn-primary hide" type="button" id="disable-explicit-content">Disable</button>
+                  <div id="party-qrcode"></div>
+                  <div class="btns">
+                     <button class="btn btn-primary click-to-copy" id="copy-party-url" type="button">Copy
+                        URL</button>
+                     <button class="btn btn-primary click-to-share hide" id="share-party-url" type="button">Share
+                        URL</button>
+
+                  </div>
                </div>
             </div>
-         </div>
-         <div class="collapsible-item">
-            <span class="collapsible-icon"></span>
-            <span class="collapsible-title">Duplicate blocker</span>
-            <div class="collapsible-content collapsed-content">
-               <p>This setting is used to prevent the same song from being added to the queue multiple times</p>
-               <div class="btns">
-                  <button class="btn btn-primary hide" type="button" id="enable-duplicate-blocker">Enable</button>
-                  <button class="btn btn-primary hide" type="button" id="disable-duplicate-blocker">Disable</button>
+            <div class="collapsible-item">
+               <span class="collapsible-icon"></span>
+               <span class="collapsible-title">Extend party duration</span>
+               <div class="collapsible-content collapsed-content">
+                  <p>Enter how many hours you would like to extend the party</p>
+                  <form id="extend-party-form">
+                     <label for="extend-party-duration" class="number-input-secondary">
+                        <span>Party Duration (hours)</span>
+                        <input id="extend-party-duration" type="number" name="extend-party-duration"
+                           title="Extend Party Duration" minlength="1" maxlength="2" min="1" max="24" required
+                           value="4" />
+                     </label>
+                     <div class="btns">
+                        <button class="btn btn-primary" type="submit">Extend Party</button>
+                     </div>
+                  </form>
                </div>
             </div>
-         </div>
-         <div class="collapsible-item">
-            <span class="collapsible-icon"></span>
-            <span class="collapsible-title">End Party</span>
-            <div class="collapsible-content collapsed-content">
-               <p>This will end the party and close the session stopping anyone from using the party to edit your queue
-               </p>
-               <div class="btns">
-                  <button class="btn btn-primary modal-opener" modal-target="confirm-end-party-modal" type="button">End
-                     party</button>
+            <div class="collapsible-item">
+               <span class="collapsible-icon"></span>
+               <span class="collapsible-title">Explicit content</span>
+               <div class="collapsible-content collapsed-content">
+                  <p>This setting is used to allow explicit content to be added to the queue</p>
+                  <div class="btns">
+                     <button class="btn btn-primary hide" type="button" id="enable-explicit-content">Enable</button>
+                     <button class="btn btn-primary hide" type="button" id="disable-explicit-content">Disable</button>
+                  </div>
+               </div>
+            </div>
+            <div class="collapsible-item">
+               <span class="collapsible-icon"></span>
+               <span class="collapsible-title">Duplicate blocker</span>
+               <div class="collapsible-content collapsed-content">
+                  <p>This setting is used to prevent the same song from being added to the queue multiple times</p>
+                  <div class="btns">
+                     <button class="btn btn-primary hide" type="button" id="enable-duplicate-blocker">Enable</button>
+                     <button class="btn btn-primary hide" type="button" id="disable-duplicate-blocker">Disable</button>
+                  </div>
+               </div>
+            </div>
+            <div class="collapsible-item">
+               <span class="collapsible-icon"></span>
+               <span class="collapsible-title">End Party</span>
+               <div class="collapsible-content collapsed-content">
+                  <p>This will end the party and close the session stopping anyone from using the party to edit your
+                     queue
+                  </p>
+                  <div class="btns">
+                     <button class="btn btn-primary modal-opener" modal-target="confirm-end-party-modal"
+                        type="button">End
+                        party</button>
+                  </div>
                </div>
             </div>
          </div>
