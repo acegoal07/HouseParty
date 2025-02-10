@@ -57,7 +57,6 @@ window.addEventListener('load', () => {
       searchResults.setAttribute('data-current-search', searchInput);
       searchInputElement.value = '';
       if (!searchInput || searchInput.replaceAll(' ', '') === '') {
-         console.log("No search input");
          noResults.classList.remove('hide');
          loadingIcon.classList.add('hide');
          return;
