@@ -21,6 +21,10 @@ class CollapsibleHandler {
       if (callback) { callback(); }
       this.collapsible = target;
       this.collapsible.classList.add('open');
+      const content = this.collapsible.querySelector('div.collapsible-content');
+      content.style.display = 'block';
+      content.style.setProperty('--content-height', content.scrollHeight + 'px');
+      content.style.animation = 'exapnd-collapsible-item 0.5s forwards';
    }
 
    /**
@@ -30,9 +34,13 @@ class CollapsibleHandler {
    close(callback) {
       if (!this.collapsible) { return; }
       this.collapsible.classList.remove('open');
+      const content = this.collapsible.querySelector('div.collapsible-content');
+      content.style.setProperty('--content-height', content.scrollHeight + 'px');
+      content.style.animation = 'collapse-collapsible-item 0.5s forwards';
       this.collapsible = null;
       setTimeout(() => {
          if (callback) { callback(); }
+         content.style.display = 'none';
       }, 500);
    }
 
@@ -50,20 +58,19 @@ class CollapsibleHandler {
    setupCollapsibleItems() {
       document.querySelectorAll('.collapsible-item').forEach((item) => {
          item.addEventListener('click', (event) => {
-            console.log("hello")
-            if (this.collapsible === null) {
+            if (!(event.target.classList.contains('collapsible-item') || event.target.classList.contains('collapsible-title') || event.target.classList.contains('collapsible-icon'))) {
+               return;
+            } else if (this.collapsible === null) {
                if (this.collapsible === item) {
                   this.close();
                } else {
                   this.open(item);
                }
-            } else if (this.collapsible === item && (event.target.classList.contains('collapsible-item') || event.target.classList.contains('collapsible-title') || event.target.classList.contains('collapsible-icon'))) {
+            } else if (this.collapsible === item) {
                this.close();
             } else {
                this.close();
-               setTimeout(() => {
-                  this.open(item);
-               }, 100);
+               this.open(item);
             }
          });
       });

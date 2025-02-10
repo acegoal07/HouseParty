@@ -11,6 +11,7 @@ Go back to the main [README](../../../README.md)
   - [cookies](#cookies)
   - [modalHandler](#modalhandler)
   - [qrCode](#qrcode)
+  - [collapsibleHandler](#collapsiblehandler)
 
 <hr>
 
@@ -104,4 +105,32 @@ This is used to generate a QR code for the user to scan to join the party this l
 <script type="text/javascript">
   new QRCode(document.getElementById("qrcode"), "http://jindo.dev.naver.com/collie");
 </script>
+```
+
+<hr>
+
+## collapsibleHandler
+
+This is used to make it so the user can open and close a collapsible section. The events for the collapsible is handled automatically
+
+```html
+<div class="collapsible-container">
+
+    <div class="collapsible-item">
+      <span class="collapsible-icon"></span>
+      <span class="collapsible-title">Title 1</span>
+      <div class="collapsible-content collapsed-content">
+          <p>content 1</p>
+      </div>
+    </div>
+
+    <div class="collapsible-item">
+      <span class="collapsible-icon"></span>
+      <span class="collapsible-title">Title 2</span>
+      <div class="collapsible-content collapsed-content">
+          <p>content 2</p>
+      </div>
+    </div>
+
+</div>
 ```
