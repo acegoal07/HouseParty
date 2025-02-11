@@ -1,6 +1,7 @@
 class ModalHandler {
    constructor() {
       this.modal = null;
+      this.lastFocusedElement = null;
       this.init();
    }
 
@@ -27,11 +28,13 @@ class ModalHandler {
          console.error(`Modal with id ${modalId} not found`);
          return;
       }
+      this.lastFocusedElement = document.activeElement;
       document.body.classList.add('stop-scrolling');
       if (callback) { callback(); }
       this.modal = modal;
       this.modal.style.animation = "modal-open 0.4s forwards";
       this.modal.style.display = 'flex';
+      this.trapFocus();
    }
 
    /**
@@ -46,6 +49,9 @@ class ModalHandler {
          this.modal.style.display = 'none';
          this.modal = null;
          if (callback) { callback(); }
+         if (this.lastFocusedElement) {
+            this.lastFocusedElement.focus();
+         }
       }, 400);
    }
 
@@ -103,6 +109,33 @@ class ModalHandler {
             this.close();
          }
       });
+   }
+
+   /**
+    * Trap focus within the modal
+    */
+   trapFocus() {
+      const focusableElements = this.modal.querySelectorAll('a, button, input, textarea, select, details, [tabindex]:not([tabindex="-1"])');
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+      this.modal.addEventListener('keydown', (event) => {
+         const isTabPressed = (event.key === 'Tab' || event.keyCode === 9);
+         if (!isTabPressed) {
+            return;
+         }
+         if (event.shiftKey) {
+            if (document.activeElement === firstElement) {
+               lastElement.focus();
+               event.preventDefault();
+            }
+         } else {
+            if (document.activeElement === lastElement) {
+               firstElement.focus();
+               event.preventDefault();
+            }
+         }
+      });
+      firstElement.focus();
    }
 }
 

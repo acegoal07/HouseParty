@@ -77,7 +77,6 @@ window.addEventListener('load', () => {
                // Create the result container
                const resultContainer = document.createElement('div');
                resultContainer.className = 'search-results-item';
-               resultContainer.tabIndex = 0;
 
                // Create the song cover image
                const songCover = document.createElement('img');
@@ -145,63 +144,69 @@ window.addEventListener('load', () => {
                addIcon.setAttribute('class', 'search-results-add-song-icon');
                addIcon.setAttribute('viewBox', '0 0 512 512');
                addIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+               addIcon.tabIndex = 0;
+               addIcon.setAttribute('aria-label', `Add ${song.name} by ${artistText}`);
+               addIcon.setAttribute('role', 'button');
 
                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                path.setAttribute('d', 'M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z');
                addIcon.appendChild(path);
 
                // Add event listener to the add icon
-               addIcon.addEventListener('click', () => {
-                  loadingIcon.classList.remove('hide');
-                  fetch(`assets/php/website/spotifyHandler.php`, {
-                     method: 'post',
-                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                     },
-                     body: `type=addSongToQueue&songId=${song.uri}&partyId=${sessionCode}`
-                  }).then(response => response.json()).then(data => {
-                     loadingIcon.classList.add('hide');
-                     if (data.success) {
-                        switch (data.responseCode) {
-                           case 1:
-                              document.dispatchEvent(new CustomEvent('openModal', {
-                                 detail: {
-                                    target: 'add-to-queue-successfully-modal',
-                                    callback: () => {
-                                       document.querySelector('#add-queue-successfully-song-name').textContent = `${song.name} by ${artistsList.join(', ')}`;
+               const addSongFunction = (event) => {
+                  if (event.type === 'click' || (event.type === 'keydown' && (event.key === 'Enter' || event.key === ' '))) {
+                     loadingIcon.classList.remove('hide');
+                     fetch(`assets/php/website/spotifyHandler.php`, {
+                        method: 'post',
+                        headers: {
+                           'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: `type=addSongToQueue&songId=${song.uri}&partyId=${sessionCode}`
+                     }).then(response => response.json()).then(data => {
+                        loadingIcon.classList.add('hide');
+                        if (data.success) {
+                           switch (data.responseCode) {
+                              case 1:
+                                 document.dispatchEvent(new CustomEvent('openModal', {
+                                    detail: {
+                                       target: 'add-to-queue-successfully-modal',
+                                       callback: () => {
+                                          document.querySelector('#add-queue-successfully-song-name').textContent = `${song.name} by ${artistText}`;
+                                       }
                                     }
-                                 }
-                              }));
-                              break;
-                           case 2:
-                              document.dispatchEvent(new CustomEvent('openModal', {
-                                 detail: {
-                                    target: 'add-to-queue-duplicate-modal',
-                                    callback: () => {
-                                       document.querySelector('#add-queue-duplicate-song-name').textContent = `${song.name} by ${artistsList.join(', ')}`;
+                                 }));
+                                 break;
+                              case 2:
+                                 document.dispatchEvent(new CustomEvent('openModal', {
+                                    detail: {
+                                       target: 'add-to-queue-duplicate-modal',
+                                       callback: () => {
+                                          document.querySelector('#add-queue-duplicate-song-name').textContent = `${song.name} by ${artistText}`;
+                                       }
                                     }
-                                 }
-                              }));
-                              break;
-                           case 3:
-                              document.dispatchEvent(new CustomEvent('openModal', {
-                                 detail: {
-                                    target: 'add-to-queue-not-playing-modal'
-                                 }
-                              }));
-                              break;
-                           default:
-                              document.dispatchEvent(new CustomEvent('openModal', {
-                                 detail: {
-                                    target: 'add-to-queue-failed-modal'
-                                 }
-                              }));
-                              break;
+                                 }));
+                                 break;
+                              case 3:
+                                 document.dispatchEvent(new CustomEvent('openModal', {
+                                    detail: {
+                                       target: 'add-to-queue-not-playing-modal'
+                                    }
+                                 }));
+                                 break;
+                              default:
+                                 document.dispatchEvent(new CustomEvent('openModal', {
+                                    detail: {
+                                       target: 'add-to-queue-failed-modal'
+                                    }
+                                 }));
+                                 break;
+                           }
                         }
-                     }
-                  });
-               });
-
+                     });
+                  }
+               }
+               addIcon.addEventListener('keydown', addSongFunction);
+               addIcon.addEventListener('click', addSongFunction);
                // Append the add icon to the result container
                resultContainer.appendChild(addIcon);
 

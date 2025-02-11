@@ -17,84 +17,86 @@
 </head>
 
 <body>
-   <div class="loading-icon-container" id="loading-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-label="Loading">
+   <div class="loading-icon-container" id="loading-icon" aria-live="polite">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-label="Loading" role="img">
          <path
             d="M304 48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zm0 416a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM48 304a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm464-48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM142.9 437A48 48 0 1 0 75 369.1 48 48 0 1 0 142.9 437zm0-294.2A48 48 0 1 0 75 75a48 48 0 1 0 67.9 67.9zM369.1 437A48 48 0 1 0 437 369.1 48 48 0 1 0 369.1 437z" />
       </svg>
    </div>
-   <div class="modal-background" id="add-to-queue-successfully-modal">
+   <div class="modal-background" id="add-to-queue-successfully-modal" role="dialog"
+      aria-labelledby="add-to-queue-successfully-title" aria-describedby="add-to-queue-successfully-description">
       <div class="modal-body">
-         <span class="modal-close modal-closer">&times;</span>
-         <h1>Song added to queue</h1>
-         <p><span class="special-text" id="add-queue-successfully-song-name"></span> Has been added to the song queue
-         </p>
+         <h1 id="add-to-queue-successfully-title">Song added to queue</h1>
+         <p id="add-to-queue-successfully-description"><span class="special-text"
+               id="add-queue-successfully-song-name"></span> has been added to the song queue</p>
          <div class="btns">
-            <button class="btn btn-primary modal-closer" type="button">Ok</button>
+            <button class="btn btn-primary modal-closer" type="button" aria-label="Close">Ok</button>
          </div>
       </div>
    </div>
-   <div class="modal-background" id="add-to-queue-failed-modal">
+   <div class="modal-background" id="add-to-queue-failed-modal" role="dialog"
+      aria-labelledby="add-to-queue-failed-title" aria-describedby="add-to-queue-failed-description">
       <div class="modal-body">
-         <span class="modal-close modal-closer">&times;</span>
-         <h1>Failed to add song</h1>
-         <p>Woops something went wrong please try again!</p>
+         <h1 id="add-to-queue-failed-title">Failed to add song</h1>
+         <p id="add-to-queue-failed-description">Woops something went wrong please try again!</p>
          <div class="btns">
-            <button class="btn btn-primary modal-closer" type="button">I'll try again</button>
+            <button class="btn btn-primary modal-closer" type="button" aria-label="Try Again">I'll try again</button>
          </div>
       </div>
    </div>
-   <div class="modal-background" id="add-to-queue-duplicate-modal">
+   <div class="modal-background" id="add-to-queue-duplicate-modal" role="dialog"
+      aria-labelledby="add-to-queue-duplicate-title" aria-describedby="add-to-queue-duplicate-description">
       <div class="modal-body">
-         <span class="modal-close modal-closer">&times;</span>
-         <h1>Duplicate song</h1>
-         <p><span class="special-text" id="add-queue-duplicate-song-name"></span> is already in the queue and duplicate
-            songs are not allowed in this queue</p>
+         <h1 id="add-to-queue-duplicate-title">Duplicate song</h1>
+         <p id="add-to-queue-duplicate-description"><span class="special-text"
+               id="add-queue-duplicate-song-name"></span> is already in the queue and duplicate songs are not allowed in
+            this queue</p>
          <div class="btns">
-            <button class="btn btn-primary modal-closer" type="button">I'll wait then</button>
+            <button class="btn btn-primary modal-closer" type="button" aria-label="Wait">I'll wait then</button>
          </div>
       </div>
    </div>
-   <div class="modal-background" id="add-to-queue-not-playing-modal">
+   <div class="modal-background" id="add-to-queue-not-playing-modal" role="dialog"
+      aria-labelledby="add-to-queue-not-playing-title" aria-describedby="add-to-queue-not-playing-description">
       <div class="modal-body">
-         <span class="modal-close modal-closer">&times;</span>
-         <h1>Music not playing</h1>
-         <p>It appears that the queue you are trying to add songs to isn't playing tell the host to start playing music
-            so you can add songs</p>
+         <h1 id="add-to-queue-not-playing-title">Music not playing</h1>
+         <p id="add-to-queue-not-playing-description">It appears that the queue you are trying to add songs to isn't
+            playing. Tell the host to start playing music so you can add songs.</p>
          <div class="btns">
-            <button class="btn btn-primary modal-closer" type="button">I'll tell the host</button>
+            <button class="btn btn-primary modal-closer" type="button" aria-label="Tell Host">I'll tell the
+               host</button>
          </div>
       </div>
    </div>
    <main>
       <div class="btns">
-         <a class="btn" href="./">Go Back</a>
+         <a class="btn" href="./" aria-label="Go Back">Go Back</a>
       </div>
       <div class="collapsible-container">
-         <div class="collapsible-item">
+         <div class="collapsible-item" tabindex="0">
             <span class="collapsible-icon"></span>
             <span class="collapsible-title">Party join info</span>
             <div class="collapsible-content collapsed-content">
                <p>Bellow are different ways to invite people to join</p>
                <div class="party-code-container">
                   <span id="party-code"></span>
-                  <button class="btn btn-primary click-to-copy-target" copy-target="party-code"
-                     type="button">Copy</button>
+                  <button class="btn btn-primary click-to-copy-target" copy-target="party-code" type="button"
+                     aria-label="Copy Party Code">Copy</button>
                </div>
                <div id="party-qrcode"></div>
                <div class="btns">
-                  <button class="btn btn-primary click-to-copy" id="copy-party-url" type="button">Copy
-                     URL</button>
-                  <button class="btn btn-primary click-to-share hide" id="share-party-url" type="button">Share
-                     URL</button>
+                  <button class="btn btn-primary click-to-copy" id="copy-party-url" type="button"
+                     aria-label="Copy Party URL">Copy URL</button>
+                  <button class="btn btn-primary click-to-share hide" id="share-party-url" type="button"
+                     aria-label="Share Party URL">Share URL</button>
                </div>
             </div>
          </div>
       </div>
       <form id="search-song-form" class="search-container">
-         <input type="text" placeholder="Search...">
+         <input type="text" placeholder="Search..." aria-label="Search Songs">
          <button type="submit" aria-label="Search">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-hidden="true">
                <path
                   d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
             </svg>

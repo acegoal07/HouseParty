@@ -18,20 +18,21 @@
 </head>
 
 <body>
-   <div class="loading-icon-container" id="loading-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-label="Loading">
+   <div class="loading-icon-container" id="loading-icon" aria-live="polite">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-label="Loading" role="img">
          <path
             d="M304 48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zm0 416a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM48 304a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm464-48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM142.9 437A48 48 0 1 0 75 369.1 48 48 0 1 0 142.9 437zm0-294.2A48 48 0 1 0 75 75a48 48 0 1 0 67.9 67.9zM369.1 437A48 48 0 1 0 437 369.1 48 48 0 1 0 369.1 437z" />
       </svg>
    </div>
-   <div class="modal-background" id="confirm-end-party-modal">
+   <div class="modal-background" id="confirm-end-party-modal" role="dialog" aria-labelledby="end-party-title"
+      aria-describedby="end-party-description">
       <div class="modal-body">
-         <span class="modal-close modal-closer">&times;</span>
-         <h1>End party</h1>
-         <p>Are you sure you want to end the party?</p>
+         <h1 id="end-party-title">End party</h1>
+         <p id="end-party-description">Are you sure you want to end the party?</p>
          <div class="btns">
-            <button class="btn btn-primary" id="confirm-end-party-button" type="button">Yes</button>
-            <button class="btn btn-primary modal-closer" type="button">No</button>
+            <button class="btn btn-primary" id="confirm-end-party-button" type="button"
+               aria-label="Confirm End Party">Yes</button>
+            <button class="btn btn-primary modal-closer" type="button" aria-label="Cancel End Party">No</button>
          </div>
       </div>
    </div>
@@ -59,8 +60,8 @@
                </div>
             </div>
             <div class="btns">
-               <button class="btn btn-primary" type="submit">Create Party</button>
-               <a class="btn" href="./">Go Back</a>
+               <button class="btn btn-primary" type="submit" aria-label="Create Party">Create Party</button>
+               <a class="btn" href="./" aria-label="Go Back">Go Back</a>
             </div>
          </form>
       </div>
@@ -74,7 +75,7 @@
             </div>
          </div>
          <div class="collapsible-container">
-            <div class="collapsible-item">
+            <div class="collapsible-item" tabindex="0">
                <span class="collapsible-icon"></span>
                <span class="collapsible-title">How this works</span>
                <div class="collapsible-content collapsed-content">
@@ -91,27 +92,28 @@
                      music being paused those controls are reserved for the host in the spotify app only.</p>
                </div>
             </div>
-            <div class="collapsible-item">
+            <div class="collapsible-item" tabindex="0">
                <span class="collapsible-icon"></span>
                <span class="collapsible-title">Party join info</span>
                <div class="collapsible-content collapsed-content">
                   <p>Bellow are different ways to invite people to join</p>
                   <div class="party-code-container">
                      <span id="party-code"></span>
-                     <button class="btn btn-primary click-to-copy-target" copy-target="party-code"
-                        type="button">Copy</button>
+                     <button class="btn btn-primary click-to-copy-target" copy-target="party-code" type="button"
+                        aria-label="Copy Party Code">Copy</button>
                   </div>
                   <div id="party-qrcode"></div>
                   <div class="btns">
-                     <button class="btn btn-primary click-to-copy" id="copy-party-url" type="button">Copy
+                     <button class="btn btn-primary click-to-copy" id="copy-party-url" type="button"
+                        aria-label="Copy Party URL">Copy
                         URL</button>
-                     <button class="btn btn-primary click-to-share hide" id="share-party-url" type="button">Share
+                     <button class="btn btn-primary click-to-share hide" id="share-party-url" type="button"
+                        aria-label="Share Party URL">Share
                         URL</button>
-
                   </div>
                </div>
             </div>
-            <div class="collapsible-item">
+            <div class="collapsible-item" tabindex="0">
                <span class="collapsible-icon"></span>
                <span class="collapsible-title">Extend party duration</span>
                <div class="collapsible-content collapsed-content">
@@ -124,34 +126,38 @@
                            value="4" />
                      </label>
                      <div class="btns">
-                        <button class="btn btn-primary" type="submit">Extend Party</button>
+                        <button class="btn btn-primary" type="submit" aria-label="Extend Party">Extend Party</button>
                      </div>
                   </form>
                </div>
             </div>
-            <div class="collapsible-item">
+            <div class="collapsible-item" tabindex="0">
                <span class="collapsible-icon"></span>
                <span class="collapsible-title">Explicit content</span>
                <div class="collapsible-content collapsed-content">
                   <p>This setting is used to allow explicit content to be added to the queue</p>
                   <div class="btns">
-                     <button class="btn btn-primary hide" type="button" id="enable-explicit-content">Enable</button>
-                     <button class="btn btn-primary hide" type="button" id="disable-explicit-content">Disable</button>
+                     <button class="btn btn-primary hide" type="button" id="enable-explicit-content"
+                        aria-label="Enable Explicit Content">Enable</button>
+                     <button class="btn btn-primary hide" type="button" id="disable-explicit-content"
+                        aria-label="Disable Explicit Content">Disable</button>
                   </div>
                </div>
             </div>
-            <div class="collapsible-item">
+            <div class="collapsible-item" tabindex="0">
                <span class="collapsible-icon"></span>
                <span class="collapsible-title">Duplicate blocker</span>
                <div class="collapsible-content collapsed-content">
                   <p>This setting is used to prevent the same song from being added to the queue multiple times</p>
                   <div class="btns">
-                     <button class="btn btn-primary hide" type="button" id="enable-duplicate-blocker">Enable</button>
-                     <button class="btn btn-primary hide" type="button" id="disable-duplicate-blocker">Disable</button>
+                     <button class="btn btn-primary hide" type="button" id="enable-duplicate-blocker"
+                        aria-label="Enable Duplicate Blocker">Enable</button>
+                     <button class="btn btn-primary hide" type="button" id="disable-duplicate-blocker"
+                        aria-label="Disable Duplicate Blocker">Disable</button>
                   </div>
                </div>
             </div>
-            <div class="collapsible-item">
+            <div class="collapsible-item" tabindex="0">
                <span class="collapsible-icon"></span>
                <span class="collapsible-title">End Party</span>
                <div class="collapsible-content collapsed-content">
@@ -159,15 +165,15 @@
                      queue
                   </p>
                   <div class="btns">
-                     <button class="btn btn-primary modal-opener" modal-target="confirm-end-party-modal"
-                        type="button">End
+                     <button class="btn btn-primary modal-opener" modal-target="confirm-end-party-modal" type="button"
+                        aria-label="End Party">End
                         party</button>
                   </div>
                </div>
             </div>
          </div>
          <div class="btns">
-            <a class="btn" href="./">Go Back</a>
+            <a class="btn" href="./" aria-label="Go Back">Go Back</a>
          </div>
       </div>
    </main>
