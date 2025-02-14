@@ -871,7 +871,7 @@ div#search-results {
 .search-results-cover {
    width: 70px;
    height: 70px;
-   border-radius: var(--border-radius);
+   border-radius: 4px;
    margin: 0;
 }
 
@@ -879,6 +879,7 @@ div#search-results {
    .search-results-cover {
       width: 50px;
       height: 50px;
+      border-radius: 2px;
    }
 }
 
