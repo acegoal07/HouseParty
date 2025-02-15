@@ -90,7 +90,7 @@ window.addEventListener('load', () => {
             // Create the song cover image
             const songCover = document.createElement('img');
             songCover.src = song.album.images[0].url;
-            songCover.alt = `${song.name} cover`;
+            songCover.alt = `${song.name} album cover`;
             songCover.className = 'search-results-cover';
             resultContainer.appendChild(songCover);
 
@@ -154,7 +154,7 @@ window.addEventListener('load', () => {
             addIcon.setAttribute('viewBox', '0 0 512 512');
             addIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
             addIcon.tabIndex = 0;
-            addIcon.setAttribute('aria-label', `Add ${song.name} by ${artistText}`);
+            addIcon.setAttribute('aria-label', `Add ${song.name} by ${artistText} to the queue`);
             addIcon.setAttribute('role', 'button');
 
             const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
