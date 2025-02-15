@@ -64,6 +64,13 @@ window.addEventListener('load', () => {
       fetch(`assets/php/website/spotifyHandler.php?type=searchSongByName&searchTerm=${searchInput}&partyId=${sessionCode}`, {
          method: 'GET'
       }).then(response => response.json()).then(data => {
+         if (data.code === 1) {
+            return document.dispatchEvent(new CustomEvent('openModal', {
+               detail: {
+                  target: 'too-many-requests-modal'
+               }
+            }));
+         }
          const tracks = data.tracks;
          if (Object.keys(tracks).length !== 0) {
             noResults.classList.add('hide');
@@ -192,6 +199,13 @@ window.addEventListener('load', () => {
                               document.dispatchEvent(new CustomEvent('openModal', {
                                  detail: {
                                     target: 'add-to-queue-not-playing-modal'
+                                 }
+                              }));
+                              break;
+                           case 4:
+                              document.dispatchEvent(new CustomEvent('openModal', {
+                                 detail: {
+                                    target: 'too-many-requests-modal'
                                  }
                               }));
                               break;

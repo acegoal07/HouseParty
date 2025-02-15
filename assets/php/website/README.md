@@ -193,6 +193,9 @@ Searches for a song by name on Spotify.
 
 - `totalTracks` - The total number of tracks found.
 - `tracks` - An array of track objects.
+- `code` - A number that signifies what happened with the function.
+  - `code 0:` Action failed due to exceeding API rate limit
+  - `code 1:` Search successful
 
 <hr>
 
@@ -211,7 +214,8 @@ Adds a song to the queue of the party.
 
 - `success` - Boolean indicating if the song was successfully added to the queue.
 - `responseCode` - A number that signifies what happened with the function.
-  - `code 0:` function failed
-  - `code 1:` song added to queue
-  - `code 2:` song already in queue
+  - `code 0:` Function failed
+  - `code 1:` Song added to queue
+  - `code 2:` Song already in queue
   - `code 3:` Failed to add due to the music not being played
+  - `code 4:` Action failed due to exceeding API rate limit
