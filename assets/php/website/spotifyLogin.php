@@ -26,6 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
       curl_close($ch);
 
+      if ($http_code === 429) {
+         header("Location: ../../../loginerror.html?error=4");
+         exit();
+      }
+
       if (curl_errno($ch)) {
          error_log('cURL Error: ' . curl_error($ch));
          http_response_code(500);
@@ -49,6 +54,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       $response = curl_exec($ch);
       $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
       curl_close($ch);
+
+      if ($http_code === 429) {
+         header("Location: ../../../loginerror.html?error=4");
+         exit();
+      }
 
       if (curl_errno($ch)) {
          error_log('cURL Error: ' . curl_error($ch));
