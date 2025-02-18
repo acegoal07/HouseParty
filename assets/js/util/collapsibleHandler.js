@@ -57,22 +57,26 @@ class CollapsibleHandler {
     */
    setupCollapsibleItems() {
       document.querySelectorAll('.collapsible-item').forEach((item) => {
-         item.addEventListener('click', (event) => {
-            if (!(event.target.classList.contains('collapsible-item') || event.target.classList.contains('collapsible-title') || event.target.classList.contains('collapsible-icon'))) {
-               return;
-            } else if (this.collapsible === null) {
-               if (this.collapsible === item) {
+         const toggleCollapsible = (event) => {
+            if (event.type === 'click' || (event.type === 'keydown' && (event.key === 'Enter' || event.key === ' '))) {
+               if (!(event.target.classList.contains('collapsible-item') || event.target.classList.contains('collapsible-title') || event.target.classList.contains('collapsible-icon'))) {
+                  return;
+               } else if (this.collapsible === null) {
+                  if (this.collapsible === item) {
+                     this.close();
+                  } else {
+                     this.open(item);
+                  }
+               } else if (this.collapsible === item) {
                   this.close();
                } else {
+                  this.close();
                   this.open(item);
                }
-            } else if (this.collapsible === item) {
-               this.close();
-            } else {
-               this.close();
-               this.open(item);
             }
-         });
+         };
+         item.addEventListener('click', toggleCollapsible);
+         item.addEventListener('keydown', toggleCollapsible);
       });
    }
 }

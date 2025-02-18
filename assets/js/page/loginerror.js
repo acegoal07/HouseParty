@@ -13,6 +13,10 @@ window.addEventListener('load', () => {
          document.querySelector('div#premium-account-error').classList.remove('hide');
          loadingIcon.classList.add('hide');
          break;
+      case '4':
+         document.querySelector('div#request-limit-error').classList.remove('hide');
+         loadingIcon.classList.add('hide');
+         break;
       default:
          window.location.href = './';
          return;

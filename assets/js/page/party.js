@@ -64,94 +64,106 @@ window.addEventListener('load', () => {
       fetch(`assets/php/website/spotifyHandler.php?type=searchSongByName&searchTerm=${searchInput}&partyId=${sessionCode}`, {
          method: 'GET'
       }).then(response => response.json()).then(data => {
+         if (data.code === 1) {
+            return document.dispatchEvent(new CustomEvent('openModal', {
+               detail: {
+                  target: 'too-many-requests-modal'
+               }
+            }));
+         }
          const tracks = data.tracks;
          if (Object.keys(tracks).length !== 0) {
             noResults.classList.add('hide');
          } else {
             noResults.classList.remove('hide');
          }
-         for (const key in tracks) {
-            if (tracks.hasOwnProperty(key)) {
-               const song = tracks[key];
 
-               // Create the result container
-               const resultContainer = document.createElement('div');
-               resultContainer.className = 'search-results-item';
-               resultContainer.tabIndex = 0;
+         const limitedTracks = Object.keys(tracks).slice(0, 20);
 
-               // Create the song cover image
-               const songCover = document.createElement('img');
-               songCover.src = song.album.images[0].url;
-               songCover.alt = `${song.name} cover`;
-               songCover.className = 'search-results-cover';
-               resultContainer.appendChild(songCover);
+         for (const key of limitedTracks) {
+            const song = tracks[key];
 
-               // Create the result info container
-               const resultInfoContainer = document.createElement('div');
-               resultInfoContainer.className = 'search-results-info-container';
+            // Create the result container
+            const resultContainer = document.createElement('div');
+            resultContainer.className = 'search-results-item';
 
-               // Create the song title
-               const songTitle = document.createElement('p');
-               songTitle.className = 'search-results-title';
-               songTitle.textContent = song.name;
-               resultInfoContainer.appendChild(songTitle);
+            // Create the song cover image
+            const songCover = document.createElement('img');
+            songCover.src = song.album.images[0].url;
+            songCover.alt = `${song.name} album cover`;
+            songCover.className = 'search-results-cover';
+            resultContainer.appendChild(songCover);
 
-               // Add the explicit icon if the song is explicit
-               if (song.explicit) {
-                  const explicitIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                  explicitIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-                  explicitIcon.setAttribute('class', 'search-results-explicit-icon');
-                  explicitIcon.setAttribute('viewBox', '0 0 16 16');
+            // Create the result info container
+            const resultInfoContainer = document.createElement('div');
+            resultInfoContainer.className = 'search-results-info-container';
 
-                  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                  path.setAttribute('d', 'M2.5 0A2.5 2.5 0 0 0 0 2.5v11A2.5 2.5 0 0 0 2.5 16h11a2.5 2.5 0 0 0 2.5-2.5v-11A2.5 2.5 0 0 0 13.5 0zm4.326 10.88H10.5V12h-5V4.002h5v1.12H6.826V7.4h3.457v1.073H6.826z');
-                  explicitIcon.appendChild(path);
-                  songTitle.appendChild(explicitIcon);
-               }
+            // Create the song title
+            const songTitle = document.createElement('p');
+            songTitle.className = 'search-results-title';
+            songTitle.textContent = song.name;
+            resultInfoContainer.appendChild(songTitle);
 
-               // Create the song artist
-               const songArtist = document.createElement('p');
-               songArtist.className = 'search-results-artists';
-
-               const maxChars = 30;
-               let charCount = 0;
-               const artistsList = [];
-               let remainingArtistsCount = 0;
-
-               for (let i = 0; i < song.artists.length; i++) {
-                  const artistName = song.artists[i].name;
-                  if (charCount + artistName.length <= maxChars) {
-                     artistsList.push(artistName);
-                     charCount += artistName.length;
-                  } else {
-                     remainingArtistsCount = song.artists.length - i;
-                     break;
-                  }
-               }
-
-               let artistText = artistsList.join(', ');
-               if (remainingArtistsCount > 0) {
-                  artistText += `, and ${remainingArtistsCount} more`;
-               }
-
-               songArtist.textContent = artistText;
-               resultInfoContainer.appendChild(songArtist);
-
-               // Append the result info container to the result container
-               resultContainer.appendChild(resultInfoContainer);
-
-               // Create the add icon
-               const addIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-               addIcon.setAttribute('class', 'search-results-add-song-icon');
-               addIcon.setAttribute('viewBox', '0 0 512 512');
-               addIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+            // Add the explicit icon if the song is explicit
+            if (song.explicit) {
+               const explicitIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+               explicitIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+               explicitIcon.setAttribute('class', 'search-results-explicit-icon');
+               explicitIcon.setAttribute('viewBox', '0 0 16 16');
 
                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-               path.setAttribute('d', 'M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z');
-               addIcon.appendChild(path);
+               path.setAttribute('d', 'M2.5 0A2.5 2.5 0 0 0 0 2.5v11A2.5 2.5 0 0 0 2.5 16h11a2.5 2.5 0 0 0 2.5-2.5v-11A2.5 2.5 0 0 0 13.5 0zm4.326 10.88H10.5V12h-5V4.002h5v1.12H6.826V7.4h3.457v1.073H6.826z');
+               explicitIcon.appendChild(path);
+               songTitle.appendChild(explicitIcon);
+            }
 
-               // Add event listener to the add icon
-               addIcon.addEventListener('click', () => {
+            // Create the song artist
+            const songArtist = document.createElement('p');
+            songArtist.className = 'search-results-artists';
+
+            const maxChars = 30;
+            let charCount = 0;
+            const artistsList = [];
+            let remainingArtistsCount = 0;
+
+            for (let i = 0; i < song.artists.length; i++) {
+               const artistName = song.artists[i].name;
+               if (charCount + artistName.length <= maxChars) {
+                  artistsList.push(artistName);
+                  charCount += artistName.length;
+               } else {
+                  remainingArtistsCount = song.artists.length - i;
+                  break;
+               }
+            }
+
+            let artistText = artistsList.join(', ');
+            if (remainingArtistsCount > 0) {
+               artistText += `, and ${remainingArtistsCount} more`;
+            }
+
+            songArtist.textContent = artistText;
+            resultInfoContainer.appendChild(songArtist);
+
+            // Append the result info container to the result container
+            resultContainer.appendChild(resultInfoContainer);
+
+            // Create the add icon
+            const addIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            addIcon.setAttribute('class', 'search-results-add-song-icon');
+            addIcon.setAttribute('viewBox', '0 0 512 512');
+            addIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+            addIcon.tabIndex = 0;
+            addIcon.setAttribute('aria-label', `Add ${song.name} by ${artistText} to the queue`);
+            addIcon.setAttribute('role', 'button');
+
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', 'M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z');
+            addIcon.appendChild(path);
+
+            // Add event listener to the add icon
+            const addSongFunction = (event) => {
+               if (event.type === 'click' || (event.type === 'keydown' && (event.key === 'Enter' || event.key === ' '))) {
                   loadingIcon.classList.remove('hide');
                   fetch(`assets/php/website/spotifyHandler.php`, {
                      method: 'post',
@@ -168,7 +180,7 @@ window.addEventListener('load', () => {
                                  detail: {
                                     target: 'add-to-queue-successfully-modal',
                                     callback: () => {
-                                       document.querySelector('#add-queue-successfully-song-name').textContent = `${song.name} by ${artistsList.join(', ')}`;
+                                       document.querySelector('#add-queue-successfully-song-name').textContent = `${song.name} by ${artistText}`;
                                     }
                                  }
                               }));
@@ -178,7 +190,7 @@ window.addEventListener('load', () => {
                                  detail: {
                                     target: 'add-to-queue-duplicate-modal',
                                     callback: () => {
-                                       document.querySelector('#add-queue-duplicate-song-name').textContent = `${song.name} by ${artistsList.join(', ')}`;
+                                       document.querySelector('#add-queue-duplicate-song-name').textContent = `${song.name} by ${artistText}`;
                                     }
                                  }
                               }));
@@ -187,6 +199,13 @@ window.addEventListener('load', () => {
                               document.dispatchEvent(new CustomEvent('openModal', {
                                  detail: {
                                     target: 'add-to-queue-not-playing-modal'
+                                 }
+                              }));
+                              break;
+                           case 4:
+                              document.dispatchEvent(new CustomEvent('openModal', {
+                                 detail: {
+                                    target: 'too-many-requests-modal'
                                  }
                               }));
                               break;
@@ -200,14 +219,15 @@ window.addEventListener('load', () => {
                         }
                      }
                   });
-               });
-
-               // Append the add icon to the result container
-               resultContainer.appendChild(addIcon);
-
-               // Append the result container to the search results
-               searchResults.appendChild(resultContainer);
+               }
             }
+            addIcon.addEventListener('keydown', addSongFunction);
+            addIcon.addEventListener('click', addSongFunction);
+            // Append the add icon to the result container
+            resultContainer.appendChild(addIcon);
+
+            // Append the result container to the search results
+            searchResults.appendChild(resultContainer);
          }
          loadingIcon.classList.add('hide');
       }).catch(error => {

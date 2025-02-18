@@ -14,6 +14,7 @@
    src: url('../fonts/roboto/Roboto-Regular.ttf') format('truetype');
    font-weight: 400;
    font-style: normal;
+   font-display: swap;
 }
 
 @font-face {
@@ -21,6 +22,7 @@
    src: url('../fonts/roboto/Roboto-Light.ttf') format('truetype');
    font-weight: 300;
    font-style: normal;
+   font-display: swap;
 }
 
 @font-face {
@@ -28,6 +30,7 @@
    src: url('../fonts/roboto/Roboto-Medium.ttf') format('truetype');
    font-weight: 500;
    font-style: normal;
+   font-display: swap;
 }
 
 @font-face {
@@ -35,6 +38,7 @@
    src: url('../fonts/roboto/Roboto-Bold.ttf') format('truetype');
    font-weight: 700;
    font-style: normal;
+   font-display: swap;
 }
 
 /* UNIVERSAL */
@@ -224,7 +228,9 @@ button:focus,
 a:focus,
 select:focus,
 .custom-checkbox-container input:focus~.custom-checkbox,
-input[type="text"]:focus {
+input[type="text"]:focus,
+div.collapsible-item:focus,
+svg.search-results-add-song-icon:focus {
    outline: 2px solid #2196F3;
    outline-offset: 2px;
 }
@@ -428,6 +434,10 @@ div.collapsible-item {
    padding: 20px;
    max-width: 500px;
    width: 100%;
+}
+
+div.collapsible-content div.btns {
+   margin-bottom: 5px;
 }
 
 @media (max-width: 600px) {
@@ -707,7 +717,7 @@ ol li::marker {
 .modal-body {
    background-color: var(--secondary-body-color);
    margin: 1rem;
-   padding: 20px;
+   padding: 0 20px;
    width: 100%;
    max-width: 500px;
    height: -webkit-max-content;
@@ -717,20 +727,6 @@ ol li::marker {
    border-radius: var(--border-radius);
    position: relative;
    box-shadow: 0 0px 10px var(--shadow-color);
-}
-
-.modal-close {
-   color: var(--primary-color);
-   float: right;
-   font-size: 34px;
-   font-weight: bold;
-   cursor: pointer;
-}
-
-.modal-close:hover,
-.modal-close:focus {
-   color: var(--primary-color-hover);
-   text-decoration: none;
 }
 
 @-webkit-keyframes modal-open {
@@ -875,7 +871,7 @@ div#search-results {
 .search-results-cover {
    width: 70px;
    height: 70px;
-   border-radius: var(--border-radius);
+   border-radius: 4px;
    margin: 0;
 }
 
@@ -883,6 +879,7 @@ div#search-results {
    .search-results-cover {
       width: 50px;
       height: 50px;
+      border-radius: 2px;
    }
 }
 

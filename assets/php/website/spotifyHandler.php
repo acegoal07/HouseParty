@@ -58,13 +58,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
          curl_setopt($curl, CURLOPT_HTTPHEADER, [$party_info['auth']]);
          $response = curl_exec($curl);
+         $responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
          curl_close($curl);
+
+         if ($responseCode === 429) {
+            http_response_code(200);
+            echo json_encode(['totalTracks' => 0, 'tracks' => [], 'code' => 1]);
+            exit();
+         }
 
          $responseData = json_decode($response, true);
 
          if (count($responseData['tracks']['items']) === 0) {
             http_response_code(200);
-            echo json_encode(['totalTracks' => 0, 'tracks' => []]);
+            echo json_encode(['totalTracks' => 0, 'tracks' => [], 'code' => 0]);
             exit();
          }
 
@@ -75,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          }
 
          http_response_code(200);
-         echo json_encode(['totalTracks' => count($responseData['tracks']['items']), 'tracks' => $responseData['tracks']['items']]);
+         echo json_encode(['totalTracks' => count($responseData['tracks']['items']), 'tracks' => $responseData['tracks']['items'], 'code' => 0]);
          break;
          //////////////// default //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       default:
@@ -102,7 +109,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
          curl_setopt($curl, CURLOPT_HTTPHEADER, [$party_info['auth']]);
          $response = curl_exec($curl);
+         $responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
          curl_close($curl);
+
+         if ($responseCode === 429) {
+            http_response_code(200);
+            echo json_encode(['success' => true, 'responseCode' => 4]);
+            exit();
+         }
 
          if ($response === false) {
             http_response_code(200);
@@ -124,7 +138,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($curl, CURLOPT_HTTPHEADER, [$party_info['auth']]);
             $response = curl_exec($curl);
+            $responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             curl_close($curl);
+
+            if ($responseCode === 429) {
+               http_response_code(200);
+               echo json_encode(['success' => true, 'responseCode' => 4]);
+               exit();
+            }
 
             if ($response === false) {
                http_response_code(200);
@@ -160,14 +181,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          $responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
          curl_close($curl);
 
-         if ($responseCode !== 200) {
+         if ($responseCode === 429) {
+            http_response_code(200);
+            echo json_encode(['success' => true, 'responseCode' => 4]);
+            exit();
+         } elseif ($responseCode !== 200) {
             http_response_code(200);
             echo json_encode(['success' => false, 'responseCode' => 0]);
             exit();
+         } else {
+            http_response_code(200);
+            echo json_encode(['success' => true, 'responseCode' => 1]);
+            exit();
          }
 
-         http_response_code(200);
-         echo json_encode(['success' => true, 'responseCode' => 1]);
          break;
          //////////////// default //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       default:
