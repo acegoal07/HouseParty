@@ -87,7 +87,6 @@ body {
 
 main {
    width: 100%;
-   padding: 10px;
 }
 
 p {
@@ -575,7 +574,7 @@ div.party-code-container span#party-code {
    div.party-code-container span#party-code {
       font-size: 1rem;
    }
-   
+
 }
 
 div#party-qrcode {
@@ -894,10 +893,9 @@ div#search-results {
    height: 40px;
    flex-shrink: 0;
    fill: var(--primary-color);
-   box-shadow: 0 0 10px var(--shadow-color);
    margin-left: auto;
    cursor: pointer;
-   transition: fill ease 0.2s, box-shadow ease 0.2s, transform ease 0.2s;
+   transition: fill ease 0.2s;
    border-radius: 100%;
 }
 
@@ -910,8 +908,25 @@ div#search-results {
 
 .search-results-add-song-icon:hover {
    fill: var(--primary-color-hover);
-   box-shadow: 0 0 15px var(--shadow-color-hover);
-   transform: scale(1.03);
+}
+
+.search-results-spotify-logo-link {
+   border-radius: 100%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+
+.search-results-spotify-logo {
+   width: 40px;
+   height: 40px;
+}
+
+@media screen and (max-width: 600px) {
+   .search-results-spotify-logo {
+      width: 35px;
+      height: 35px;
+   }
 }
 
 .search-results-explicit-icon {
