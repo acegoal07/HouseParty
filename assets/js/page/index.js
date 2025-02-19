@@ -14,7 +14,7 @@ window.addEventListener('load', () => {
    }
    checkCookies();
    setInterval(checkCookies, 1000);
-   //Extend cookies periodically
+   // Extend cookies periodically
    function extendCookiesPeriodically() {
       extendCookie({ name: 'refresh_token', days: 1 });
       extendCookie({ name: 'host_id', days: 1 });

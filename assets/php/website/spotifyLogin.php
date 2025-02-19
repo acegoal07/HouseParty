@@ -26,18 +26,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
       curl_close($ch);
 
+      if (curl_errno($ch)) {
+         error_log('cURL Error: ' . curl_error($ch));
+         header("Location: ../../../loginerror.html?error=1");
+         exit();
+      }
+
       if ($http_code === 429) {
          header("Location: ../../../loginerror.html?error=4");
          exit();
-      }
-
-      if (curl_errno($ch)) {
-         error_log('cURL Error: ' . curl_error($ch));
-         http_response_code(500);
-         exit();
-      }
-
-      if ($http_code !== 200) {
+      } elseif ($http_code !== 200) {
          header("Location: ../../../loginerror.html?error=1");
          exit();
       }
@@ -55,23 +53,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
       curl_close($ch);
 
+      if (curl_errno($ch)) {
+         error_log('cURL Error: ' . curl_error($ch));
+         header("Location: ../../../loginerror.html?error=1");
+         exit();
+      }
+
       if ($http_code === 429) {
          header("Location: ../../../loginerror.html?error=4");
          exit();
-      }
-
-      if (curl_errno($ch)) {
-         error_log('cURL Error: ' . curl_error($ch));
-         http_response_code(500);
-         exit();
-      }
-
-      if ($http_code === 403) {
+      } elseif ($http_code === 403) {
          header("Location: ../../../loginerror.html?error=2");
          exit();
-      }
-
-      if ($http_code !== 200) {
+      } elseif ($http_code !== 200) {
          header("Location: ../../../loginerror.html?error=1");
          exit();
       }
@@ -97,7 +91,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       $stmt->execute();
 
       if ($stmt->error) {
-         http_response_code(500);
+         setcookie("host_id", "", time() - 3600, "/", "", true);
+         header("Location: ../../../loginerror.html?error=1");
          exit();
       }
 
