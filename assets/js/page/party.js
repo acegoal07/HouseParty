@@ -10,7 +10,7 @@ window.addEventListener('load', () => {
    let explicitToggle;
    //////////////// Page polling //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    function pagePolling() {
-      fetch(`assets/php/website/databasePartyHandlers.php?type=checkPartyExistsUser&partyId=${sessionCode}`, {
+      fetch(`assets/php/website/databaseHandler.php?type=checkPartyExistsUser&partyId=${sessionCode}`, {
          method: 'GET'
       }).then(response => response.json()).then(data => {
          if (!data.partyExists) {
