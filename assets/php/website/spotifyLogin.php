@@ -1,109 +1,162 @@
 <?php
 header("Access-Control-Allow-Origin: https://aw1443.brighton.domains/");
 header("Access-Control-Allow-Methods: GET");
+
 include '../secrets.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-   if (isset($_GET['error'])) {
-      header("Location: ../../../loginerror.html?error=1");
-   } else {
-      //////////////// Get access token //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+class SpotifyLoginHandler
+{
+   private $conn;
+   private $spotifyClientId;
+   private $spotifyClientSecret;
+
+   /**
+    * Constructor
+    * @param mysqli $conn The database connection
+    * @param string $spotifyClientId The Spotify client ID
+    * @param string $spotifyClientSecret The Spotify client secret
+    */
+   public function __construct($conn, $spotifyClientId, $spotifyClientSecret)
+   {
+      $this->conn = $conn;
+      $this->spotifyClientId = $spotifyClientId;
+      $this->spotifyClientSecret = $spotifyClientSecret;
+   }
+
+   /**
+    * Handle the request
+    * @return void
+    */
+   public function handleRequest()
+   {
+      if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+         if (isset($_GET['error'])) {
+            $this->redirectWithError(1);
+         } else {
+            $this->processLogin();
+         }
+      } else {
+         http_response_code(405);
+         exit();
+      }
+   }
+
+   /**
+    * Process the login request
+    * @return void
+    */
+   private function processLogin()
+   {
+      $result = $this->getAccessToken();
+      $stored_refresh_token = $result['refresh_token'];
+
+      $result = $this->getHostId($result['access_token']);
+
+      if (!isset($result['id'])) {
+         $this->redirectWithError(1);
+      }
+
+      if ($result['product'] !== 'premium') {
+         $this->redirectWithError(3);
+      }
+
+      setcookie("host_id", $result['id'], time() + 86400, "/", "", true);
+
+      $final_refresh_token = $this->checkRefreshToken($result['id'], $stored_refresh_token);
+
+      setcookie("refresh_token", $final_refresh_token, time() + 86400, "/", "", true);
+
+      header("Location: ../../../dashboard.html");
+      exit();
+   }
+
+   /**
+    * Get the access token from the Spotify API
+    * @return array The access token
+    */
+   private function getAccessToken()
+   {
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, "https://accounts.spotify.com/api/token");
       curl_setopt($ch, CURLOPT_POST, true);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(
-         [
-            'grant_type' => 'authorization_code',
-            'code' => $_GET['code'],
-            'redirect_uri' => 'https://aw1443.brighton.domains/houseparty/assets/php/website/spotifyLogin.php',
-            'client_id' => $spotifyClientId,
-            'client_secret' => $spotifyClientSecret
-         ]
-      ));
+      curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
+         'grant_type' => 'authorization_code',
+         'code' => $_GET['code'],
+         'redirect_uri' => 'https://aw1443.brighton.domains/houseparty/assets/php/website/spotifyLogin.php',
+         'client_id' => $this->spotifyClientId,
+         'client_secret' => $this->spotifyClientSecret
+      ]));
       curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
       $response = curl_exec($ch);
       $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
       curl_close($ch);
 
-      if ($http_code === 429) {
-         header("Location: ../../../loginerror.html?error=4");
-         exit();
-      }
-
       if (curl_errno($ch)) {
          error_log('cURL Error: ' . curl_error($ch));
-         http_response_code(500);
-         exit();
+         $this->redirectWithError(1);
       }
 
-      if ($http_code !== 200) {
-         header("Location: ../../../loginerror.html?error=1");
-         exit();
+      if ($http_code === 429) {
+         $this->redirectWithError(4);
+      } elseif ($http_code !== 200) {
+         $this->redirectWithError(1);
       }
 
-      $result = json_decode($response, true);
+      return json_decode($response, true);
+   }
 
-      $stored_refresh_token = $result['refresh_token'];
-
-      //////////////// Get host ID //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   /**
+    * Get the host ID from the Spotify API
+    * @param string $accessToken The access token
+    * @return array The host ID
+    */
+   private function getHostId($accessToken)
+   {
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, "https://api.spotify.com/v1/me");
-      curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $result['access_token']]);
+      curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $accessToken]);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
       $response = curl_exec($ch);
       $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
       curl_close($ch);
 
-      if ($http_code === 429) {
-         header("Location: ../../../loginerror.html?error=4");
-         exit();
-      }
-
       if (curl_errno($ch)) {
          error_log('cURL Error: ' . curl_error($ch));
-         http_response_code(500);
-         exit();
+         $this->redirectWithError(1);
       }
 
-      if ($http_code === 403) {
-         header("Location: ../../../loginerror.html?error=2");
-         exit();
+      if ($http_code === 429) {
+         $this->redirectWithError(4);
+      } elseif ($http_code === 403) {
+         $this->redirectWithError(2);
+      } elseif ($http_code !== 200) {
+         $this->redirectWithError(1);
       }
 
-      if ($http_code !== 200) {
-         header("Location: ../../../loginerror.html?error=1");
-         exit();
-      }
+      return json_decode($response, true);
+   }
 
-      $result = json_decode($response, true);
-
-      if (!isset($result['id'])) {
-         error_log('Error: Missing host_id in response');
-         http_response_code(500);
-         exit();
-      }
-
-      if ($result['product'] !== 'premium') {
-         header("Location:  ../../../loginerror.html?error=3");
-         exit();
-      }
-
-      setcookie("host_id", $result['id'], time() + 86400, "/", "", true);
-
-      //////////////// Refresh token check //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      $stmt = $conn->prepare("SELECT refresh_token FROM parties WHERE host_id = ? COLLATE utf8_bin");
-      $stmt->bind_param("s", $result['id']);
+   /**
+    * Check if the refresh token has changed and update it if necessary
+    * @param string $hostId The host ID
+    * @param string $stored_refresh_token The stored refresh token
+    * @return string The final refresh token
+    */
+   private function checkRefreshToken($hostId, $stored_refresh_token)
+   {
+      $stmt = $this->conn->prepare("SELECT refresh_token FROM parties WHERE host_id = ? COLLATE utf8_bin");
+      $stmt->bind_param("s", $hostId);
       $stmt->execute();
 
       if ($stmt->error) {
-         http_response_code(500);
-         exit();
+         setcookie("host_id", "", time() - 3600, "/", "", true);
+         $this->redirectWithError(1);
       }
 
       $query_result = $stmt->get_result();
-
       $final_refresh_token = $stored_refresh_token;
+
       if ($query_result->num_rows > 0) {
          $row = $query_result->fetch_assoc();
          if ($row['refresh_token'] !== $stored_refresh_token) {
@@ -111,15 +164,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          }
       }
 
-      setcookie("refresh_token", $final_refresh_token, time() + 86400, "/", "", true);
-
       $stmt->close();
-      $conn->close();
 
-      header("Location: ../../../dashboard.html");
+      return $final_refresh_token;
+   }
+
+   /**
+    * Redirect the user to the login error page with an error code
+    * @param int $errorCode The error code
+    * @return void
+    */
+   private function redirectWithError($errorCode)
+   {
+      header("Location: ../../../loginerror.html?error=$errorCode");
       exit();
    }
-} else {
-   http_response_code(405);
-   exit();
+
+   /**
+    * Destructor
+    */
+   public function __destruct()
+   {
+      $this->conn->close();
+   }
 }
+
+$spotifyLoginHandler = new SpotifyLoginHandler($conn, $spotifyClientId, $spotifyClientSecret);
+$spotifyLoginHandler->handleRequest();

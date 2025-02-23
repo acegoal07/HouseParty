@@ -10,7 +10,7 @@ window.addEventListener('load', () => {
    let explicitToggle;
    //////////////// Page polling //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    function pagePolling() {
-      fetch(`assets/php/website/databasePartyHandlers.php?type=checkPartyExistsUser&partyId=${sessionCode}`, {
+      fetch(`assets/php/website/databaseHandler.php?type=checkPartyExistsUser&partyId=${sessionCode}`, {
          method: 'GET'
       }).then(response => response.json()).then(data => {
          if (!data.partyExists) {
@@ -83,6 +83,28 @@ window.addEventListener('load', () => {
          for (const key of limitedTracks) {
             const song = tracks[key];
 
+            // Get the artist text
+            const maxChars = 30;
+            let charCount = 0;
+            const artistsList = [];
+            let remainingArtistsCount = 0;
+
+            for (let i = 0; i < song.artists.length; i++) {
+               const artistName = song.artists[i].name;
+               if (charCount + artistName.length <= maxChars) {
+                  artistsList.push(artistName);
+                  charCount += artistName.length;
+               } else {
+                  remainingArtistsCount = song.artists.length - i;
+                  break;
+               }
+            }
+
+            let artistText = artistsList.join(', ');
+            if (remainingArtistsCount > 0) {
+               artistText += `, and ${remainingArtistsCount} more`;
+            }
+
             // Create the result container
             const resultContainer = document.createElement('div');
             resultContainer.className = 'search-results-item';
@@ -90,7 +112,7 @@ window.addEventListener('load', () => {
             // Create the song cover image
             const songCover = document.createElement('img');
             songCover.src = song.album.images[0].url;
-            songCover.alt = `${song.name} album cover`;
+            songCover.alt = `${song.name} by ${artistText} album cover`;
             songCover.className = 'search-results-cover';
             resultContainer.appendChild(songCover);
 
@@ -120,27 +142,6 @@ window.addEventListener('load', () => {
             // Create the song artist
             const songArtist = document.createElement('p');
             songArtist.className = 'search-results-artists';
-
-            const maxChars = 30;
-            let charCount = 0;
-            const artistsList = [];
-            let remainingArtistsCount = 0;
-
-            for (let i = 0; i < song.artists.length; i++) {
-               const artistName = song.artists[i].name;
-               if (charCount + artistName.length <= maxChars) {
-                  artistsList.push(artistName);
-                  charCount += artistName.length;
-               } else {
-                  remainingArtistsCount = song.artists.length - i;
-                  break;
-               }
-            }
-
-            let artistText = artistsList.join(', ');
-            if (remainingArtistsCount > 0) {
-               artistText += `, and ${remainingArtistsCount} more`;
-            }
 
             songArtist.textContent = artistText;
             resultInfoContainer.appendChild(songArtist);
@@ -225,6 +226,23 @@ window.addEventListener('load', () => {
             addIcon.addEventListener('click', addSongFunction);
             // Append the add icon to the result container
             resultContainer.appendChild(addIcon);
+
+            // Add spotify logo with link to song
+            const spotifyLogoLink = document.createElement('a');
+            spotifyLogoLink.href = song.external_urls.spotify;
+            spotifyLogoLink.target = '_blank';
+            spotifyLogoLink.rel = 'noopener noreferrer';
+            spotifyLogoLink.className = 'search-results-spotify-logo-link';
+            spotifyLogoLink.ariaLabel = `Open ${song.title} by ${artistText} in Spotify`;
+
+            const spotifyLogo = document.createElement('img');
+            spotifyLogo.src = 'assets/images/Primary_Logo_White_CMYK.svg';
+            spotifyLogo.alt = 'Spotify logo';
+            spotifyLogo.className = 'search-results-spotify-logo';
+            spotifyLogo.href = song.external_urls.spotify;
+            spotifyLogoLink.appendChild(spotifyLogo);
+
+            resultContainer.appendChild(spotifyLogoLink);
 
             // Append the result container to the search results
             searchResults.appendChild(resultContainer);

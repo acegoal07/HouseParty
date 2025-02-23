@@ -44,7 +44,7 @@ window.addEventListener('load', () => {
          hostId: `${getCookie('host_id')}`,
          refreshToken: `${getCookie('refresh_token')}`
       });
-      fetch(`assets/php/website/databasePartyHandlers.php?${urlParams}`, {
+      fetch(`assets/php/website/databaseHandler.php?${urlParams}`, {
          method: 'GET'
       }).then(response => response.json()).then(data => {
          if (data.partyExists) {
@@ -112,7 +112,7 @@ window.addEventListener('load', () => {
    startPartyForm.addEventListener('submit', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
-      fetch(`assets/php/website/databasePartyHandlers.php`, {
+      fetch(`assets/php/website/databaseHandler.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -136,7 +136,7 @@ window.addEventListener('load', () => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
       const partyDuration = document.querySelector('input#extend-party-duration').value;
-      fetch(`assets/php/website/databasePartyHandlers.php`, {
+      fetch(`assets/php/website/databaseHandler.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -154,7 +154,7 @@ window.addEventListener('load', () => {
    disableExplicitButton.addEventListener('click', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
-      fetch(`assets/php/website/databasePartyHandlers.php`, {
+      fetch(`assets/php/website/databaseHandler.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -172,7 +172,7 @@ window.addEventListener('load', () => {
    enableExplicitButton.addEventListener('click', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
-      fetch(`assets/php/website/databasePartyHandlers.php`, {
+      fetch(`assets/php/website/databaseHandler.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -191,7 +191,7 @@ window.addEventListener('load', () => {
    disableDuplicateBlockerButton.addEventListener('click', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
-      fetch(`assets/php/website/databasePartyHandlers.php`, {
+      fetch(`assets/php/website/databaseHandler.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -209,7 +209,7 @@ window.addEventListener('load', () => {
    enableDuplicateBlockerButton.addEventListener('click', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
-      fetch(`assets/php/website/databasePartyHandlers.php`, {
+      fetch(`assets/php/website/databaseHandler.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -228,7 +228,7 @@ window.addEventListener('load', () => {
    document.querySelector('button#confirm-end-party-button').addEventListener('click', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
-      fetch(`assets/php/website/databasePartyHandlers.php`, {
+      fetch(`assets/php/website/databaseHandler.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/x-www-form-urlencoded'

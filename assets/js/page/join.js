@@ -19,7 +19,7 @@ window.addEventListener('load', () => {
          return;
       }
 
-      fetch(`assets/php/website/databasePartyHandlers.php?type=checkPartyExistsUser&partyId=${partyCode}`, {
+      fetch(`assets/php/website/databaseHandler.php?type=checkPartyExistsUser&partyId=${partyCode}`, {
          method: 'GET'
       }).then(response => response.json()).then(data => {
          if (data.partyExists) {
