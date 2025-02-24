@@ -122,7 +122,6 @@ window.addEventListener('load', () => {
          if (data.success) {
             event.target.reset();
             window.location.reload();
-            loadingIcon.classList.add('hide');
          } else {
             deleteCookie({ name: 'refresh_token' });
             deleteCookie({ name: 'host_id' });
@@ -237,7 +236,6 @@ window.addEventListener('load', () => {
       }).then(response => response.json()).then(data => {
          if (data.success) {
             window.location.reload();
-            loadingIcon.classList.add('hide');
          }
       });
    });
