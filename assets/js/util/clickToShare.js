@@ -9,10 +9,9 @@ window.addEventListener('DOMContentLoaded', () => {
                title: 'House Party',
                text: 'Join my party on House Party!',
                url: button.getAttribute('data-party-url')
-            })
-               .catch((error) => {
-                  console.error('Error sharing:', error);
-               });
+            }).catch((error) => {
+               console.error('Error sharing:', error);
+            });
          });
       });
    }

@@ -123,16 +123,14 @@ class ModalHandler {
          if (!isTabPressed) {
             return;
          }
-         if (event.shiftKey) {
-            if (document.activeElement === firstElement) {
-               lastElement.focus();
-               event.preventDefault();
-            }
+         if (event.shiftKey && document.activeElement === firstElement) {
+            lastElement.focus();
+            event.preventDefault();
+         } else if (document.activeElement === lastElement) {
+            firstElement.focus();
+            event.preventDefault();
          } else {
-            if (document.activeElement === lastElement) {
-               firstElement.focus();
-               event.preventDefault();
-            }
+            return;
          }
       });
       firstElement.focus();

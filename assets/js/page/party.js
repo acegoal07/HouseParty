@@ -219,6 +219,8 @@ window.addEventListener('load', () => {
                               break;
                         }
                      }
+                  }).catch(error => {
+                     console.error('Add Song Error:', error);
                   });
                }
             }

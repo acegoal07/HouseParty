@@ -127,6 +127,8 @@ window.addEventListener('load', () => {
             deleteCookie({ name: 'host_id' });
             window.location.href = '/houseparty/';
          }
+      }).catch(error => {
+         console.error('Create Party Error:', error);
       });
    });
    //////////////// Extend party //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -146,6 +148,8 @@ window.addEventListener('load', () => {
             event.target.reset();
             loadingIcon.classList.remove('hide');
          }
+      }).catch(error => {
+         console.error('Extend Party Error:', error);
       });
    });
    //////////////// Explicit enable/disable buttons //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -165,6 +169,8 @@ window.addEventListener('load', () => {
             enableExplicitButton.classList.remove('hide');
             loadingIcon.classList.add('hide');
          }
+      }).catch(error => {
+         console.error('Disable Explicit Error:', error);
       });
    });
    // Handle the button press for enabling explicit songs
@@ -183,6 +189,8 @@ window.addEventListener('load', () => {
             disableExplicitButton.classList.remove('hide');
             loadingIcon.classList.add('hide');
          }
+      }).catch(error => {
+         console.error('Enable Explicit Error:', error);
       });
    });
    //////////////// Duplicate blocker enable/disable buttons //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -202,6 +210,8 @@ window.addEventListener('load', () => {
             enableDuplicateBlockerButton.classList.remove('hide');
             loadingIcon.classList.add('hide');
          }
+      }).catch(error => {
+         console.error('Disable Duplicate Blocker Error:', error);
       });
    });
    // Handle the button press for enabling duplicate blocker
@@ -220,6 +230,8 @@ window.addEventListener('load', () => {
             disableDuplicateBlockerButton.classList.remove('hide');
             loadingIcon.classList.add('hide');
          }
+      }).catch(error => {
+         console.error('Enable Duplicate Blocker Error:', error);
       });
    });
    //////////////// End party //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -237,6 +249,8 @@ window.addEventListener('load', () => {
          if (data.success) {
             window.location.reload();
          }
+      }).catch(error => {
+         console.error('End Party Error:', error);
       });
    });
 });
