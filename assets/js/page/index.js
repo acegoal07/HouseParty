@@ -7,9 +7,9 @@ window.addEventListener('load', () => {
       if (getCookie('refresh_token') !== null && getCookie('host_id') !== null) {
          logoutButton.classList.remove('hide');
       } else {
+         logoutButton.classList.add('hide');
          deleteCookie({ name: 'host_id' });
          deleteCookie({ name: 'refresh_token' });
-         logoutButton.classList.add('hide');
       }
    }
    checkCookies();
@@ -38,7 +38,6 @@ window.addEventListener('load', () => {
    });
    // Add event listener to the logout button
    logoutButton.addEventListener('click', () => {
-      loadingIcon.classList.remove('hide');
       deleteCookie({ name: 'host_id' });
       deleteCookie({ name: 'refresh_token' });
       window.location.reload();
