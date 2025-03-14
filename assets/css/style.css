@@ -496,7 +496,7 @@ div.collapsible-item div.collapsible-content p {
    margin-bottom: 0;
 }
 
-@-webkit-keyframes exapnd-collapsible-item {
+@-webkit-keyframes expand-collapsible-item {
    0% {
       height: 0;
    }
@@ -510,7 +510,7 @@ div.collapsible-item div.collapsible-content p {
    }
 }
 
-@keyframes exapnd-collapsible-item {
+@keyframes expand-collapsible-item {
    0% {
       height: 0;
    }

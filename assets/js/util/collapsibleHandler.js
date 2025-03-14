@@ -24,7 +24,7 @@ class CollapsibleHandler {
       const content = this.collapsible.querySelector('div.collapsible-content');
       content.style.display = 'block';
       content.style.setProperty('--content-height', content.scrollHeight + 'px');
-      content.style.animation = 'exapnd-collapsible-item 0.5s forwards';
+      content.style.animation = 'expand-collapsible-item 0.5s forwards';
    }
 
    /**
