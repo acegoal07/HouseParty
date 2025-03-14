@@ -87,6 +87,14 @@ body {
 
 main {
    width: 100%;
+   margin-top: auto;
+}
+
+footer {
+   position: -webkit-sticky;
+   position: sticky;
+   top: 100vh;
+   text-align: center;
 }
 
 p {
@@ -934,4 +942,15 @@ div#search-results {
    height: 16px;
    fill: currentColor;
    margin-left: 5px;
+}
+
+/* LINKS */
+a {
+   color: var(--primary-color);
+   text-decoration: none;
+}
+
+a:hover {
+   color: var(--primary-color-hover);
+   text-decoration: underline;
 }
