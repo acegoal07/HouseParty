@@ -87,6 +87,18 @@ body {
 
 main {
    width: 100%;
+   margin-top: auto;
+}
+
+footer {
+   position: -webkit-sticky;
+   position: sticky;
+   top: 100vh;
+   text-align: center;
+}
+
+footer p {
+   margin: 0;
 }
 
 p {
@@ -113,21 +125,21 @@ h1.logo {
       display: flex;
       flex-direction: column;
       font-size: 3.5rem;
-      line-height: 55px;
+      line-height: 3.5rem;
    }
 }
 
 /* DESCRIPTION */
 h2.description {
    font-size: 1.5rem;
-   margin: 10px 0 20px 0;
+   margin: 0.625rem 0 1.25rem 0;
    text-align: center;
 }
 
 @media (max-width: 600px) {
    h2.description {
       font-size: 1.3rem;
-      margin-bottom: 15px;
+      margin-bottom: 0.9375rem;
    }
 }
 
@@ -137,14 +149,14 @@ div.btns {
    flex-direction: row;
    align-items: center;
    justify-content: center;
-   gap: 20px;
-   margin: 20px;
+   gap: 1.25rem;
+   margin: 1.25rem;
 }
 
 @media (max-width: 600px) {
    div.btns {
       flex-direction: column;
-      margin: 15px;
+      margin: 0.9375rem;
    }
 }
 
@@ -153,9 +165,9 @@ button.btn {
    display: inline-block;
    padding: 10px 20px;
    font-size: 1.5rem;
-   color: #fff;
+   color: #fff !important;
    background-color: var(--secondary-body-color);
-   text-decoration: none;
+   text-decoration: none !important;
    border-radius: var(--border-radius);
    transition: background-color ease 0.2s;
    cursor: pointer;
@@ -176,7 +188,7 @@ button.btn {
 a.btn.btn-primary,
 button.btn.btn-primary {
    background-color: var(--primary-color);
-   color: #000;
+   color: #000 !important;
 }
 
 a.btn.btn-primary:hover,
@@ -425,10 +437,10 @@ div.collapsible-container {
 
 div.collapsible-item {
    cursor: pointer;
-   margin: 20px auto;
+   margin: 1.25rem auto;
    background-color: var(--secondary-body-color);
    border-radius: var(--border-radius);
-   padding: 20px;
+   padding: 1.25rem;
    max-width: 500px;
    width: 100%;
 }
@@ -439,8 +451,8 @@ div.collapsible-content div.btns {
 
 @media (max-width: 600px) {
    div.collapsible-item {
-      margin: 15px auto;
-      padding: 15px;
+      margin: 0.9375rem auto;
+      padding: 0.9375rem;
    }
 }
 
@@ -496,7 +508,7 @@ div.collapsible-item div.collapsible-content p {
    margin-bottom: 0;
 }
 
-@-webkit-keyframes exapnd-collapsible-item {
+@-webkit-keyframes expand-collapsible-item {
    0% {
       height: 0;
    }
@@ -510,7 +522,7 @@ div.collapsible-item div.collapsible-content p {
    }
 }
 
-@keyframes exapnd-collapsible-item {
+@keyframes expand-collapsible-item {
    0% {
       height: 0;
    }
@@ -558,8 +570,8 @@ div.party-code-container {
    align-items: center;
    justify-content: space-between;
    background-color: var(--primary-body-color);
-   padding: 5px 15px;
-   margin-top: 10px;
+   padding: 0.3125rem 0.9375rem;
+   margin-top: 0.625rem;
    border-radius: var(--border-radius);
 }
 
@@ -581,8 +593,8 @@ div#party-qrcode {
    display: flex;
    justify-content: center;
    align-items: center;
-   margin-top: 20px;
-   padding: 10px;
+   margin-top: 1.25rem;
+   padding: 0.625rem;
 }
 
 /* list */
@@ -665,18 +677,18 @@ ol li::marker {
    display: flex;
    align-items: center;
    justify-content: center;
-   padding: 10px 15px;
+   padding: 0.625rem 0.9375rem;
    border-radius: var(--border-radius);
    background-color: var(--secondary-body-color);
    width: -webkit-max-content;
    width: -moz-max-content;
    width: max-content;
-   margin: 20px auto;
+   margin: 1.25rem auto;
 }
 
 @media screen and (max-width: 600px) {
    .expires-at-container {
-      margin: 15px auto;
+      margin: 0.9375rem auto;
    }
 }
 
@@ -934,4 +946,15 @@ div#search-results {
    height: 16px;
    fill: currentColor;
    margin-left: 5px;
+}
+
+/* LINKS */
+a {
+   color: var(--primary-color);
+   text-decoration: none;
+}
+
+a:hover {
+   color: var(--primary-color-hover);
+   text-decoration: underline;
 }

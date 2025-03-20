@@ -57,8 +57,7 @@ function getCookie(name) {
    }
 
    const nameEQ = `${encodeURIComponent(name)}=`;
-   const cookies = document.cookie.split(';');
-   for (const cookie of cookies) {
+   for (const cookie of document.cookie.split(';')) {
       const trimmedCookie = cookie.trim();
       if (trimmedCookie.startsWith(nameEQ)) {
          return decodeURIComponent(trimmedCookie.substring(nameEQ.length));

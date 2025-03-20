@@ -28,7 +28,6 @@ window.addEventListener('load', () => {
             });
          }
          if (data.explicit !== explicitToggle) {
-            // document.querySelector('p.explicit-indicator').textContent = data.explicit ? 'enabled' : 'disabled';
             explicitToggle = data.explicit;
             if (searchResults.hasChildNodes()) {
                searchFunction();
@@ -219,6 +218,8 @@ window.addEventListener('load', () => {
                               break;
                         }
                      }
+                  }).catch(error => {
+                     console.error('Add Song Error:', error);
                   });
                }
             }

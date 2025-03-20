@@ -33,3 +33,5 @@ I chose to use font awesome and bootstrap icons for the icon library as they hav
 
 I decided to combine all the login errors into one page and then when the php has an error with the login it sends it to the page and displays the correct error to match what has happened
 i did this instead of having multiple html pages that show different errors
+
+I decided to add a Spotify icon which also doubles as a link to the song you are looking at as it is a guideline requirement for the spotify API to get it approved
