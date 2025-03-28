@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import os from 'os';
 
 const basePath = `http://127.0.0.1:3000/index.html`;
 
@@ -108,6 +109,7 @@ test.describe('House Party Index Page', () => {
       await page.waitForTimeout(500); // wait to make sure cookies are set
       const logoutButton = page.locator('button#logout-button');
       await logoutButton.click();
+      await page.waitForTimeout(500);
       if (browserName === 'webkit') {
          const cookies = await page.evaluate(() => document.cookie);
          expect(cookies).not.toContain('refresh_token=dummy_token');
