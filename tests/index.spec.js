@@ -39,6 +39,11 @@ test.describe('House Party Index Page', () => {
          }
       ]);
       await page.goto(basePath, { waitUntil: 'load' });
+      await page.evaluate(() => {
+         document.cookie = "refresh_token=dummy_token; path=/; domain=127.0.0.1; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
+         document.cookie = "host_id=dummy_host; path=/; domain=127.0.0.1; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
+      });
+      await page.waitForTimeout(500); // wait to make sure cookies are set
       const logoutButton = page.locator('button#logout-button');
       await expect(logoutButton).not.toHaveClass(/hide/);
    });
@@ -61,6 +66,11 @@ test.describe('House Party Index Page', () => {
          }
       ]);
       await page.goto(basePath, { waitUntil: 'load' });
+      await page.evaluate(() => {
+         document.cookie = "refresh_token=dummy_token; path=/; domain=127.0.0.1; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
+         document.cookie = "host_id=dummy_host; path=/; domain=127.0.0.1; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
+      });
+      await page.waitForTimeout(500); // wait to make sure cookies are set
       const partyManagerButton = page.locator('button#party-manager-button');
       await partyManagerButton.click();
       await expect(page).toHaveURL(/dashboard.html/);
