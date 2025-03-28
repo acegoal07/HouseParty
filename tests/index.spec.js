@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import os from 'os';
 
 const basePath = `http://127.0.0.1:3000/index.html`;
 
@@ -84,7 +83,7 @@ test.describe('House Party Index Page', () => {
       await expect(page).toHaveURL(/accounts\.spotify\.com/);
    });
 
-   test('should remove cookies and reload the page on logout', async ({ page, context }) => {
+   test('should remove cookies and reload the page on logout', async ({ page, context, browserName }) => {
       await context.addCookies([
          {
             name: 'refresh_token',
