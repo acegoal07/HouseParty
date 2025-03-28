@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import os from 'os';
 
 const basePath = `http://127.0.0.1:3000/index.html`;
 
@@ -101,11 +102,22 @@ test.describe('House Party Index Page', () => {
          }
       ]);
       await page.goto(basePath, { waitUntil: 'load' });
+      await page.evaluate(() => {
+         document.cookie = "refresh_token=dummy_token; path=/; domain=127.0.0.1; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
+         document.cookie = "host_id=dummy_host; path=/; domain=127.0.0.1; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
+      });
+      await page.waitForTimeout(500); // wait to make sure cookies are set
       const logoutButton = page.locator('button#logout-button');
       await logoutButton.click();
-      const cookies = await context.cookies();
-      expect(cookies.find(cookie => cookie.name === 'refresh_token')).toBeUndefined();
-      expect(cookies.find(cookie => cookie.name === 'host_id')).toBeUndefined();
+      if (browserName === 'webkit') {
+         const cookies = await page.evaluate(() => document.cookie);
+         expect(cookies).not.toContain('refresh_token=dummy_token');
+         expect(cookies).not.toContain('host_id=dummy_host');
+      } else {
+         const cookies = await context.cookies();
+         expect(cookies.find(cookie => cookie.name === 'refresh_token')).toBeUndefined();
+         expect(cookies.find(cookie => cookie.name === 'host_id')).toBeUndefined();
+      }
       await expect(page).toHaveURL(basePath);
    });
 

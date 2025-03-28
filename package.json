@@ -26,5 +26,8 @@
     "@playwright/test": "^1.51.1",
     "@types/node": "^22.13.11",
     "playwright": "^1.51.1"
+  },
+  "dependencies": {
+    "os": "^0.1.2"
   }
 }
