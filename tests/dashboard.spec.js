@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { host_id, refresh_token } from './testCookies.json'
+// import { host_id, refresh_token } from './testCookies.json'
 
 const basePath = `http://127.0.0.1:3000/dashboard.html`;
 
