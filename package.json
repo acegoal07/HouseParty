@@ -1,0 +1,30 @@
+{
+  "name": "houseparty",
+  "version": "1.0.0",
+  "description": "<p align=\"center\">\r   <img src=\"assets/images/HousePartyLogo.png\" width=\"350\" height=\"350\"/>\r </p>",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "npx playwright test",
+    "getReport": "npx playwright show-report",
+    "start": "npx http-server . -p 3000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/acegoal07/HouseParty.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/acegoal07/HouseParty/issues"
+  },
+  "homepage": "https://github.com/acegoal07/HouseParty#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.51.1",
+    "@types/node": "^22.13.11",
+    "playwright": "^1.51.1"
+  }
+}
