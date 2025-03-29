@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-import os from 'os';
 
 const basePath = `http://127.0.0.1:3000/index.html`;
+const domain = process.env.CI ? 'localhost' : '127.0.0.1';
 
 test.describe('House Party Index Page', () => {
    test.beforeEach(async ({ page, context }) => {
@@ -27,14 +27,14 @@ test.describe('House Party Index Page', () => {
          {
             name: 'refresh_token',
             value: 'dummy_token',
-            domain: '127.0.0.1',
+            domain: domain,
             path: '/',
             expires: Math.floor(Date.now() / 1000) + 3600
          },
          {
             name: 'host_id',
             value: 'dummy_host',
-            domain: '127.0.0.1',
+            domain: domain,
             path: '/',
             expires: Math.floor(Date.now() / 1000) + 3600
          }
@@ -54,14 +54,14 @@ test.describe('House Party Index Page', () => {
          {
             name: 'refresh_token',
             value: 'dummy_token',
-            domain: '127.0.0.1',
+            domain: domain,
             path: '/',
             expires: Math.floor(Date.now() / 1000) + 3600
          },
          {
             name: 'host_id',
             value: 'dummy_host',
-            domain: '127.0.0.1',
+            domain: domain,
             path: '/',
             expires: Math.floor(Date.now() / 1000) + 3600
          }
@@ -89,14 +89,14 @@ test.describe('House Party Index Page', () => {
          {
             name: 'refresh_token',
             value: 'dummy_token',
-            domain: '127.0.0.1',
+            domain: domain,
             path: '/',
             expires: Math.floor(Date.now() / 1000) + 3600
          },
          {
             name: 'host_id',
             value: 'dummy_host',
-            domain: '127.0.0.1',
+            domain: domain,
             path: '/',
             expires: Math.floor(Date.now() / 1000) + 3600
          }
