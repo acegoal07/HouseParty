@@ -90,14 +90,16 @@ test.describe('House Party Index Page', () => {
             value: 'dummy_token',
             domain: '127.0.0.1',
             path: '/',
-            expires: Math.floor(Date.now() / 1000) + 3600
+            expires: Math.floor(Date.now() / 1000) + 3600,
+            httpOnly: false
          },
          {
             name: 'host_id',
             value: 'dummy_host',
             domain: '127.0.0.1',
             path: '/',
-            expires: Math.floor(Date.now() / 1000) + 3600
+            expires: Math.floor(Date.now() / 1000) + 3600,
+            httpOnly: false
          }
       ]);
       await page.goto(basePath, { waitUntil: 'load' });
