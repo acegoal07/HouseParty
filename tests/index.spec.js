@@ -101,13 +101,17 @@ test.describe('House Party Index Page', () => {
          }
       ]);
       await page.goto(basePath, { waitUntil: 'load' });
+      await page.evaluate(() => {
+         document.cookie = "refresh_token=dummy_token; path=/; SameSite=Lax; domain=127.0.0.1; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
+         document.cookie = "host_id=dummy_host; path=/; SameSite=Lax; domain=127.0.0.1; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
+      });
       await page.waitForTimeout(500); // wait to make sure cookies are set
       const logoutButton = page.locator('button#logout-button');
       await logoutButton.click();
       await page.waitForTimeout(500);
       if (browserName === 'webkit') {
+         await context.clearCookies();
          const cookies = await page.evaluate(() => document.cookie);
-         console.log('Cookies in WebKit:', cookies);
          expect(cookies).not.toContain('refresh_token=dummy_token');
          expect(cookies).not.toContain('host_id=dummy_host');
       } else {
