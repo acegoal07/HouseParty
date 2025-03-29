@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 
 const basePath = `http://127.0.0.1:3000/index.html`;
-const domain = process.env.CI ? 'localhost' : '127.0.0.1';
 
 test.describe('House Party Index Page', () => {
    test.beforeEach(async ({ page, context }) => {
@@ -27,14 +26,14 @@ test.describe('House Party Index Page', () => {
          {
             name: 'refresh_token',
             value: 'dummy_token',
-            domain: domain,
+            domain: '127.0.0.1',
             path: '/',
             expires: Math.floor(Date.now() / 1000) + 3600
          },
          {
             name: 'host_id',
             value: 'dummy_host',
-            domain: domain,
+            domain: '127.0.0.1',
             path: '/',
             expires: Math.floor(Date.now() / 1000) + 3600
          }
@@ -54,14 +53,14 @@ test.describe('House Party Index Page', () => {
          {
             name: 'refresh_token',
             value: 'dummy_token',
-            domain: domain,
+            domain: '127.0.0.1',
             path: '/',
             expires: Math.floor(Date.now() / 1000) + 3600
          },
          {
             name: 'host_id',
             value: 'dummy_host',
-            domain: domain,
+            domain: '127.0.0.1',
             path: '/',
             expires: Math.floor(Date.now() / 1000) + 3600
          }
@@ -89,22 +88,22 @@ test.describe('House Party Index Page', () => {
          {
             name: 'refresh_token',
             value: 'dummy_token',
-            domain: domain,
+            domain: '127.0.0.1',
             path: '/',
             expires: Math.floor(Date.now() / 1000) + 3600
          },
          {
             name: 'host_id',
             value: 'dummy_host',
-            domain: domain,
+            domain: '127.0.0.1',
             path: '/',
             expires: Math.floor(Date.now() / 1000) + 3600
          }
       ]);
       await page.goto(basePath, { waitUntil: 'load' });
       await page.evaluate(() => {
-         document.cookie = "refresh_token=dummy_token; path=/; domain=127.0.0.1; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
-         document.cookie = "host_id=dummy_host; path=/; domain=127.0.0.1; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
+         document.cookie = "refresh_token=dummy_token; path=/; samesite=Lax; domain=127.0.0.1; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
+         document.cookie = "host_id=dummy_host; path=/; samesite=Lax; domain=127.0.0.1; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
       });
       await page.waitForTimeout(500); // wait to make sure cookies are set
       const logoutButton = page.locator('button#logout-button');
