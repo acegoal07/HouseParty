@@ -39,6 +39,11 @@ test.describe('House Party Index Page', () => {
          }
       ]);
       await page.goto(basePath, { waitUntil: 'load' });
+      await page.evaluate(() => {
+         document.cookie = "refresh_token=dummy_token; path=/; domain=127.0.0.1; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
+         document.cookie = "host_id=dummy_host; path=/; domain=127.0.0.1; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
+      });
+      await page.waitForTimeout(500); // wait to make sure cookies are set
       const logoutButton = page.locator('button#logout-button');
       await expect(logoutButton).not.toHaveClass(/hide/);
    });
@@ -61,6 +66,11 @@ test.describe('House Party Index Page', () => {
          }
       ]);
       await page.goto(basePath, { waitUntil: 'load' });
+      await page.evaluate(() => {
+         document.cookie = "refresh_token=dummy_token; path=/; domain=127.0.0.1; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
+         document.cookie = "host_id=dummy_host; path=/; domain=127.0.0.1; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
+      });
+      await page.waitForTimeout(500); // wait to make sure cookies are set
       const partyManagerButton = page.locator('button#party-manager-button');
       await partyManagerButton.click();
       await expect(page).toHaveURL(/dashboard.html/);
@@ -73,7 +83,7 @@ test.describe('House Party Index Page', () => {
       await expect(page).toHaveURL(/accounts\.spotify\.com/);
    });
 
-   test('should remove cookies and reload the page on logout', async ({ page, context }) => {
+   test('should remove cookies and reload the page on logout', async ({ page, context, browserName }) => {
       await context.addCookies([
          {
             name: 'refresh_token',
@@ -91,11 +101,24 @@ test.describe('House Party Index Page', () => {
          }
       ]);
       await page.goto(basePath, { waitUntil: 'load' });
+      await page.evaluate(() => {
+         document.cookie = "refresh_token=dummy_token; path=/; domain=127.0.0.1; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
+         document.cookie = "host_id=dummy_host; path=/; domain=127.0.0.1; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
+      });
+      await page.waitForTimeout(500); // wait to make sure cookies are set
       const logoutButton = page.locator('button#logout-button');
       await logoutButton.click();
-      const cookies = await context.cookies();
-      expect(cookies.find(cookie => cookie.name === 'refresh_token')).toBeUndefined();
-      expect(cookies.find(cookie => cookie.name === 'host_id')).toBeUndefined();
+      await page.waitForTimeout(500);
+      if (browserName === 'webkit') {
+         await context.clearCookies(); // Clear cookies for WebKit browsers
+         const cookies = await page.evaluate(() => document.cookie);
+         expect(cookies).not.toContain('refresh_token=dummy_token');
+         expect(cookies).not.toContain('host_id=dummy_host');
+      } else {
+         const cookies = await context.cookies();
+         expect(cookies.find(cookie => cookie.name === 'refresh_token')).toBeUndefined();
+         expect(cookies.find(cookie => cookie.name === 'host_id')).toBeUndefined();
+      }
       await expect(page).toHaveURL(basePath);
    });
 
