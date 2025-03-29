@@ -84,27 +84,31 @@ test.describe('House Party Index Page', () => {
    });
 
    test('should remove cookies and reload the page on logout', async ({ page, context, browserName }) => {
-      await context.addCookies([
-         {
-            name: 'refresh_token',
-            value: 'dummy_token',
-            domain: '127.0.0.1',
-            path: '/',
-            expires: Math.floor(Date.now() / 1000) + 3600
-         },
-         {
-            name: 'host_id',
-            value: 'dummy_host',
-            domain: '127.0.0.1',
-            path: '/',
-            expires: Math.floor(Date.now() / 1000) + 3600
-         }
-      ]);
+      if (browserName !== 'webkit') {
+         await context.addCookies([
+            {
+               name: 'refresh_token',
+               value: 'dummy_token',
+               domain: '127.0.0.1',
+               path: '/',
+               expires: Math.floor(Date.now() / 1000) + 3600
+            },
+            {
+               name: 'host_id',
+               value: 'dummy_host',
+               domain: '127.0.0.1',
+               path: '/',
+               expires: Math.floor(Date.now() / 1000) + 3600
+            }
+         ]);
+      }
       await page.goto(basePath, { waitUntil: 'load' });
-      await page.evaluate(() => {
-         document.cookie = "refresh_token=dummy_token; path=/; domain=127.0.0.1; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
-         document.cookie = "host_id=dummy_host; path=/; domain=127.0.0.1; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
-      });
+      if (browserName === 'webkit') {
+         await page.evaluate(() => {
+            document.cookie = "refresh_token=dummy_token; path=/; domain=127.0.0.1; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
+            document.cookie = "host_id=dummy_host; path=/; domain=127.0.0.1; expires=" + new Date(Date.now() + 3600 * 1000).toUTCString();
+         });
+      }
       await page.waitForTimeout(500); // wait to make sure cookies are set
       const logoutButton = page.locator('button#logout-button');
       await logoutButton.click();
