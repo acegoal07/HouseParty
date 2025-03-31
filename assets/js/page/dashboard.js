@@ -87,7 +87,7 @@ window.addEventListener('load', () => {
             if (!createParty.classList.contains('hide')) { createParty.classList.add('hide'); }
             settings.classList.remove('hide');
          } else {
-            // document.dispatchEvent(new Event('closeCurrentModal'));
+            document.dispatchEvent(new Event('closeCurrentModal'));
             if (!settings.classList.contains('hide')) { settings.classList.add('hide'); }
             createParty.classList.remove('hide');
          }
