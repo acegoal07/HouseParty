@@ -4,4 +4,3 @@ test-results/
 playwright-report/
 blob-report/
 playwright/.cache/
-tests/testCookies.json
