@@ -1,22 +1,30 @@
 <?php
-header("Access-Control-Allow-Origin: https://aw1443.brighton.domains/");
-header("Access-Control-Allow-Methods: POST, GET");
-
 include '../secrets.php';
+header("Access-Control-Allow-Origin: {$allowedDomain}");
+header("Access-Control-Allow-Methods: POST, GET");
 
 class SpotifyHandler
 {
    private $conn;
-   private $allowedDomain = 'https://aw1443.brighton.domains/';
+   private $allowedDomain;
 
    /**
     * Constructor
     * @param mysqli $conn The database connection
     */
-   public function __construct($conn)
+   public function __construct($conn, $allowedDomain)
    {
       $this->conn = $conn;
+      $this->allowedDomain = $allowedDomain;
       $this->checkOrigin();
+   }
+
+   /**
+    * Destructor
+    */
+   public function __destruct()
+   {
+      $this->conn->close();
    }
 
    /**
@@ -24,8 +32,8 @@ class SpotifyHandler
     */
    private function checkOrigin()
    {
-      $referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
-      $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+      $referer = $_SERVER['HTTP_REFERER'] ?? '';
+      $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
       if (strpos($referer, $this->allowedDomain) !== 0 && strpos($origin, $this->allowedDomain) !== 0) {
          http_response_code(403);
@@ -35,17 +43,57 @@ class SpotifyHandler
    }
 
    /**
+    * Get the authorisation token for a party from the database
+    * @param string $partyId The party ID
+    * @return array|null The authorisation token, explicit content setting, and duplicate blocker setting
+    */
+   private function getPartyInfo($partyId)
+   {
+      $stmt = $this->conn->prepare("SELECT access_token, explicit, duplicate_blocker FROM parties WHERE party_id = ?");
+      $stmt->bind_param("s", $partyId);
+      $stmt->execute();
+
+      if ($stmt->error) {
+         http_response_code(500);
+         exit();
+      }
+
+      $result = $stmt->get_result();
+
+      if ($result->num_rows === 0) {
+         http_response_code(400);
+         exit();
+      }
+
+      $row = $result->fetch_assoc();
+
+      $stmt->close();
+      return ['auth' => "Authorization: Bearer " . $row['access_token'], 'explicit' => $row['explicit'], 'duplicateBlocker' => $row['duplicate_blocker']];
+   }
+
+   /**
     * Handle the request
     */
    public function handleRequest()
    {
       if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+         if (!isset($_GET['type'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Bad Request: Missing type parameter']);
+            exit();
+         }
          $this->handleGetRequest();
       } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+         if (!isset($_POST['type'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Bad Request: Missing type parameter']);
+            exit();
+         }
          $this->handlePostRequest();
       } else {
          http_response_code(405);
          echo json_encode(['error' => 'Method Not Allowed']);
+         exit();
       }
    }
 
@@ -110,6 +158,7 @@ class SpotifyHandler
       curl_close($curl);
 
       echo $response;
+      exit();
    }
 
    /**
@@ -133,7 +182,7 @@ class SpotifyHandler
       $searchTerm = urlencode($_GET['searchTerm']);
 
       $curl = curl_init();
-      curl_setopt($curl, CURLOPT_URL, "https://api.spotify.com/v1/search?q=" . $searchTerm . "&type=track&limit=50");
+      curl_setopt($curl, CURLOPT_URL, "https://api.spotify.com/v1/search?q={$searchTerm}&type=track&limit=50");
       curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
       curl_setopt($curl, CURLOPT_HTTPHEADER, [$party_info['auth']]);
       $response = curl_exec($curl);
@@ -162,6 +211,7 @@ class SpotifyHandler
 
       http_response_code(200);
       echo json_encode(['totalTracks' => count($responseData['tracks']['items']), 'tracks' => $responseData['tracks']['items'], 'code' => 0]);
+      exit();
    }
 
    /**
@@ -251,7 +301,7 @@ class SpotifyHandler
       }
 
       $curl = curl_init();
-      curl_setopt($curl, CURLOPT_URL, "https://api.spotify.com/v1/me/player/queue?uri=" . $_POST['songId']);
+      curl_setopt($curl, CURLOPT_URL, "https://api.spotify.com/v1/me/player/queue?uri={}" . $_POST['songId']);
       curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
       curl_setopt($curl, CURLOPT_HTTPHEADER, [$party_info['auth']]);
       curl_setopt($curl, CURLOPT_POST, true);
@@ -273,44 +323,7 @@ class SpotifyHandler
          exit();
       }
    }
-
-   /**
-    * Get the authorisation token for a party from the database
-    * @param string $partyId The party ID
-    * @return array|null The authorisation token, explicit content setting, and duplicate blocker setting
-    */
-   private function getPartyInfo($partyId)
-   {
-      $stmt = $this->conn->prepare("SELECT access_token, explicit, duplicate_blocker FROM parties WHERE party_id = ?");
-      $stmt->bind_param("s", $partyId);
-      $stmt->execute();
-
-      if ($stmt->error) {
-         http_response_code(500);
-         exit();
-      }
-
-      $result = $stmt->get_result();
-
-      if ($result->num_rows === 0) {
-         http_response_code(400);
-         exit();
-      }
-
-      $row = $result->fetch_assoc();
-
-      $stmt->close();
-      return ['auth' => "Authorization: Bearer " . $row['access_token'], 'explicit' => $row['explicit'], 'duplicateBlocker' => $row['duplicate_blocker']];
-   }
-
-   /**
-    * Destructor
-    */
-   public function __destruct()
-   {
-      $this->conn->close();
-   }
 }
 
-$api = new SpotifyHandler($conn);
+$api = new SpotifyHandler($conn, $allowedDomain);
 $api->handleRequest();

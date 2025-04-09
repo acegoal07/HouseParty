@@ -1,13 +1,12 @@
 <?php
-header("Access-Control-Allow-Origin: https://aw1443.brighton.domains/");
-header("Access-Control-Allow-Methods: POST, GET");
-
 include '../secrets.php';
+header("Access-Control-Allow-Origin: {$allowedDomain}");
+header("Access-Control-Allow-Methods: POST, GET");
 
 class DatabasePartyHandlers
 {
    private $conn;
-   private $allowedDomain = 'https://aw1443.brighton.domains/';
+   private $allowedDomain;
    private $spotifyClientId;
    private $spotifyClientSecret;
 
@@ -17,12 +16,21 @@ class DatabasePartyHandlers
     * @param string $spotifyClientId The Spotify client ID
     * @param string $spotifyClientSecret The Spotify client secret
     */
-   public function __construct($conn, $spotifyClientId, $spotifyClientSecret)
+   public function __construct($conn, $allowedDomain, $spotifyClientId, $spotifyClientSecret)
    {
       $this->conn = $conn;
+      $this->allowedDomain = $allowedDomain;
       $this->spotifyClientId = $spotifyClientId;
       $this->spotifyClientSecret = $spotifyClientSecret;
       $this->checkOrigin();
+   }
+
+   /**
+    * Destructor
+    */
+   public function __destruct()
+   {
+      $this->conn->close();
    }
 
    /**
@@ -30,14 +38,40 @@ class DatabasePartyHandlers
     */
    private function checkOrigin()
    {
-      $referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
-      $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+      $referer = $_SERVER['HTTP_REFERER'] ?? '';
+      $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
       if (strpos($referer, $this->allowedDomain) !== 0 && strpos($origin, $this->allowedDomain) !== 0) {
          http_response_code(403);
-         echo json_encode(array('error' => 'Forbidden'));
+         echo json_encode(['error' => 'Forbidden']);
          exit();
       }
+   }
+
+   /**
+    * Verify that the refresh token matches the expected format
+    * @param string $refreshToken The refresh token to verify
+    * @return bool True if the refresh token is valid, false otherwise
+    */
+   private function verifyRefreshToken($refreshToken)
+   {
+      $pattern = '/^[A-Za-z0-9-_]{40,}$/';
+      return preg_match($pattern, $refreshToken) === 1;
+   }
+
+   /**
+    * Generate a random party ID
+    * @return string The generated party ID
+    */
+   private function generatePartyId()
+   {
+      $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      $charactersLength = strlen($characters);
+      $randomString = '';
+      for ($i = 0; $i < 6; $i++) {
+         $randomString .= $characters[rand(0, $charactersLength - 1)];
+      }
+      return $randomString;
    }
 
    /**
@@ -46,12 +80,23 @@ class DatabasePartyHandlers
    public function handleRequest()
    {
       if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+         if (!isset($_GET['type'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Bad Request: Missing type parameter']);
+            exit();
+         }
          $this->handleGetRequest();
       } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+         if (!isset($_POST['type'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Bad Request: Missing type parameter']);
+            exit();
+         }
          $this->handlePostRequest();
       } else {
          http_response_code(405);
          echo json_encode(['error' => 'Method Not Allowed']);
+         exit();
       }
    }
 
@@ -136,6 +181,7 @@ class DatabasePartyHandlers
       } else {
          echo json_encode(['partyExists' => false, 'refreshTokenValid' => false]);
       }
+      exit();
    }
 
    /**
@@ -168,6 +214,7 @@ class DatabasePartyHandlers
       } else {
          echo json_encode(['partyExists' => false]);
       }
+      exit();
    }
 
    /**
@@ -228,7 +275,7 @@ class DatabasePartyHandlers
       curl_setopt($ch, CURLOPT_URL, "https://accounts.spotify.com/api/token");
       curl_setopt($ch, CURLOPT_POST, true);
       curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(['grant_type' => 'refresh_token', 'refresh_token' => $_POST['refreshToken'], 'client_id' => $this->spotifyClientId]));
-      curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded', 'Authorization: Basic ' . base64_encode($this->spotifyClientId . ':' .  $this->spotifyClientSecret)]);
+      curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded', 'Authorization: Basic ' . base64_encode("{$this->spotifyClientId}:{$this->spotifyClientSecret}")]);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
       $response = curl_exec($ch);
       $responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -276,6 +323,7 @@ class DatabasePartyHandlers
 
       http_response_code(200);
       echo json_encode(['success' => true]);
+      exit();
    }
 
    /**
@@ -306,6 +354,7 @@ class DatabasePartyHandlers
 
       http_response_code(200);
       echo json_encode(['success' => true]);
+      exit();
    }
 
    /**
@@ -336,6 +385,7 @@ class DatabasePartyHandlers
 
       http_response_code(200);
       echo json_encode(['success' => true]);
+      exit();
    }
 
    /**
@@ -367,6 +417,7 @@ class DatabasePartyHandlers
 
       http_response_code(200);
       echo json_encode(['success' => true]);
+      exit();
    }
 
    /**
@@ -416,42 +467,9 @@ class DatabasePartyHandlers
 
       http_response_code(200);
       echo json_encode(['success' => true]);
-   }
-
-   /**
-    * Generate a random party ID
-    * @return string The generated party ID
-    */
-   private function generatePartyId()
-   {
-      $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      $charactersLength = strlen($characters);
-      $randomString = '';
-      for ($i = 0; $i < 6; $i++) {
-         $randomString .= $characters[rand(0, $charactersLength - 1)];
-      }
-      return $randomString;
-   }
-
-   /**
-    * Verify that the refresh token matches the expected format
-    * @param string $refreshToken The refresh token to verify
-    * @return bool True if the refresh token is valid, false otherwise
-    */
-   private function verifyRefreshToken($refreshToken)
-   {
-      $pattern = '/^[A-Za-z0-9-_]{40,}$/';
-      return preg_match($pattern, $refreshToken) === 1;
-   }
-
-   /**
-    * Destructor
-    */
-   public function __destruct()
-   {
-      $this->conn->close();
+      exit();
    }
 }
 
-$api = new DatabasePartyHandlers($conn, $spotifyClientId, $spotifyClientSecret);
+$api = new DatabasePartyHandlers($conn, $allowedDomain, $spotifyClientId, $spotifyClientSecret);
 $api->handleRequest();
