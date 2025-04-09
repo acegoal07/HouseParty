@@ -38,10 +38,7 @@ class DatabasePartyHandlers
     */
    private function checkOrigin()
    {
-      $referer = $_SERVER['HTTP_REFERER'] ?? '';
-      $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-
-      if (strpos($referer, $this->allowedDomain) !== 0 && strpos($origin, $this->allowedDomain) !== 0) {
+      if (strpos($_SERVER['HTTP_REFERER'] ?? '', $this->allowedDomain) !== 0 && strpos($_SERVER['HTTP_ORIGIN'] ?? '', $this->allowedDomain) !== 0) {
          http_response_code(403);
          echo json_encode(['error' => 'Forbidden']);
          exit();
@@ -79,24 +76,32 @@ class DatabasePartyHandlers
     */
    public function handleRequest()
    {
-      if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-         if (!isset($_GET['type'])) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Bad Request: Missing type parameter']);
-            exit();
-         }
-         $this->handleGetRequest();
-      } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
-         if (!isset($_POST['type'])) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Bad Request: Missing type parameter']);
-            exit();
-         }
-         $this->handlePostRequest();
-      } else {
+      if (!isset($_SERVER['REQUEST_METHOD'])) {
          http_response_code(405);
-         echo json_encode(['error' => 'Method Not Allowed']);
+         echo json_encode(['error' => 'Bad Request: Missing request method']);
          exit();
+      }
+      switch ($_SERVER['REQUEST_METHOD']) {
+         case 'GET':
+            if (!isset($_GET['type'])) {
+               http_response_code(400);
+               echo json_encode(['error' => 'Bad Request: Missing type parameter']);
+               exit();
+            }
+            $this->handleGetRequest();
+            break;
+         case 'POST':
+            if (!isset($_POST['type'])) {
+               http_response_code(400);
+               echo json_encode(['error' => 'Bad Request: Missing type parameter']);
+               exit();
+            }
+            $this->handlePostRequest();
+            break;
+         default:
+            http_response_code(405);
+            echo json_encode(['error' => 'Method Not Allowed']);
+            exit();
       }
    }
 
