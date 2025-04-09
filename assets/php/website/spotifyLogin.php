@@ -1,8 +1,7 @@
 <?php
-header("Access-Control-Allow-Origin: https://aw1443.brighton.domains/");
-header("Access-Control-Allow-Methods: GET");
-
 include '../secrets.php';
+header("Access-Control-Allow-Origin: {$allowedDomain}");
+header("Access-Control-Allow-Methods: GET");
 
 class SpotifyLoginHandler
 {
@@ -21,6 +20,25 @@ class SpotifyLoginHandler
       $this->conn = $conn;
       $this->spotifyClientId = $spotifyClientId;
       $this->spotifyClientSecret = $spotifyClientSecret;
+   }
+
+   /**
+    * Destructor
+    */
+   public function __destruct()
+   {
+      $this->conn->close();
+   }
+
+   /**
+    * Redirect the user to the login error page with an error code
+    * @param int $errorCode The error code
+    * @return void
+    */
+   private function redirectWithError($errorCode)
+   {
+      header("Location: ../../../loginerror.html?error=$errorCode");
+      exit();
    }
 
    /**
@@ -115,7 +133,7 @@ class SpotifyLoginHandler
    {
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, "https://api.spotify.com/v1/me");
-      curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $accessToken]);
+      curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Bearer {$accessToken}"]);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
       $response = curl_exec($ch);
       $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -167,25 +185,6 @@ class SpotifyLoginHandler
       $stmt->close();
 
       return $final_refresh_token;
-   }
-
-   /**
-    * Redirect the user to the login error page with an error code
-    * @param int $errorCode The error code
-    * @return void
-    */
-   private function redirectWithError($errorCode)
-   {
-      header("Location: ../../../loginerror.html?error=$errorCode");
-      exit();
-   }
-
-   /**
-    * Destructor
-    */
-   public function __destruct()
-   {
-      $this->conn->close();
    }
 }
 

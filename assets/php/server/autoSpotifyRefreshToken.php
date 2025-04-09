@@ -1,7 +1,6 @@
 <?php
-header("Access-Control-Allow-Origin: https://aw1443.brighton.domains/");
-
 include __DIR__ . '/../secrets.php';
+header("Access-Control-Allow-Origin: {$allowedDomain}");
 
 $sql = 'SELECT * FROM parties WHERE token_expires_at <= UTC_TIMESTAMP() + INTERVAL 1 HOUR + INTERVAL 15 MINUTE';
 $result = $conn->query($sql);
@@ -15,20 +14,20 @@ if ($result->num_rows > 0) {
          $ch,
          CURLOPT_POSTFIELDS,
          http_build_query(
-            array(
+            [
                'grant_type' => 'refresh_token',
                'refresh_token' => $row['refresh_token'],
                'client_id' => $spotifyClientId
-            )
+            ]
          )
       );
       curl_setopt(
          $ch,
          CURLOPT_HTTPHEADER,
-         array(
+         [
             'Content-Type: application/x-www-form-urlencoded',
             'Authorization: Basic ' . base64_encode($spotifyClientId . ':' .  $spotifyClientSecret)
-         )
+         ]
       );
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
       $response = curl_exec($ch);
