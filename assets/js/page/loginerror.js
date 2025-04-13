@@ -1,6 +1,6 @@
 window.addEventListener('load', () => {
    const loadingIcon = document.querySelector('div#loading-icon');
-   switch (new URLSearchParams(window.location.search).get('')) {
+   switch (new URLSearchParams(window.location.search).get('error')) {
       case '1':
          document.querySelector('div#main-error').classList.remove('hide');
          loadingIcon.classList.add('hide');
