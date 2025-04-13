@@ -47,6 +47,11 @@ class SpotifyLoginHandler
     */
    public function handleRequest()
    {
+      if (!isset($_SERVER['REQUEST_METHOD'])) {
+         http_response_code(405);
+         echo json_encode(['error' => 'Bad Request: Missing request method']);
+         exit();
+      }
       if ($_SERVER['REQUEST_METHOD'] === 'GET') {
          if (isset($_GET['error'])) {
             $this->redirectWithError(1);
