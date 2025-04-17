@@ -3,7 +3,7 @@ include '../secrets.php';
 header("Access-Control-Allow-Origin: {$allowedDomain}");
 header("Access-Control-Allow-Methods: POST, GET");
 
-class DatabasePartyHandlers
+class DatabaseHandler
 {
    private $conn;
    private $allowedDomain;
@@ -53,7 +53,7 @@ class DatabasePartyHandlers
    private function verifyRefreshToken($refreshToken)
    {
       $pattern = '/^[A-Za-z0-9-_]{40,}$/';
-      return preg_match($pattern, $refreshToken) === 1;
+      return is_string($refreshToken) && preg_match($pattern, $refreshToken) === 1;
    }
 
    /**
@@ -63,10 +63,9 @@ class DatabasePartyHandlers
    private function generatePartyId()
    {
       $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      $charactersLength = strlen($characters);
       $randomString = '';
       for ($i = 0; $i < 6; $i++) {
-         $randomString .= $characters[rand(0, $charactersLength - 1)];
+         $randomString .= $characters[rand(0, strlen($characters) - 1)];
       }
       return $randomString;
    }
@@ -154,6 +153,7 @@ class DatabasePartyHandlers
 
    /**
     * Check if a party exists for a host
+    * @return never
     */
    private function checkPartyExistsHost()
    {
@@ -162,6 +162,9 @@ class DatabasePartyHandlers
          echo json_encode(['error' => 'Missing parameters']);
          exit();
       }
+
+      $_GET['hostId'] = $this->conn->real_escape_string($_GET['hostId']);
+      $_GET['refreshToken'] = $this->conn->real_escape_string($_GET['refreshToken']);
 
       $stmt = $this->conn->prepare("SELECT explicit, duplicate_blocker, party_id, party_expires_at, refresh_token FROM parties WHERE host_id = ? COLLATE utf8_bin");
       $stmt->bind_param("s", $_GET['hostId']);
@@ -191,6 +194,7 @@ class DatabasePartyHandlers
 
    /**
     * Check if a party exists for a user
+    * @return never
     */
    private function checkPartyExistsUser()
    {
@@ -199,6 +203,8 @@ class DatabasePartyHandlers
          echo json_encode(['error' => 'Missing parameters']);
          exit();
       }
+
+      $_GET['partyId'] = $this->conn->real_escape_string($_GET['partyId']);
 
       $stmt = $this->conn->prepare("SELECT explicit FROM parties WHERE party_id = ? COLLATE utf8_bin");
       $stmt->bind_param("s", $_GET['partyId']);
@@ -224,6 +230,7 @@ class DatabasePartyHandlers
 
    /**
     * Create a party
+    * @return never
     */
    private function createParty()
    {
@@ -238,6 +245,12 @@ class DatabasePartyHandlers
          echo json_encode(['error' => 'Invalid refresh token']);
          exit();
       }
+
+      $_POST['hostId'] = $this->conn->real_escape_string($_POST['hostId']);
+      $_POST['refreshToken'] = $this->conn->real_escape_string($_POST['refreshToken']);
+      $_POST['explicit'] = $this->conn->real_escape_string($_POST['explicit']);
+      $_POST['duplicateBlocker'] = $this->conn->real_escape_string($_POST['duplicateBlocker']);
+      $_POST['partyEndsIn'] = $this->conn->real_escape_string($_POST['partyEndsIn']);
 
       $stmt = $this->conn->prepare("SELECT * FROM parties WHERE host_id = ? COLLATE utf8_bin");
       $stmt->bind_param("s", $_POST['hostId']);
@@ -333,6 +346,7 @@ class DatabasePartyHandlers
 
    /**
     * Delete a party
+    * @return never
     */
    private function deleteParty()
    {
@@ -340,6 +354,9 @@ class DatabasePartyHandlers
          http_response_code(400);
          exit();
       }
+
+      $_POST['hostId'] = $this->conn->real_escape_string($_POST['hostId']);
+      $_POST['refreshToken'] = $this->conn->real_escape_string($_POST['refreshToken']);
 
       $stmt = $this->conn->prepare("DELETE FROM parties WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
       $stmt->bind_param("ss", $_POST['hostId'], $_POST['refreshToken']);
@@ -364,6 +381,7 @@ class DatabasePartyHandlers
 
    /**
     * Update the explicit setting for a party
+    * @return never
     */
    private function updatePartyExplicit()
    {
@@ -371,6 +389,10 @@ class DatabasePartyHandlers
          http_response_code(400);
          exit();
       }
+
+      $_POST['hostId'] = $this->conn->real_escape_string($_POST['hostId']);
+      $_POST['refreshToken'] = $this->conn->real_escape_string($_POST['refreshToken']);
+      $_POST['explicit'] = $this->conn->real_escape_string($_POST['duplicateBlocker']);
 
       $stmt = $this->conn->prepare("UPDATE parties SET explicit = ? WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
       $stmt->bind_param("sss", $_POST['explicit'], $_POST['hostId'], $_POST['refreshToken']);
@@ -395,14 +417,18 @@ class DatabasePartyHandlers
 
    /**
     * Update the duplicate blocker setting for a party
+    * @return never
     */
    private function updatePartyDuplicateBlocker()
    {
-      if (!isset($_POST['hostId']) || !isset($_POST['refreshToken'])  || !isset($_POST['duplicateBlocker'])) {
+      if (!isset($_POST['hostId']) || !isset($_POST['refreshToken']) || !isset($_POST['duplicateBlocker'])) {
          http_response_code(400);
-
          exit();
       }
+
+      $_POST['hostId'] = $this->conn->real_escape_string($_POST['hostId']);
+      $_POST['refreshToken'] = $this->conn->real_escape_string($_POST['refreshToken']);
+      $_POST['duplicateBlocker'] = $this->conn->real_escape_string($_POST['duplicateBlocker']);
 
       $stmt = $this->conn->prepare("UPDATE parties SET duplicate_blocker = ? WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
       $stmt->bind_param("sss", $_POST['duplicateBlocker'], $_POST['hostId'], $_POST['refreshToken']);
@@ -427,6 +453,7 @@ class DatabasePartyHandlers
 
    /**
     * Extend the duration of a party
+    * @return never
     */
    private function extendPartyDuration()
    {
@@ -435,6 +462,9 @@ class DatabasePartyHandlers
          echo json_encode(['error' => 'Missing parameters']);
          exit();
       }
+
+      $_POST['hostId'] = $this->conn->real_escape_string($_POST['hostId']);
+      $_POST['refreshToken'] = $this->conn->real_escape_string($_POST['refreshToken']);
 
       $stmt = $this->conn->prepare("SELECT party_expires_at FROM parties WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
       $stmt->bind_param("ss", $_POST['hostId'], $_POST['refreshToken']);
@@ -476,5 +506,5 @@ class DatabasePartyHandlers
    }
 }
 
-$api = new DatabasePartyHandlers($conn, $allowedDomain, $spotifyClientId, $spotifyClientSecret);
+$api = new DatabaseHandler($conn, $allowedDomain, $spotifyClientId, $spotifyClientSecret);
 $api->handleRequest();
