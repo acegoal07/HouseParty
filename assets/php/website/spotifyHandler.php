@@ -139,6 +139,7 @@ class SpotifyHandler
 
    /**
     * Get the currently playing song
+    * @return never
     */
    private function getCurrentlyPlaying()
    {
@@ -147,6 +148,8 @@ class SpotifyHandler
          echo json_encode(['error' => 'Bad Request: Missing partyId']);
          exit();
       }
+
+      $_GET['partyId'] = $this->conn->real_escape_string($_GET['partyId']);
 
       $party_info = $this->getPartyInfo($_GET['partyId']);
       if ($party_info == null) {
@@ -168,6 +171,7 @@ class SpotifyHandler
 
    /**
     * Search for a song by name
+    * @return never
     */
    private function searchSongByName()
    {
@@ -176,6 +180,9 @@ class SpotifyHandler
          echo json_encode(['error' => 'Bad Request: Missing parameters']);
          exit();
       }
+
+      $_GET['partyId'] = $this->conn->real_escape_string($_GET['partyId']);
+      $_GET['searchTerm'] = $this->conn->real_escape_string($_GET['searchTerm']);
 
       $party_info = $this->getPartyInfo($_GET['partyId']);
       if ($party_info == null) {
@@ -221,6 +228,7 @@ class SpotifyHandler
 
    /**
     * Add a song to the queue
+    * @return never
     */
    private function addSongToQueue()
    {
@@ -229,6 +237,9 @@ class SpotifyHandler
          echo json_encode(['error' => 'Bad Request: Missing parameters']);
          exit();
       }
+
+      $_POST['partyId'] = $this->conn->real_escape_string($_POST['partyId']);
+      $_POST['songId'] = $this->conn->real_escape_string($_POST['songId']);
 
       $party_info = $this->getPartyInfo($_POST['partyId']);
       if ($party_info == null) {
