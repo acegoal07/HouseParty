@@ -264,7 +264,7 @@ class SpotifyHandler
 
       if ($response === false) {
          http_response_code(200);
-         echo json_encode(['success' => false, 'responseCode' => 0]);
+         echo json_encode(['success' => true, 'responseCode' => 0]);
          exit();
       }
 
@@ -274,6 +274,35 @@ class SpotifyHandler
          http_response_code(200);
          echo json_encode(['success' => true, 'responseCode' => 3]);
          exit();
+      }
+
+      if ($party_info['explicit'] != 1) {
+         $curl = curl_init();
+         curl_setopt($curl, CURLOPT_URL, "https://api.spotify.com/v1/tracks/" . explode(":", $_POST['songId'])[2]);
+         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+         curl_setopt($curl, CURLOPT_HTTPHEADER, [$party_info['auth']]);
+         $response = curl_exec($curl);
+         $responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+         curl_close($curl);
+
+         if ($responseCode === 429) {
+            http_response_code(200);
+            echo json_encode(['success' => true, 'responseCode' => 4]);
+            exit();
+         }
+
+         if ($response === false) {
+            http_response_code(200);
+            echo json_encode(['success' => true, 'responseCode' => 0]);
+            exit();
+         }
+
+         $responseData = json_decode($response, true);
+         if ($responseData['explicit'] == 1) {
+            http_response_code(200);
+            echo json_encode(['success' => true, 'responseCode' => 5]);
+            exit();
+         }
       }
 
       if ($party_info['duplicateBlocker'] == 1) {
@@ -293,7 +322,7 @@ class SpotifyHandler
 
          if ($response === false) {
             http_response_code(200);
-            echo json_encode(['success' => false, 'responseCode' => 0]);
+            echo json_encode(['success' => true, 'responseCode' => 0]);
             exit();
          }
 
@@ -331,7 +360,7 @@ class SpotifyHandler
          exit();
       } elseif ($responseCode !== 200) {
          http_response_code(200);
-         echo json_encode(['success' => false, 'responseCode' => 0]);
+         echo json_encode(['success' => true, 'responseCode' => 0]);
          exit();
       } else {
          http_response_code(200);

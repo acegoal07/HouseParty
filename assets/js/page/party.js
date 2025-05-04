@@ -209,6 +209,13 @@ window.addEventListener('load', () => {
                                  }
                               }));
                               break;
+                           case 5:
+                              document.dispatchEvent(new CustomEvent('openModal', {
+                                 detail: {
+                                    target: 'add-to-queue-explicit-blocked-modal'
+                                 }
+                              }));
+                              break;
                            default:
                               document.dispatchEvent(new CustomEvent('openModal', {
                                  detail: {
