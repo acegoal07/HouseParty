@@ -392,7 +392,7 @@ class DatabaseHandler
 
       $_POST['hostId'] = $this->conn->real_escape_string($_POST['hostId']);
       $_POST['refreshToken'] = $this->conn->real_escape_string($_POST['refreshToken']);
-      $_POST['explicit'] = $this->conn->real_escape_string($_POST['duplicateBlocker']);
+      $_POST['explicit'] = $this->conn->real_escape_string($_POST['explicit']);
 
       $stmt = $this->conn->prepare("UPDATE parties SET explicit = ? WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
       $stmt->bind_param("sss", $_POST['explicit'], $_POST['hostId'], $_POST['refreshToken']);

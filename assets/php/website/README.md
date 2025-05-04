@@ -219,3 +219,4 @@ Adds a song to the queue of the party.
   - `code 2:` Song already in queue
   - `code 3:` Failed to add due to the music not being played
   - `code 4:` Action failed due to exceeding API rate limit
+  - `code 5:` Song was explicit and explicit content is not allowed
