@@ -39,6 +39,14 @@ test.describe('House Party Dashboard Page', () => {
       expect(errorMessage).toBe("");
    });
 
+   test('go back should redirect to the home page', async ({ page }) => {
+      await page.goto(basePath + '1', { waitUntil: 'load' });
+      const goBackButton = page.locator('a:has-text("Go Back")');
+      await goBackButton.click();
+      await page.waitForTimeout(500);
+      expect(page.url()).toBe("http://127.0.0.1:3000/");
+   });
+
    test('should be sent back to the home page if error is not selected', async ({ page }) => {
       await page.goto(basePath, { waitUntil: 'load' });
       await page.waitForTimeout(500);
