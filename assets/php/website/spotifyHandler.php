@@ -46,7 +46,7 @@ class SpotifyHandler
     */
    private function getPartyInfo($partyId)
    {
-      $stmt = $this->conn->prepare("SELECT access_token, explicit, duplicate_blocker FROM parties WHERE party_id = ?");
+      $stmt = $this->conn->prepare("SELECT access_token, explicit, duplicate_blocker FROM parties WHERE party_id = ? COLLATE utf8_bin");
       $stmt->bind_param("s", $partyId);
       $stmt->execute();
 
