@@ -87,6 +87,9 @@ class DatabaseHandler
                echo json_encode(['error' => 'Bad Request: Missing type parameter']);
                exit();
             }
+            foreach ($_GET as $key => $value) {
+               $_GET[$key] = $this->conn->real_escape_string($value);
+            }
             $this->handleGetRequest();
             break;
          case 'POST':
@@ -94,6 +97,9 @@ class DatabaseHandler
                http_response_code(400);
                echo json_encode(['error' => 'Bad Request: Missing type parameter']);
                exit();
+            }
+            foreach ($_POST as $key => $value) {
+               $_POST[$key] = $this->conn->real_escape_string($value);
             }
             $this->handlePostRequest();
             break;
@@ -163,9 +169,6 @@ class DatabaseHandler
          exit();
       }
 
-      $_GET['hostId'] = $this->conn->real_escape_string($_GET['hostId']);
-      $_GET['refreshToken'] = $this->conn->real_escape_string($_GET['refreshToken']);
-
       $stmt = $this->conn->prepare("SELECT explicit, duplicate_blocker, party_id, party_expires_at, refresh_token FROM parties WHERE host_id = ? COLLATE utf8_bin");
       $stmt->bind_param("s", $_GET['hostId']);
       $stmt->execute();
@@ -203,8 +206,6 @@ class DatabaseHandler
          echo json_encode(['error' => 'Missing parameters']);
          exit();
       }
-
-      $_GET['partyId'] = $this->conn->real_escape_string($_GET['partyId']);
 
       $stmt = $this->conn->prepare("SELECT explicit FROM parties WHERE party_id = ? COLLATE utf8_bin");
       $stmt->bind_param("s", $_GET['partyId']);
@@ -245,12 +246,6 @@ class DatabaseHandler
          echo json_encode(['error' => 'Invalid refresh token']);
          exit();
       }
-
-      $_POST['hostId'] = $this->conn->real_escape_string($_POST['hostId']);
-      $_POST['refreshToken'] = $this->conn->real_escape_string($_POST['refreshToken']);
-      $_POST['explicit'] = $this->conn->real_escape_string($_POST['explicit']);
-      $_POST['duplicateBlocker'] = $this->conn->real_escape_string($_POST['duplicateBlocker']);
-      $_POST['partyEndsIn'] = $this->conn->real_escape_string($_POST['partyEndsIn']);
 
       $stmt = $this->conn->prepare("SELECT * FROM parties WHERE host_id = ? COLLATE utf8_bin");
       $stmt->bind_param("s", $_POST['hostId']);
@@ -355,9 +350,6 @@ class DatabaseHandler
          exit();
       }
 
-      $_POST['hostId'] = $this->conn->real_escape_string($_POST['hostId']);
-      $_POST['refreshToken'] = $this->conn->real_escape_string($_POST['refreshToken']);
-
       $stmt = $this->conn->prepare("DELETE FROM parties WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
       $stmt->bind_param("ss", $_POST['hostId'], $_POST['refreshToken']);
       $stmt->execute();
@@ -389,10 +381,6 @@ class DatabaseHandler
          http_response_code(400);
          exit();
       }
-
-      $_POST['hostId'] = $this->conn->real_escape_string($_POST['hostId']);
-      $_POST['refreshToken'] = $this->conn->real_escape_string($_POST['refreshToken']);
-      $_POST['explicit'] = $this->conn->real_escape_string($_POST['explicit']);
 
       $stmt = $this->conn->prepare("UPDATE parties SET explicit = ? WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
       $stmt->bind_param("sss", $_POST['explicit'], $_POST['hostId'], $_POST['refreshToken']);
@@ -426,10 +414,6 @@ class DatabaseHandler
          exit();
       }
 
-      $_POST['hostId'] = $this->conn->real_escape_string($_POST['hostId']);
-      $_POST['refreshToken'] = $this->conn->real_escape_string($_POST['refreshToken']);
-      $_POST['duplicateBlocker'] = $this->conn->real_escape_string($_POST['duplicateBlocker']);
-
       $stmt = $this->conn->prepare("UPDATE parties SET duplicate_blocker = ? WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
       $stmt->bind_param("sss", $_POST['duplicateBlocker'], $_POST['hostId'], $_POST['refreshToken']);
       $stmt->execute();
@@ -462,9 +446,6 @@ class DatabaseHandler
          echo json_encode(['error' => 'Missing parameters']);
          exit();
       }
-
-      $_POST['hostId'] = $this->conn->real_escape_string($_POST['hostId']);
-      $_POST['refreshToken'] = $this->conn->real_escape_string($_POST['refreshToken']);
 
       $stmt = $this->conn->prepare("SELECT party_expires_at FROM parties WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
       $stmt->bind_param("ss", $_POST['hostId'], $_POST['refreshToken']);

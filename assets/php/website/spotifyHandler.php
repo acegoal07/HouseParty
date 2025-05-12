@@ -85,6 +85,9 @@ class SpotifyHandler
                echo json_encode(['error' => 'Bad Request: Missing type parameter']);
                exit();
             }
+            foreach ($_GET as $key => $value) {
+               $_GET[$key] = $this->conn->real_escape_string($value);
+            }
             $this->handleGetRequest();
             break;
          case 'POST':
@@ -92,6 +95,9 @@ class SpotifyHandler
                http_response_code(400);
                echo json_encode(['error' => 'Bad Request: Missing type parameter']);
                exit();
+            }
+            foreach ($_POST as $key => $value) {
+               $_POST[$key] = $this->conn->real_escape_string($value);
             }
             $this->handlePostRequest();
             break;
@@ -149,8 +155,6 @@ class SpotifyHandler
          exit();
       }
 
-      $_GET['partyId'] = $this->conn->real_escape_string($_GET['partyId']);
-
       $party_info = $this->getPartyInfo($_GET['partyId']);
       if ($party_info == null) {
          http_response_code(400);
@@ -180,9 +184,6 @@ class SpotifyHandler
          echo json_encode(['error' => 'Bad Request: Missing parameters']);
          exit();
       }
-
-      $_GET['partyId'] = $this->conn->real_escape_string($_GET['partyId']);
-      $_GET['searchTerm'] = $this->conn->real_escape_string($_GET['searchTerm']);
 
       $party_info = $this->getPartyInfo($_GET['partyId']);
       if ($party_info == null) {
@@ -237,9 +238,6 @@ class SpotifyHandler
          echo json_encode(['error' => 'Bad Request: Missing parameters']);
          exit();
       }
-
-      $_POST['partyId'] = $this->conn->real_escape_string($_POST['partyId']);
-      $_POST['songId'] = $this->conn->real_escape_string($_POST['songId']);
 
       $party_info = $this->getPartyInfo($_POST['partyId']);
       if ($party_info == null) {
