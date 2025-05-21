@@ -26,7 +26,7 @@ if ($result->num_rows > 0) {
          CURLOPT_HTTPHEADER,
          [
             'Content-Type: application/x-www-form-urlencoded',
-            'Authorization: Basic ' . base64_encode($spotifyClientId . ':' .  $spotifyClientSecret)
+            'Authorization: Basic ' . base64_encode("{$spotifyClientId}:{$spotifyClientSecret}")
          ]
       );
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -46,7 +46,8 @@ if ($result->num_rows > 0) {
       $tokenExpiresAt->setTimestamp(time() + 3600);
       $tokenExpiresAtFormatted = $tokenExpiresAt->format($timestamp_formatted);
 
-      $sql = "UPDATE parties SET access_token = '" . $accessToken . "', token_expires_at = '" . $tokenExpiresAtFormatted . "' WHERE refresh_token = '" . $row['refresh_token'] . "'";
-      $updateResult = $conn->query($sql);
+      $stmt = $conn->prepare("UPDATE parties SET access_token = ?, token_expires_at = ? WHERE refresh_token = ? COLLATE utf8_bin");
+      $stmt->bind_param("sss", $accessToken, $tokenExpiresAtFormatted, $row['refresh_token']);
+      $updateResult = $stmt->execute();
    }
 }

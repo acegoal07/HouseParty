@@ -53,13 +53,16 @@ window.addEventListener('load', () => {
                deleteCookie({ name: 'host_id' });
                window.location.href = './';
             }
-            if (document.querySelector('div#party-qrcode').childElementCount === 0) {
+            if (document.querySelector('div#party-qrcode').childElementCount === 0 || document.querySelector('span#party-code').textContent !== data.partyId) {
                partyExpiresAt = new Date(data.partyExpiresAt);
                updateTimestamp();
                const websiteUrl = `${window.location.origin}/houseparty/party.html?session_code=`;
                document.querySelector('span#party-code').textContent = data.partyId;
                document.querySelector('button#copy-party-url').setAttribute('copy-data', `${websiteUrl}${data.partyId}`);
                document.querySelector('button#share-party-url').setAttribute('data-party-url', `${websiteUrl}${data.partyId}`);
+               if (document.querySelector('div#party-qrcode').childElementCount > 0) {
+                  document.querySelector('div#party-qrcode').innerHTML = '';
+               }
                new QRCode(document.querySelector('div#party-qrcode'), {
                   text: `${websiteUrl}${data.partyId}`,
                   width: 150,
