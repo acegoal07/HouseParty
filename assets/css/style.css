@@ -746,6 +746,20 @@ ol li::marker {
    box-shadow: 0 0px 10px var(--shadow-color);
 }
 
+.modal-close {
+   color: var(--primary-color);
+   float: right;
+   font-size: 34px;
+   font-weight: bold;
+   cursor: pointer;
+}
+
+.modal-close:hover,
+.modal-close:focus {
+   color: var(--primary-color-hover);
+   text-decoration: none;
+}
+
 @-webkit-keyframes modal-open {
    from {
       opacity: 0;

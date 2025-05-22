@@ -66,12 +66,12 @@ The way the modalHandler works means you do not need to write JS to you can use 
 ```html
 <div id="myModal" class="modal-background">
   <div class="modal-body">
-    <span class="modal-close modal-closer">&times;</span>
+    <span class="modal-closer">&times;</span>
     <p>Some text in the Modal..</p>
   </div>
 </div>
 
-<button class="modal-opener" modal-target="myModal" type="button">End party</button>
+<button class="modal-opener" modal-target="myModal" type="button">Open Modal</button>
 ```
 
 ```javascript
@@ -111,7 +111,7 @@ This is used to generate a QR code for the user to scan to join the party this l
 
 ## collapsibleHandler
 
-This is used to make it so the user can open and close a collapsible section. The events for the collapsible is handled automatically
+This is used to make it so the user can open and close a collapsible section. The events for the collapsible items is handled automatically
 
 ```html
 <div class="collapsible-container">

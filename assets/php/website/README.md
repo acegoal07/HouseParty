@@ -158,7 +158,7 @@ Extends the duration of a party.
 
 ## Spotify Middleman API
 
-This API facilitates interactions with the Spotify API and manages database operations for specific data requirements.
+This API facilitates interactions with the Spotify API and manages database operations required to support the party functionality.
 
 <hr>
 
