@@ -59,7 +59,7 @@ window.addEventListener('load', () => {
                const websiteUrl = `${window.location.origin}/houseparty/party.html?session_code=`;
                document.querySelector('span#party-code').textContent = data.partyId;
                document.querySelector('button#copy-party-url').setAttribute('copy-data', `${websiteUrl}${data.partyId}`);
-               document.querySelector('button#share-party-url').setAttribute('data-party-url', `${websiteUrl}${data.partyId}`);
+               document.querySelector('button#share-party-url').setAttribute('share-url', `${websiteUrl}${data.partyId}`);
                if (document.querySelector('div#party-qrcode').childElementCount > 0) {
                   document.querySelector('div#party-qrcode').innerHTML = '';
                }

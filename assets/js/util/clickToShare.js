@@ -6,9 +6,9 @@ window.addEventListener('DOMContentLoaded', () => {
          button.classList.remove('hide');
          button.addEventListener('click', () => {
             navigator.share({
-               title: 'House Party',
-               text: 'Join my party on House Party!',
-               url: button.getAttribute('data-party-url')
+               title: button.getAttribute('share-title'),
+               text: button.getAttribute('share-text'),
+               url: button.getAttribute('share-url')
             }).catch((error) => {
                console.error('Error sharing:', error);
             });

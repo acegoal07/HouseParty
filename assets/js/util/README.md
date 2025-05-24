@@ -35,7 +35,7 @@ This is used to make it so the user can copy something to the clipboard. The eve
 This is used to make it so the user if available can share something using the native share functionality of device. The event for the button is handled automatically
 
 ```html
-  <button class="click-to-share" id="share-party-url" type="button" data-party-url="url">Share URL</button>
+  <button class="click-to-share" id="share-party-url" type="button" share-title="Website name" share-text="Check out this website!" share-url="url">Share URL</button>
 ```
 
 <hr>
