@@ -1,9 +1,17 @@
 <?php
 include __DIR__ . '/../secrets.php';
-header("Access-Control-Allow-Origin: {$allowedDomain}");
+
+// Only allow CLI or cron execution
+if (php_sapi_name() !== 'cli') {
+   exit("Forbidden\n");
+}
 
 $sql = 'SELECT * FROM parties WHERE token_expires_at <= UTC_TIMESTAMP() + INTERVAL 1 HOUR + INTERVAL 15 MINUTE';
 $result = $conn->query($sql);
+
+$timezone = new DateTimeZone('Europe/London');
+date_default_timezone_set($timezone->getName());
+$timestamp_formatted = 'Y-m-d H:i:s';
 
 if ($result->num_rows > 0) {
    while ($row = $result->fetch_assoc()) {
@@ -35,10 +43,6 @@ if ($result->num_rows > 0) {
 
       $responseData = json_decode($response, true);
 
-      $timezone = new DateTimeZone('Europe/London');
-      date_default_timezone_set($timezone->getName());
-      $timestamp_formatted = 'Y-m-d H:i:s';
-
       $accessToken = $responseData['access_token'];
 
       $tokenExpiresAt = new DateTime();
@@ -49,5 +53,9 @@ if ($result->num_rows > 0) {
       $stmt = $conn->prepare("UPDATE parties SET access_token = ?, token_expires_at = ? WHERE refresh_token = ? COLLATE utf8_bin");
       $stmt->bind_param("sss", $accessToken, $tokenExpiresAtFormatted, $row['refresh_token']);
       $updateResult = $stmt->execute();
+      $stmt->close();
    }
 }
+
+$conn->close();
+exit(0);

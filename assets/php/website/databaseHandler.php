@@ -322,6 +322,15 @@ class DatabaseHandler
       $partyExpiresAt = new DateTime();
       $partyExpiresAt->setTimezone($timezone);
       $partyExpiresAt->setTimestamp(time() + $_POST['partyEndsIn'] * 3600);
+      $seconds = (int)$partyExpiresAt->format('s');
+      if ($seconds >= 30) {
+         $partyExpiresAt->modify('+1 minute');
+      }
+      $partyExpiresAt->setTime(
+         (int)$partyExpiresAt->format('H'),
+         (int)$partyExpiresAt->format('i'),
+         0
+      );
       $partyExpiresAtFormatted = $partyExpiresAt->format($timestamp_formatted);
 
       $stmt = $this->conn->prepare("INSERT INTO parties (party_id, host_id, access_token, refresh_token, party_expires_at, token_expires_at, explicit, duplicate_blocker) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
