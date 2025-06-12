@@ -3,7 +3,9 @@ include __DIR__ . '/../secrets.php';
 
 // Only allow CLI or cron execution
 if (php_sapi_name() !== 'cli') {
-   exit("Forbidden\n");
+   http_response_code(403);
+   header('Location: /403.html');
+   exit();
 }
 
 $sql = 'SELECT * FROM parties WHERE token_expires_at <= UTC_TIMESTAMP() + INTERVAL 1 HOUR + INTERVAL 15 MINUTE';

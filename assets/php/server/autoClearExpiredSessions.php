@@ -3,7 +3,9 @@ include __DIR__ . '/../secrets.php';
 
 // Only allow CLI or cron execution
 if (php_sapi_name() !== 'cli') {
-   exit("Forbidden\n");
+   http_response_code(403);
+   header('Location: /403.html');
+   exit();
 }
 
 // Set to run every minute

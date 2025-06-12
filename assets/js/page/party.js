@@ -17,7 +17,7 @@ window.addEventListener('load', () => {
             window.location.href = '/houseparty/join.html';
          }
          if (document.querySelector('div#party-qrcode').childElementCount === 0) {
-            const websiteUrl = `https://aw1443.brighton.domains/houseparty/party.html?session_code=`;
+            const websiteUrl = `${window.location.origin}/party.html?session_code=`;
             document.querySelector('span#party-code').textContent = sessionCode;
             document.querySelector('button#copy-party-url').setAttribute('copy-data', `${websiteUrl}${sessionCode}`);
             document.querySelector('button#share-party-url').setAttribute('share-url', `${websiteUrl}${sessionCode}`);

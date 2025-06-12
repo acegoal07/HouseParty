@@ -37,7 +37,7 @@ class SpotifyLoginHandler
     */
    private function redirectWithError($errorCode)
    {
-      header("Location: ../../../loginerror.html?error=$errorCode");
+      header("Location: /loginerror.html?error=$errorCode");
       exit();
    }
 
@@ -89,7 +89,7 @@ class SpotifyLoginHandler
 
       setcookie("refresh_token", $final_refresh_token, time() + 86400, "/", "", true);
 
-      header("Location: ../../../dashboard.html");
+      header("Location: /dashboard.html");
       exit();
    }
 
