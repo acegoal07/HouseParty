@@ -105,7 +105,7 @@ class SpotifyLoginHandler
       curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
          'grant_type' => 'authorization_code',
          'code' => $_GET['code'],
-         'redirect_uri' => 'https://aw1443.brighton.domains/houseparty/assets/php/website/spotifyLogin.php',
+         'redirect_uri' => 'https://houseparty.acegoal07.dev/assets/php/website/spotifyLogin.php',
          'client_id' => $this->spotifyClientId,
          'client_secret' => $this->spotifyClientSecret
       ]));
@@ -168,7 +168,7 @@ class SpotifyLoginHandler
     */
    private function checkRefreshToken($hostId, $stored_refresh_token)
    {
-      $stmt = $this->conn->prepare("SELECT refresh_token FROM parties WHERE host_id = ? COLLATE utf8_bin");
+      $stmt = $this->conn->prepare("SELECT refresh_token FROM parties WHERE host_id = ? COLLATE latin1_bin");
       $stmt->bind_param("s", $hostId);
       $stmt->execute();
 

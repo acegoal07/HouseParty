@@ -169,7 +169,7 @@ class DatabaseHandler
          exit();
       }
 
-      $stmt = $this->conn->prepare("SELECT explicit, duplicate_blocker, party_id, party_expires_at, refresh_token FROM parties WHERE host_id = ? COLLATE utf8_bin");
+      $stmt = $this->conn->prepare("SELECT explicit, duplicate_blocker, party_id, party_expires_at, refresh_token FROM parties WHERE host_id = ? COLLATE latin1_bin");
       $stmt->bind_param("s", $_GET['hostId']);
       $stmt->execute();
 
@@ -207,7 +207,7 @@ class DatabaseHandler
          exit();
       }
 
-      $stmt = $this->conn->prepare("SELECT explicit FROM parties WHERE party_id = ? COLLATE utf8_bin");
+      $stmt = $this->conn->prepare("SELECT explicit FROM parties WHERE party_id = ? COLLATE latin1_bin");
       $stmt->bind_param("s", $_GET['partyId']);
       $stmt->execute();
 
@@ -247,7 +247,7 @@ class DatabaseHandler
          exit();
       }
 
-      $stmt = $this->conn->prepare("SELECT * FROM parties WHERE host_id = ? COLLATE utf8_bin");
+      $stmt = $this->conn->prepare("SELECT * FROM parties WHERE host_id = ? COLLATE latin1_bin");
       $stmt->bind_param("s", $_POST['hostId']);
       $stmt->execute();
 
@@ -266,7 +266,7 @@ class DatabaseHandler
       }
 
       $partyId = $this->generatePartyId();
-      $stmt = $this->conn->prepare("SELECT * FROM parties WHERE party_id = ? COLLATE utf8_bin");
+      $stmt = $this->conn->prepare("SELECT * FROM parties WHERE party_id = ? COLLATE latin1_bin");
       $stmt->bind_param("s", $partyId);
       $stmt->execute();
 
@@ -359,7 +359,7 @@ class DatabaseHandler
          exit();
       }
 
-      $stmt = $this->conn->prepare("DELETE FROM parties WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
+      $stmt = $this->conn->prepare("DELETE FROM parties WHERE host_id = ? COLLATE latin1_bin AND refresh_token = ? COLLATE latin1_bin");
       $stmt->bind_param("ss", $_POST['hostId'], $_POST['refreshToken']);
       $stmt->execute();
 
@@ -391,7 +391,7 @@ class DatabaseHandler
          exit();
       }
 
-      $stmt = $this->conn->prepare("UPDATE parties SET explicit = ? WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
+      $stmt = $this->conn->prepare("UPDATE parties SET explicit = ? WHERE host_id = ? COLLATE latin1_bin AND refresh_token = ? COLLATE latin1_bin");
       $stmt->bind_param("sss", $_POST['explicit'], $_POST['hostId'], $_POST['refreshToken']);
       $stmt->execute();
 
@@ -423,7 +423,7 @@ class DatabaseHandler
          exit();
       }
 
-      $stmt = $this->conn->prepare("UPDATE parties SET duplicate_blocker = ? WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
+      $stmt = $this->conn->prepare("UPDATE parties SET duplicate_blocker = ? WHERE host_id = ? COLLATE latin1_bin AND refresh_token = ? COLLATE latin1_bin");
       $stmt->bind_param("sss", $_POST['duplicateBlocker'], $_POST['hostId'], $_POST['refreshToken']);
       $stmt->execute();
 
@@ -456,7 +456,7 @@ class DatabaseHandler
          exit();
       }
 
-      $stmt = $this->conn->prepare("SELECT party_expires_at FROM parties WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
+      $stmt = $this->conn->prepare("SELECT party_expires_at FROM parties WHERE host_id = ? COLLATE latin1_bin AND refresh_token = ? COLLATE latin1_bin");
       $stmt->bind_param("ss", $_POST['hostId'], $_POST['refreshToken']);
       $stmt->execute();
 
@@ -480,7 +480,7 @@ class DatabaseHandler
       $partyExpiresAt->setTimestamp($partyExpiresAtSeconds);
       $partyExpiresAtFormatted = $partyExpiresAt->format('Y-m-d H:i:s');
 
-      $stmt = $this->conn->prepare("UPDATE parties SET party_expires_at = ? WHERE host_id = ? COLLATE utf8_bin AND refresh_token = ? COLLATE utf8_bin");
+      $stmt = $this->conn->prepare("UPDATE parties SET party_expires_at = ? WHERE host_id = ? COLLATE latin1_bin AND refresh_token = ? COLLATE latin1_bin");
       $stmt->bind_param("sss", $partyExpiresAtFormatted, $_POST['hostId'], $_POST['refreshToken']);
       $stmt->execute();
 

@@ -50,7 +50,7 @@ if ($result->num_rows > 0) {
       $tokenExpiresAt->setTimestamp(time() + 3600);
       $tokenExpiresAtFormatted = $tokenExpiresAt->format($timestamp_formatted);
 
-      $stmt = $conn->prepare("UPDATE parties SET access_token = ?, token_expires_at = ? WHERE refresh_token = ? COLLATE utf8_bin");
+      $stmt = $conn->prepare("UPDATE parties SET access_token = ?, token_expires_at = ? WHERE refresh_token = ? COLLATE latin1_bin");
       $stmt->bind_param("sss", $accessToken, $tokenExpiresAtFormatted, $row['refresh_token']);
       $updateResult = $stmt->execute();
       $stmt->close();

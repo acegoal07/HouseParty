@@ -29,7 +29,7 @@ window.addEventListener('load', () => {
          const queryParams = new URLSearchParams({
             client_id: '67fa8a1f5eec455495394d8429fede37',
             response_type: 'code',
-            redirect_uri: 'https://aw1443.brighton.domains/houseparty/assets/php/website/spotifyLogin.php',
+            redirect_uri: 'https://houseparty.acegoal07.dev/assets/php/website/spotifyLogin.php',
             scope: 'user-read-playback-state user-modify-playback-state user-read-currently-playing user-read-private user-read-email',
             show_dialog: true
          });

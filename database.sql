@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `aw1443_houseParty`
+-- Database: `acegoal1_HouseParty`
 --
 
 -- --------------------------------------------------------
@@ -28,15 +28,15 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `parties` (
-  `party_id` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `host_id` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `access_token` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `refresh_token` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `party_id` varchar(6) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `host_id` varchar(30) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `access_token` longtext CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `refresh_token` longtext CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `token_expires_at` datetime NOT NULL,
   `party_expires_at` datetime NOT NULL,
   `explicit` tinyint(1) NOT NULL DEFAULT '0',
   `duplicate_blocker` tinyint(1) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Indexes for dumped tables
