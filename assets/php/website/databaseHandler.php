@@ -13,6 +13,7 @@ class DatabaseHandler
    /**
     * Constructor
     * @param mysqli $conn The database connection
+    * @param string $allowedDomain The allowed domain for CORS
     * @param string $spotifyClientId The Spotify client ID
     * @param string $spotifyClientSecret The Spotify client secret
     */
