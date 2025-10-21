@@ -1,0 +1,34 @@
+Table users {
+  host_id varchar(64) [primary key, not null]
+  refresh_token varchar(500) [not null]
+  
+  indexes {
+    host_id [unique]
+  }
+}
+
+Table sessions {
+  session_id char(64) [primary key, not null]
+  host_id varchar(64) [ref: > users.host_id, not null]
+  expires_at datetime [not null]
+  
+  indexes {
+    (host_id, expires_at)
+    expires_at
+  }
+}
+
+Table parties {
+  party_id varchar(6) [primary key, not null]
+  host_id varchar(64) [ref: > users.host_id, not null]
+  access_token varchar(500) [not null]
+  token_expires_at datetime [not null]
+  party_expires_at datetime [not null]
+  explicit tinyint(1) [default: 0, not null]
+  duplicate_blocker tinyint(1) [default: 0, not null]
+  
+  indexes {
+    host_id
+    party_expires_at
+  }
+}

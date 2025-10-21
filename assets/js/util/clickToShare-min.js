@@ -1,1 +1,0 @@
-window.addEventListener("DOMContentLoaded",(()=>{navigator.userAgent.includes("Mobile")&&void 0!==navigator.share&&document.querySelectorAll(".click-to-share").forEach((e=>{e.classList.remove("hide"),e.addEventListener("click",(()=>{navigator.share({title:e.getAttribute("share-title"),text:e.getAttribute("share-text"),url:e.getAttribute("share-url")}).catch((e=>{}))}))}))}));
