@@ -1,39 +1,50 @@
+//////////////// Imports ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { deleteCookie, getCookie, extendCookie } from '@/assets/js/util/cookies.js';
 
-window.addEventListener('load', () => {
-   // Loading icon element
-   const loadingIcon = document.querySelector('div#loading-icon');
-   // Check users session id if they are logged in
-   let checkInterval;
-   function checkLoggedInUser() {
-      if (getCookie('session_id') === null) {
-         clearInterval(checkInterval);
-      } else {
-         const urlParams = new URLSearchParams({
-            type: 'validateSession',
-            session_id: `${getCookie('session_id')}`
-         });
-         fetch(`api/website/database.php?${urlParams}`)
-            .then((response) => {
-               return response.json();
-            }).then((data) => {
-               if (!data.validated) {
-                  deleteCookie({ name: 'session_id' });
-               }
-               if (data.extended) {
-                  extendCookie({ name: 'session_id', days: 0.5 });
-               }
-            }).catch(() => {
-               deleteCookie({ name: 'session_id' });
-               clearInterval(checkInterval);
-            });
-      }
-   }
+//////////////// Variables /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+let pollingInterval;
+let loadingIcon;
+
+//////////////// Polling functions /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function pollingFunction() {
    if (getCookie('session_id') !== null) {
-      checkLoggedInUser();
-      checkInterval = setInterval(checkLoggedInUser, 1000);
+      fetch(`api/website/database.php?${new URLSearchParams({
+         type: 'validateSession',
+         session_id: `${getCookie('session_id')}`
+      })}`)
+         .then((response) => { response.json(); })
+         .then((data) => {
+            if (!data.validated) {
+               deleteCookie({ name: 'session_id' });
+            }
+            if (data.extended) {
+               extendCookie({ name: 'session_id', days: 0.5 });
+            }
+         })
+         .catch(() => {
+            deleteCookie({ name: 'session_id' });
+         });
    }
-   // Handle Join Form Submission
+}
+
+function startPolling() {
+   pollingFunction();
+   pollingInterval = setInterval(pollingFunction, 1000);
+}
+
+function stopPolling() {
+   clearInterval(pollingInterval);
+}
+
+//////////////// Main Body /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+window.addEventListener('load', () => {
+   //////////////// Set variables //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   loadingIcon = document.querySelector('div#loading-icon');
+
+   //////////////// Page polling ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   startPolling();
+
+   //////////////// Join Form //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    document.querySelector('form#join-form').addEventListener('submit', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
@@ -53,18 +64,30 @@ window.addEventListener('load', () => {
          return;
       }
 
-      fetch(`api/website/database.php?type=checkPartyExists&party_id=${partyCode}`, {
+      fetch(`api/website/database.php?type=validatePartyAndSession&party_id=${partyCode}`, {
          method: 'GET'
-      }).then(response => response.json()).then(data => {
-         if (data.partyExists) {
-            globalThis.location.href = `party.html?session_code=${partyCode}`;
-         } else {
-            noPartyFoundError.classList.remove('hide');
-         }
-         loadingIcon.classList.add("hide");
-      }).catch(error => {
-         console.error('Join Error:', error);
-      });
+      })
+         .then(response => response.json())
+         .then(data => {
+            if (data.partyExists) {
+               globalThis.location.href = `party.html?session_code=${partyCode}`;
+            } else {
+               noPartyFoundError.classList.remove('hide');
+            }
+            loadingIcon.classList.add("hide");
+         })
+         .catch(error => {
+            console.error('Join Error:', error);
+         });
       PartyCodeInput.value = '';
+   });
+
+   /////////////////////// Stop Polling while off the page /////////////////////////////////////////////////////////////////////////////////////////
+   document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+         stopPolling();
+      } else {
+         startPolling();
+      }
    });
 });

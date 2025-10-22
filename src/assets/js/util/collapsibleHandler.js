@@ -1,6 +1,7 @@
-export class CollapsibleHandler {
+class CollapsibleHandler {
+   collapsible = null;
+
    constructor() {
-      this.collapsible = null;
       this._init();
    }
 
@@ -40,10 +41,10 @@ export class CollapsibleHandler {
     * Setup event listeners for collapsible items
     */
    _setupCollapsibleItems() {
-      document.querySelectorAll('.collapsible-item').forEach((item) => {
+      for (const item of document.querySelectorAll('.collapsible-item')) {
          item.addEventListener('click', (event) => this._toggleCollapsible(event, item));
          item.addEventListener('keydown', (event) => this._toggleCollapsible(event, item));
-      });
+      }
    }
 
    /**
@@ -80,4 +81,4 @@ export class CollapsibleHandler {
    }
 }
 
-const collapsibleHandler = new CollapsibleHandler();
+export default new CollapsibleHandler();

@@ -1,97 +1,178 @@
+//////////////// Imports ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { getCookie, extendCookie, deleteCookie } from '@/assets/js/util/cookies.js';
-import QrCreator from '@/assets/js/util/qrcode.js';
+import '@/assets/js/util/qrcode.js';
 import '@/assets/js/util/modalHandler.js';
 import '@/assets/js/util/collapsibleHandler.js';
 import '@/assets/js/util/clickToCopy.js';
 import '@/assets/js/util/clickToShare.js';
 
-window.addEventListener('load', () => {
-   const partyId = new URLSearchParams(globalThis.location.search).get('session_code')?.trim();
-   const loadingIcon = document.querySelector('div#loading-icon');
-   if (!partyId) {
-      globalThis.location.href = './join.html';
-   }
-   const searchForm = document.querySelector('form#search-song-form');
-   const searchResults = document.querySelector('div#search-results');
-   const noResults = document.querySelector('span#no-results');
-   let explicitToggle;
-   //////////////// Page polling //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   function pagePolling() {
-      const urlParams = new URLSearchParams({
-         type: 'validatePartyAndSession',
-         party_id: partyId,
-         session_id: getCookie('session_id') || ''
-      });
-      fetch(`api/website/database.php?${urlParams}`, {
-         method: 'GET'
-      }).then(response => response.json()).then(data => {
-         if (!data.partyExists) {
-            globalThis.location.href = './join.html';
-         }
-         if (getCookie('session_id') !== null) {
-            if (!data.validated) {
-               deleteCookie({ name: 'session_id' });
-            }
-            if (data.extended) {
-               extendCookie({ name: 'session_id', days: 0.5 });
-            }
-         }
-         if (document.querySelector('div#party-qrcode').childElementCount === 0) {
-            const websiteUrl = `${globalThis.location.origin}/party.html?session_code=`;
-            document.querySelector('span#party-code').textContent = partyId;
-            document.querySelector('button#copy-party-url').setAttribute('copy-data', `${websiteUrl}${partyId}`);
-            document.querySelector('button#share-party-url').setAttribute('share-url', `${websiteUrl}${partyId}`);
-            QrCreator.render({
-               text: `${websiteUrl}${partyId}`,
-               radius: 0.5,
-               ecLevel: 'H',
-               fill: '#fff',
-               size: 125
-            }, document.querySelector('div#party-qrcode'));
+//////////////// Variables /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+let pollingInterval;
+let partyId;
+let loadingIcon;
+let searchForm;
+let searchResults;
+let noResults;
+let explicitToggle;
 
+//////////////// Polling functions /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function pollingFunction() {
+   fetch(`api/website/database.php?${new URLSearchParams({
+      type: 'validatePartyAndSession',
+      party_id: partyId,
+      session_id: getCookie('session_id') || ''
+   })}`, {
+      method: 'GET'
+   }).then(response => response.json()).then(data => {
+      if (!data.partyExists) {
+         globalThis.location.href = './join.html';
+      }
+      if (getCookie('session_id') !== null) {
+         if (!data.validated) {
+            deleteCookie({ name: 'session_id' });
          }
-         if (data.explicit !== explicitToggle) {
-            explicitToggle = data.explicit;
-            if (searchResults.hasChildNodes()) {
-               searchFunction();
-            }
+         if (data.extended) {
+            extendCookie({ name: 'session_id', days: 0.5 });
          }
-      }).catch(error => {
-         console.error('Page Polling Error:', error);
-      });
-   }
-   pagePolling();
-   setInterval(pagePolling, 1500);
-   //////////////// Search submit //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   searchForm.addEventListener('submit', (event) => {
-      event.preventDefault();
-      searchFunction();
+      }
+      if (document.querySelector('div#party-qrcode').childElementCount === 0) {
+         const websiteUrl = `${globalThis.location.origin}/party.html?session_code=`;
+         document.querySelector('span#party-code').textContent = partyId;
+         document.querySelector('button#copy-party-url').setAttribute('copy-data', `${websiteUrl}${partyId}`);
+         document.querySelector('button#share-party-url').setAttribute('share-url', `${websiteUrl}${partyId}`);
+         QrCreator.render({
+            text: `${websiteUrl}${partyId}`,
+            radius: 0.5,
+            ecLevel: 'H',
+            fill: '#fff',
+            size: 125
+         }, document.querySelector('div#party-qrcode'));
+
+      }
+      if (data.explicit !== explicitToggle) {
+         explicitToggle = data.explicit;
+         if (searchResults.hasChildNodes()) {
+            searchFunction();
+         }
+      }
+   }).catch(error => {
+      console.error('Page Polling Error:', error);
    });
-   function searchFunction() {
+}
+
+function startPolling() {
+   pollingFunction();
+   pollingInterval = setInterval(pollingFunction, 1000);
+}
+
+function stopPolling() {
+   clearInterval(pollingInterval);
+}
+
+//////////////// Add song to queue function ////////////////////////////////////////////////////////////////////////////////////////////////////////
+function addSongToQueue(event, song, artists) {
+   if (event.type === 'click' || (event.type === 'keydown' && (event.key === 'Enter' || event.key === ' '))) {
       loadingIcon.classList.remove('hide');
-      for (const child of searchResults.children) {
-         if (child.tagName !== 'SPAN') {
-            child.remove();
-         }
+      fetch(`api/website/spotify.php`, {
+         method: 'post',
+         headers: {
+            'Content-Type': 'application/json'
+         },
+         body: JSON.stringify({
+            type: 'addSongToQueue',
+            song_id: song.uri,
+            party_id: partyId
+         })
+      })
+         .then(response => response.json())
+         .then(data => {
+            if (data.success) {
+               switch (data.response_code) {
+                  case 1:
+                     document.dispatchEvent(new CustomEvent('openModal', {
+                        detail: {
+                           target: 'add-to-queue-successfully-modal',
+                           callback: () => {
+                              document.querySelector('#add-queue-successfully-song-name').textContent = `${song.name} by ${artists}`;
+                           }
+                        }
+                     }));
+                     break;
+                  case 2:
+                     document.dispatchEvent(new CustomEvent('openModal', {
+                        detail: {
+                           target: 'add-to-queue-duplicate-modal',
+                           callback: () => {
+                              document.querySelector('#add-queue-duplicate-song-name').textContent = `${song.name} by ${artists}`;
+                           }
+                        }
+                     }));
+                     break;
+                  case 3:
+                     document.dispatchEvent(new CustomEvent('openModal', {
+                        detail: {
+                           target: 'add-to-queue-not-playing-modal'
+                        }
+                     }));
+                     break;
+                  case 4:
+                     document.dispatchEvent(new CustomEvent('openModal', {
+                        detail: {
+                           target: 'too-many-requests-modal'
+                        }
+                     }));
+                     break;
+                  case 5:
+                     document.dispatchEvent(new CustomEvent('openModal', {
+                        detail: {
+                           target: 'add-to-queue-explicit-blocked-modal'
+                        }
+                     }));
+                     break;
+                  default:
+                     document.dispatchEvent(new CustomEvent('openModal', {
+                        detail: {
+                           target: 'add-to-queue-failed-modal'
+                        }
+                     }));
+                     break;
+               }
+            }
+            loadingIcon.classList.add('hide');
+         })
+         .catch(error => {
+            console.error('Add Song Error:', error);
+         });
+   }
+}
+
+//////////////// Search function ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function search() {
+   loadingIcon.classList.remove('hide');
+   for (const child of searchResults.children) {
+      if (child.tagName !== 'SPAN') {
+         child.remove();
       }
-      const searchInputElement = searchForm.querySelector('input');
-      const searchInput = searchInputElement.value || searchResults.getAttribute('data-current-search');
-      searchResults.setAttribute('data-current-search', searchInput);
-      searchInputElement.value = '';
-      if (!searchInput || searchInput.replaceAll(' ', '') === '') {
-         noResults.classList.remove('hide');
-         loadingIcon.classList.add('hide');
-         return;
-      }
-      const urlParams = new URLSearchParams({
-         type: 'searchSongByName',
-         search_term: searchInput,
-         party_id: partyId
-      });
-      fetch(`api/website/spotify.php?${urlParams}`, {
-         method: 'GET'
-      }).then(response => response.json()).then(data => {
-         if (data.code === 1) {
+   }
+   const searchInputElement = searchForm.querySelector('input');
+   const searchInput = searchInputElement.value || searchResults.dataset.currentSearch;
+   searchResults.dataset.currentSearch = searchInput;
+   searchInputElement.value = '';
+   if (!searchInput || searchInput.trim() === '') {
+      noResults.classList.remove('hide');
+      loadingIcon.classList.add('hide');
+      return;
+   }
+   fetch(`api/website/spotify.php?${new URLSearchParams({
+      type: 'searchSongByName',
+      search_term: searchInput,
+      party_id: partyId
+   })}`, {
+      method: 'GET'
+   })
+      .then(response => response.json())
+      .then(data => {
+         if (data.response_code === 1) {
             return document.dispatchEvent(new CustomEvent('openModal', {
                detail: {
                   target: 'too-many-requests-modal'
@@ -111,14 +192,13 @@ window.addEventListener('load', () => {
             const song = tracks[key];
 
             // Get the artist text
-            const maxChars = 30;
             let charCount = 0;
             const artistsList = [];
             let remainingArtistsCount = 0;
 
             for (let i = 0; i < song.artists.length; i++) {
                const artistName = song.artists[i].name;
-               if (charCount + artistName.length <= maxChars) {
+               if (charCount + artistName.length <= 30) {
                   artistsList.push(artistName);
                   charCount += artistName.length;
                } else {
@@ -127,9 +207,9 @@ window.addEventListener('load', () => {
                }
             }
 
-            let artistText = artistsList.join(', ');
+            let artists = artistsList.join(', ');
             if (remainingArtistsCount > 0) {
-               artistText += `, and ${remainingArtistsCount} more`;
+               artists += `, and ${remainingArtistsCount} more`;
             }
 
             // Create the result container
@@ -139,7 +219,7 @@ window.addEventListener('load', () => {
             // Create the song cover image
             const songCover = document.createElement('img');
             songCover.src = song.album.images[0].url;
-            songCover.alt = `${song.name} by ${artistText} album cover`;
+            songCover.alt = `${song.name} by ${artists} album cover`;
             songCover.className = 'search-results-cover';
             resultContainer.appendChild(songCover);
 
@@ -170,7 +250,7 @@ window.addEventListener('load', () => {
             const songArtist = document.createElement('p');
             songArtist.className = 'search-results-artists';
 
-            songArtist.textContent = artistText;
+            songArtist.textContent = artists;
             resultInfoContainer.appendChild(songArtist);
 
             // Append the result info container to the result container
@@ -182,7 +262,7 @@ window.addEventListener('load', () => {
             addIcon.setAttribute('viewBox', '0 0 512 512');
             addIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
             addIcon.tabIndex = 0;
-            addIcon.setAttribute('aria-label', `Add ${song.name} by ${artistText} to the queue`);
+            addIcon.setAttribute('aria-label', `Add ${song.name} by ${artists} to the queue`);
             addIcon.setAttribute('role', 'button');
 
             const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -190,80 +270,9 @@ window.addEventListener('load', () => {
             addIcon.appendChild(path);
 
             // Add event listener to the add icon
-            const addSongFunction = (event) => {
-               if (event.type === 'click' || (event.type === 'keydown' && (event.key === 'Enter' || event.key === ' '))) {
-                  loadingIcon.classList.remove('hide');
-                  fetch(`api/website/spotify.php`, {
-                     method: 'post',
-                     headers: {
-                        'Content-Type': 'application/json'
-                     },
-                     body: JSON.stringify({
-                        type: 'addSongToQueue',
-                        song_id: song.uri,
-                        party_id: partyId
-                     })
-                  }).then(response => response.json()).then(data => {
-                     loadingIcon.classList.add('hide');
-                     if (data.success) {
-                        switch (data.responseCode) {
-                           case 1:
-                              document.dispatchEvent(new CustomEvent('openModal', {
-                                 detail: {
-                                    target: 'add-to-queue-successfully-modal',
-                                    callback: () => {
-                                       document.querySelector('#add-queue-successfully-song-name').textContent = `${song.name} by ${artistText}`;
-                                    }
-                                 }
-                              }));
-                              break;
-                           case 2:
-                              document.dispatchEvent(new CustomEvent('openModal', {
-                                 detail: {
-                                    target: 'add-to-queue-duplicate-modal',
-                                    callback: () => {
-                                       document.querySelector('#add-queue-duplicate-song-name').textContent = `${song.name} by ${artistText}`;
-                                    }
-                                 }
-                              }));
-                              break;
-                           case 3:
-                              document.dispatchEvent(new CustomEvent('openModal', {
-                                 detail: {
-                                    target: 'add-to-queue-not-playing-modal'
-                                 }
-                              }));
-                              break;
-                           case 4:
-                              document.dispatchEvent(new CustomEvent('openModal', {
-                                 detail: {
-                                    target: 'too-many-requests-modal'
-                                 }
-                              }));
-                              break;
-                           case 5:
-                              document.dispatchEvent(new CustomEvent('openModal', {
-                                 detail: {
-                                    target: 'add-to-queue-explicit-blocked-modal'
-                                 }
-                              }));
-                              break;
-                           default:
-                              document.dispatchEvent(new CustomEvent('openModal', {
-                                 detail: {
-                                    target: 'add-to-queue-failed-modal'
-                                 }
-                              }));
-                              break;
-                        }
-                     }
-                  }).catch(error => {
-                     console.error('Add Song Error:', error);
-                  });
-               }
-            }
-            addIcon.addEventListener('keydown', addSongFunction);
-            addIcon.addEventListener('click', addSongFunction);
+            addIcon.addEventListener('keydown', (event) => addSongToQueue(event, song, artists));
+            addIcon.addEventListener('click', (event) => addSongToQueue(event, song, artists));
+
             // Append the add icon to the result container
             resultContainer.appendChild(addIcon);
 
@@ -273,7 +282,7 @@ window.addEventListener('load', () => {
             spotifyLogoLink.target = '_blank';
             spotifyLogoLink.rel = 'noopener noreferrer';
             spotifyLogoLink.className = 'search-results-spotify-logo-link';
-            spotifyLogoLink.ariaLabel = `Open ${song.title} by ${artistText} in Spotify`;
+            spotifyLogoLink.ariaLabel = `Open ${song.title} by ${artists} in Spotify`;
 
             const spotifyLogo = document.createElement('img');
             spotifyLogo.src = 'assets/images/Primary_Logo_White_CMYK.svg';
@@ -288,9 +297,42 @@ window.addEventListener('load', () => {
             searchResults.appendChild(resultContainer);
          }
          loadingIcon.classList.add('hide');
-      }).catch(error => {
+      })
+      .catch(error => {
          console.error('Search Error:', error);
       });
+}
+
+//////////////// Main Body /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+window.addEventListener('load', () => {
+   //////////////// Set variables //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   partyId = new URLSearchParams(globalThis.location.search).get('session_code')?.trim();
+   loadingIcon = document.querySelector('div#loading-icon');
+   if (!partyId) {
+      globalThis.location.href = './join.html';
    }
+   searchForm = document.querySelector('form#search-song-form');
+   searchResults = document.querySelector('div#search-results');
+   noResults = document.querySelector('span#no-results');
+
+   //////////////// Page polling //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   startPolling();
+
+   //////////////// Search submit //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   searchForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      search();
+   });
+
+   /////////////////////// Stop Polling while off the page /////////////////////////////////////////////////////////////////////////////////////////
+   document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+         stopPolling();
+      } else {
+         startPolling();
+      }
+   });
+
+   /////////////// Finishing up ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    loadingIcon.classList.add('hide');
 });

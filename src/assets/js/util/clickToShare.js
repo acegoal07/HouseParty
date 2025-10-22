@@ -1,8 +1,8 @@
-window.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
    // Ignore the button if the share API is not supported
-   if (navigator.userAgent.includes('Mobile') && typeof navigator.share !== 'undefined') {
+   if (navigator.userAgent.includes('Mobile') && navigator.share !== undefined) {
       // Loop through all elements with the class 'click-to-share'
-      document.querySelectorAll('.click-to-share').forEach((button) => {
+      for (const button of document.querySelectorAll('.click-to-share')) {
          button.classList.remove('hide');
          button.addEventListener('click', () => {
             navigator.share({
@@ -13,6 +13,6 @@ window.addEventListener('DOMContentLoaded', () => {
                console.error('Error sharing:', error);
             });
          });
-      });
+      }
    }
 });

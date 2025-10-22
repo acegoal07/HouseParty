@@ -1,7 +1,8 @@
-export class ModalHandler {
+class ModalHandler {
+   modal = null;
+   lastFocusedElement = null;
+
    constructor() {
-      this.modal = null;
-      this.lastFocusedElement = null;
       this._init();
    }
 
@@ -68,9 +69,9 @@ export class ModalHandler {
     * Trap focus within the modal
     */
    _trapFocus() {
-      const focusableElements = this.modal.querySelectorAll('a, button, input, textarea, select, details, [tabindex]:not([tabindex="-1"])');
-      const firstElement = focusableElements[0];
-      const lastElement = focusableElements[focusableElements.length - 1];
+      const focusableElements = Array.from(this.modal.querySelectorAll('a, button, input, textarea, select, details, [tabindex]:not([tabindex="-1"])'));
+      const firstElement = focusableElements.at(0);
+      const lastElement = focusableElements.at(-1);
       this.modal.addEventListener('keydown', (event) => {
          const isTabPressed = (event.key === 'Tab' || event.keyCode === 9);
          if (!isTabPressed) {
@@ -129,4 +130,4 @@ export class ModalHandler {
    }
 }
 
-const ModalHandlerInstance = new ModalHandler();
+export default new ModalHandler();

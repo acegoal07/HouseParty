@@ -18,7 +18,7 @@ export function setCookie({ name, value, sameSite = "Strict", expires = 1, httpO
       throw new Error('Expires must be a non-negative number');
    }
    if (typeof httpOnly !== 'boolean') {
-      throw new Error('HttpOnly must be a boolean');
+      throw new TypeError('HttpOnly must be a boolean');
    }
 
    const date = new Date();
@@ -83,7 +83,7 @@ export function extendCookie({ name, days, sameSite = "Strict", httpOnly = false
       throw new Error('Invalid SameSite value');
    }
    if (typeof httpOnly !== 'boolean') {
-      throw new Error('HttpOnly must be a boolean');
+      throw new TypeError('HttpOnly must be a boolean');
    }
 
    const value = getCookie(name);

@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
    // Loop through all elements with the class 'click-to-copy' or 'click-to-copy-target'
-   document.querySelectorAll('.click-to-copy, .click-to-copy-target').forEach(button => {
+   for (const button of document.querySelectorAll('.click-to-copy, .click-to-copy-target')) {
       // Add an event listener to the button that copies the text to the clipboard
       button.addEventListener('click', () => {
          // Get the text to copy based on the button's class
@@ -15,16 +15,18 @@ document.addEventListener('DOMContentLoaded', () => {
          copyText = copyText.trim();
          // If the text exists, copy it to the clipboard and show a copy message
          if (copyText !== '' && copyText) {
-            navigator.clipboard.writeText(copyText).then(() => {
-               if (!document.querySelector('div.copy-toast')) {
-                  showCopyMessage();
-               }
-            }).catch(error => {
-               console.error('Failed to copy: ', error);
-            });
+            navigator.clipboard.writeText(copyText)
+               .then(() => {
+                  if (!document.querySelector('div.copy-toast')) {
+                     showCopyMessage();
+                  }
+               })
+               .catch(error => {
+                  console.error('Failed to copy: ', error);
+               });
          }
       });
-   });
+   }
 });
 
 /**

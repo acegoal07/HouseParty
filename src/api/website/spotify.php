@@ -215,7 +215,7 @@ class SpotifyHandler
 
       if ($responseCode === 429) {
          http_response_code(200);
-         echo json_encode(['total_tracks' => 0, 'tracks' => [], 'code' => 1]);
+         echo json_encode(['tracks' => [], 'response_code' => 1]);
          exit();
       }
 
@@ -227,7 +227,7 @@ class SpotifyHandler
       }
 
       http_response_code(200);
-      echo json_encode(['total_tracks' => count($tracks), 'tracks' => $tracks, 'code' => 0]);
+      echo json_encode(['tracks' => $tracks, 'response_code' => 0]);
       exit();
    }
 

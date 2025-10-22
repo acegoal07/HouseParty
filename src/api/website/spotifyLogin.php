@@ -92,6 +92,7 @@ class SpotifyLoginHandler
       setcookie('session_id', $session_id, [
          'expires'  => strtotime($expires_at),
          'path'     => '/',
+         'domain'   => 'beta.acegoal07.dev',
          'secure'   => true,
          'httponly' => false,
          'samesite' => 'strict',

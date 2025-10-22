@@ -7,8 +7,8 @@ Go back to the main [README](../../../README.md)
 - [House Party - Website API Documentation](#house-party---website-api-documentation)
   - [Contents](#contents)
   - [Database API](#database-api)
-    - [`checkLoggedInUser`](#checkloggedinuser)
-    - [`checkPartyExists`](#checkpartyexists)
+    - [`validateSession`](#validatesession)
+    - [`validatePartyAndSession`](#validatepartyandsession)
     - [`createParty`](#createparty)
     - [`deleteParty`](#deleteparty)
     - [`updatePartyExplicit`](#updatepartyexplicit)
@@ -27,7 +27,7 @@ This API manages all interactions with the website's database.
 
 <hr>
 
-### `checkLoggedInUser`
+### `validateSession`
 
 Check if a users session id is valid and returns data about the user if it is depending on what's requested.
 
@@ -42,7 +42,7 @@ TBD
 
 <hr>
 
-### `checkPartyExists`
+### `validatePartyAndSession`
 
 Check if a party exists and check session validation if session_id is provided.
 
