@@ -6,10 +6,15 @@ Go back to the main [README](../../../README.md)
 
 - [House Party - Util documentation](#house-party---util-documentation)
   - [Contents](#contents)
-  - [sessionHandler](#sessionhandler)
+  - [sessionHelper](#sessionhelper)
+  - [cookieHandler](#cookiehandler)
 
 <hr>
 
-## sessionHandler
-
+## sessionHelper
 This utility manages user sessions, including creation, validation, and expiration handling.
+
+<hr>
+
+## cookieHandler
+This utility provides functions to set, get, and delete cookies for user sessions and preferences.

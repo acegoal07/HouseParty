@@ -1,6 +1,7 @@
 <?php
 include '../secrets.php';
-include '../util/sessionHandler.php';
+include '../util/session.php';
+include '../util/cookie.php';
 header("Access-Control-Allow-Origin: {$allowedDomain}");
 header("Access-Control-Allow-Methods: GET");
 
@@ -21,14 +22,6 @@ class SpotifyLoginHandler
       $this->conn = $conn;
       $this->spotifyClientId = $spotifyClientId;
       $this->spotifyClientSecret = $spotifyClientSecret;
-   }
-
-   /**
-    * Destructor
-    */
-   public function __destruct()
-   {
-      $this->conn->close();
    }
 
    /**
@@ -63,43 +56,6 @@ class SpotifyLoginHandler
          http_response_code(405);
          exit();
       }
-   }
-
-   /**
-    * Process the login request
-    * @return void
-    */
-   private function processLogin()
-   {
-      $result = $this->getAccessToken();
-      $refresh_token = $result['refresh_token'];
-
-      $result = $this->getHostId($result['access_token']);
-
-      if (!isset($result['id'])) {
-         $this->redirectWithError(1);
-      }
-
-      if ($result['product'] !== 'premium') {
-         $this->redirectWithError(3);
-      }
-
-      $hashed_host_id = hash('sha256', $result['id']);
-
-      $sessionHandler = new SessionHelper($this->conn);
-      [$session_id, $expires_at] = $sessionHandler->createSession($hashed_host_id, $refresh_token);
-
-      setcookie('session_id', $session_id, [
-         'expires'  => strtotime($expires_at),
-         'path'     => '/',
-         'domain'   => 'beta.acegoal07.dev',
-         'secure'   => true,
-         'httponly' => false,
-         'samesite' => 'strict',
-      ]);
-
-      header("Location: /dashboard.html");
-      exit();
    }
 
    /**
@@ -168,7 +124,35 @@ class SpotifyLoginHandler
 
       return json_decode($response, true);
    }
+
+   /**
+    * Process the login request
+    * @return void
+    */
+   private function processLogin()
+   {
+      $result = $this->getAccessToken();
+      $refresh_token = $result['refresh_token'];
+
+      $result = $this->getHostId($result['access_token']);
+
+      if (!isset($result['id'])) {
+         $this->redirectWithError(1);
+      }
+
+      if ($result['product'] !== 'premium') {
+         $this->redirectWithError(3);
+      }
+
+      $hashed_host_id = hash('sha256', $result['id']);
+
+      createSession($this->conn, $hashed_host_id, $refresh_token);
+
+      header("Location: /dashboard.html");
+      exit();
+   }
 }
 
 $spotifyLoginHandler = new SpotifyLoginHandler($conn, $spotifyClientId, $spotifyClientSecret);
 $spotifyLoginHandler->handleRequest();
+$conn->close();

@@ -1,5 +1,4 @@
 //////////////// Imports ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { getCookie, extendCookie, deleteCookie } from '@/assets/js/util/cookies.js';
 import '@/assets/js/util/qrcode.js';
 import '@/assets/js/util/modalHandler.js';
 import '@/assets/js/util/collapsibleHandler.js';
@@ -14,60 +13,6 @@ let searchForm;
 let searchResults;
 let noResults;
 let explicitToggle;
-
-//////////////// Polling functions /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function pollingFunction() {
-   fetch(`api/website/database.php?${new URLSearchParams({
-      type: 'validatePartyAndSession',
-      party_id: partyId,
-      session_id: getCookie('session_id') || ''
-   })}`, {
-      method: 'GET'
-   }).then(response => response.json()).then(data => {
-      if (!data.partyExists) {
-         globalThis.location.href = './join.html';
-      }
-      if (getCookie('session_id') !== null) {
-         if (!data.validated) {
-            deleteCookie({ name: 'session_id' });
-         }
-         if (data.extended) {
-            extendCookie({ name: 'session_id', days: 0.5 });
-         }
-      }
-      if (document.querySelector('div#party-qrcode').childElementCount === 0) {
-         const websiteUrl = `${globalThis.location.origin}/party.html?session_code=`;
-         document.querySelector('span#party-code').textContent = partyId;
-         document.querySelector('button#copy-party-url').setAttribute('copy-data', `${websiteUrl}${partyId}`);
-         document.querySelector('button#share-party-url').setAttribute('share-url', `${websiteUrl}${partyId}`);
-         QrCreator.render({
-            text: `${websiteUrl}${partyId}`,
-            radius: 0.5,
-            ecLevel: 'H',
-            fill: '#fff',
-            size: 125
-         }, document.querySelector('div#party-qrcode'));
-
-      }
-      if (data.explicit !== explicitToggle) {
-         explicitToggle = data.explicit;
-         if (searchResults.hasChildNodes()) {
-            searchFunction();
-         }
-      }
-   }).catch(error => {
-      console.error('Page Polling Error:', error);
-   });
-}
-
-function startPolling() {
-   pollingFunction();
-   pollingInterval = setInterval(pollingFunction, 1000);
-}
-
-function stopPolling() {
-   clearInterval(pollingInterval);
-}
 
 //////////////// Add song to queue function ////////////////////////////////////////////////////////////////////////////////////////////////////////
 function addSongToQueue(event, song, artists) {
@@ -87,17 +32,16 @@ function addSongToQueue(event, song, artists) {
          .then(response => response.json())
          .then(data => {
             if (data.success) {
+               document.dispatchEvent(new CustomEvent('openModal', {
+                  detail: {
+                     target: 'add-to-queue-successfully-modal',
+                     callback: () => {
+                        document.querySelector('#add-queue-successfully-song-name').textContent = `${song.name} by ${artists}`;
+                     }
+                  }
+               }));
+            } else {
                switch (data.response_code) {
-                  case 1:
-                     document.dispatchEvent(new CustomEvent('openModal', {
-                        detail: {
-                           target: 'add-to-queue-successfully-modal',
-                           callback: () => {
-                              document.querySelector('#add-queue-successfully-song-name').textContent = `${song.name} by ${artists}`;
-                           }
-                        }
-                     }));
-                     break;
                   case 2:
                      document.dispatchEvent(new CustomEvent('openModal', {
                         detail: {
@@ -172,6 +116,7 @@ function search() {
    })
       .then(response => response.json())
       .then(data => {
+         // Handle rate limiting
          if (data.response_code === 1) {
             return document.dispatchEvent(new CustomEvent('openModal', {
                detail: {
@@ -179,18 +124,22 @@ function search() {
                }
             }));
          }
-         const tracks = data.tracks;
-         if (Object.keys(tracks).length === 0) {
+
+         // Check if there are no results
+         const tracks = Object.values(data.tracks);
+         if (tracks.length === 0) {
             noResults.classList.remove('hide');
          } else {
             noResults.classList.add('hide');
          }
 
-         const limitedTracks = Object.keys(tracks).slice(0, 20);
+         // Clear previous results
+         while (searchResults.firstChild) {
+            searchResults.firstChild.remove();
+         }
 
-         for (const key of limitedTracks) {
-            const song = tracks[key];
-
+         // Loop through the tracks and create the result elements
+         for (const song of tracks) {
             // Get the artist text
             let charCount = 0;
             const artistsList = [];
@@ -240,9 +189,9 @@ function search() {
                explicitIcon.setAttribute('class', 'search-results-explicit-icon');
                explicitIcon.setAttribute('viewBox', '0 0 16 16');
 
-               const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-               path.setAttribute('d', 'M2.5 0A2.5 2.5 0 0 0 0 2.5v11A2.5 2.5 0 0 0 2.5 16h11a2.5 2.5 0 0 0 2.5-2.5v-11A2.5 2.5 0 0 0 13.5 0zm4.326 10.88H10.5V12h-5V4.002h5v1.12H6.826V7.4h3.457v1.073H6.826z');
-               explicitIcon.appendChild(path);
+               const explicitIconPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+               explicitIconPath.setAttribute('d', 'M2.5 0A2.5 2.5 0 0 0 0 2.5v11A2.5 2.5 0 0 0 2.5 16h11a2.5 2.5 0 0 0 2.5-2.5v-11A2.5 2.5 0 0 0 13.5 0zm4.326 10.88H10.5V12h-5V4.002h5v1.12H6.826V7.4h3.457v1.073H6.826z');
+               explicitIcon.appendChild(explicitIconPath);
                songTitle.appendChild(explicitIcon);
             }
 
@@ -265,9 +214,9 @@ function search() {
             addIcon.setAttribute('aria-label', `Add ${song.name} by ${artists} to the queue`);
             addIcon.setAttribute('role', 'button');
 
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            path.setAttribute('d', 'M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z');
-            addIcon.appendChild(path);
+            const addIconPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            addIconPath.setAttribute('d', 'M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z');
+            addIcon.appendChild(addIconPath);
 
             // Add event listener to the add icon
             addIcon.addEventListener('keydown', (event) => addSongToQueue(event, song, artists));
@@ -301,6 +250,51 @@ function search() {
       .catch(error => {
          console.error('Search Error:', error);
       });
+}
+
+//////////////// Polling functions /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function pollingFunction() {
+   fetch(`api/website/database.php?${new URLSearchParams({
+      type: 'validatePartyAndSession',
+      party_id: partyId
+   })}`, {
+      method: 'GET'
+   }).then(response => response.json()).then(data => {
+      if (!data.party_exists) {
+         globalThis.location.href = './join.html';
+      }
+      if (document.querySelector('div#party-qrcode').childElementCount === 0) {
+         const websiteUrl = `${globalThis.location.origin}/party.html?session_code=`;
+         document.querySelector('span#party-code').textContent = partyId;
+         document.querySelector('button#copy-party-url').setAttribute('copy-data', `${websiteUrl}${partyId}`);
+         document.querySelector('button#share-party-url').setAttribute('share-url', `${websiteUrl}${partyId}`);
+         QrCreator.render({
+            text: `${websiteUrl}${partyId}`,
+            radius: 0.5,
+            ecLevel: 'H',
+            fill: '#fff',
+            size: 125
+         }, document.querySelector('div#party-qrcode'));
+
+      }
+      if (data.explicit !== explicitToggle) {
+         explicitToggle = data.explicit;
+         if (searchResults.hasChildNodes()) {
+            search();
+         }
+      }
+   }).catch(error => {
+      console.error('Page Polling Error:', error);
+   });
+}
+
+function startPolling() {
+   pollingFunction();
+   pollingInterval = setInterval(pollingFunction, 1000);
+}
+
+function stopPolling() {
+   clearInterval(pollingInterval);
 }
 
 //////////////// Main Body /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -1,5 +1,4 @@
 //////////////// Imports ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { getCookie, extendCookie, deleteCookie } from '@/assets/js/util/cookies.js';
 import '@/assets/js/util/qrcode.js';
 import '@/assets/js/util/modalHandler.js';
 import '@/assets/js/util/collapsibleHandler.js';
@@ -19,97 +18,84 @@ let partyExpiresAt
 
 //////////////// Polling functions /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function pollingFunction() {
-   // Check if the session ID cookie exists
-   if (getCookie('session_id') === null) {
-      deleteCookie({ name: 'session_id' });
-      globalThis.location.href = './';
-   } else {
-      // Check if the party exists, retrieve the required data and validate the user session
-      fetch(`api/website/database.php?${new URLSearchParams({
-         type: 'validateSession',
-         session_id: `${getCookie('session_id')}`,
-         session_data: true
-      })}`, {
-         method: 'GET'
-      })
-         .then(response => response.json())
-         .then(data => {
-            // If the session is not validated, redirect to the homepage
-            if (!data.validated) {
-               deleteCookie({ name: 'session_id' });
-               globalThis.location.href = './';
-            }
-            // Extend the session if needed
-            if (data.extended) {
-               extendCookie({ name: 'session_id', days: 0.5 });
-            }
-            // If there is an active party, update the UI accordingly
-            if (data.active_party) {
-               const party = data.parties[0];
-
-               // Set QR code and party info
-               if (document.querySelector('div#party-qrcode').childElementCount === 0 || document.querySelector('span#party-code').textContent !== party.party_id) {
-                  partyExpiresAt = new Date(party.party_expires_at);
-                  updateTimestamp();
-                  const websiteUrl = `${globalThis.location.origin}/party.html?session_code=`;
-                  document.querySelector('span#party-code').textContent = party.party_id;
-                  document.querySelector('button#copy-party-url').setAttribute('copy-data', `${websiteUrl}${party.party_id}`);
-                  document.querySelector('button#share-party-url').setAttribute('share-url', `${websiteUrl}${party.party_id}`);
-                  if (document.querySelector('div#party-qrcode').childElementCount > 0) {
-                     document.querySelector('div#party-qrcode').innerHTML = '';
-                  }
-                  QrCreator.render({
-                     text: `${websiteUrl}${party.party_id}`,
-                     radius: 0.5,
-                     ecLevel: 'H',
-                     fill: '#fff',
-                     size: 125
-                  }, document.querySelector('div#party-qrcode'));
-               }
-
-               // Update the party expiration time if it has changed
-               if (party.party_expires_at !== partyExpiresAt) {
-                  partyExpiresAt = party.party_expires_at;
-                  updateTimestamp();
-               }
-
-               // Update explicit content button states
-               if (party.explicit) {
-                  enableExplicitButton.classList.add('hide');
-                  disableExplicitButton.classList.remove('hide');
-               } else {
-                  disableExplicitButton.classList.add('hide');
-                  enableExplicitButton.classList.remove('hide');
-               }
-
-               // Update duplicate blocker button states
-               if (party.duplicate_blocker) {
-                  enableDuplicateBlockerButton.classList.add('hide');
-                  disableDuplicateBlockerButton.classList.remove('hide');
-               } else {
-                  disableDuplicateBlockerButton.classList.add('hide');
-                  enableDuplicateBlockerButton.classList.remove('hide');
-               }
-
-               // Show settings and hide create party section
-               if (!createParty.classList.contains('hide')) { createParty.classList.add('hide'); }
-               settings.classList.remove('hide');
-            } else {
-               // No active party, show create party section, hide settings and make sure all modals are closed
-               document.dispatchEvent(new Event('closeCurrentModal'));
-               if (!settings.classList.contains('hide')) { settings.classList.add('hide'); }
-               createParty.classList.remove('hide');
-            }
-            // Remove the loading icon
-            if (!loadingIcon.classList.contains('hide')) {
-               loadingIcon.classList.add('hide');
-            }
-         })
-         .catch(() => {
-            deleteCookie({ name: 'session_id' });
+   // Check if the party exists, retrieve the required data and validate the user session
+   fetch(`api/website/database.php?${new URLSearchParams({
+      type: 'validateSession',
+      session_data: true
+   })}`, {
+      method: 'GET'
+   })
+      .then(response => response.json())
+      .then(data => {
+         // If the session is not validated, redirect to the homepage
+         if (!data.validated) {
             globalThis.location.href = './';
-         });
-   }
+         }
+         // If there is an active party, update the UI accordingly
+         if (data.active_party) {
+            const party = data.parties[0];
+
+            // Set QR code and party info
+            if (document.querySelector('div#party-qrcode').childElementCount === 0 || document.querySelector('span#party-code').textContent !== party.party_id) {
+               partyExpiresAt = new Date(party.party_expires_at);
+               updateTimestamp();
+               const websiteUrl = `${globalThis.location.origin}/party.html?session_code=`;
+               document.querySelector('span#party-code').textContent = party.party_id;
+               document.querySelector('button#copy-party-url').setAttribute('copy-data', `${websiteUrl}${party.party_id}`);
+               document.querySelector('button#share-party-url').setAttribute('share-url', `${websiteUrl}${party.party_id}`);
+               if (document.querySelector('div#party-qrcode').childElementCount > 0) {
+                  document.querySelector('div#party-qrcode').innerHTML = '';
+               }
+               QrCreator.render({
+                  text: `${websiteUrl}${party.party_id}`,
+                  radius: 0.5,
+                  ecLevel: 'H',
+                  fill: '#fff',
+                  size: 125
+               }, document.querySelector('div#party-qrcode'));
+            }
+
+            // Update the party expiration time if it has changed
+            if (party.party_expires_at !== partyExpiresAt) {
+               partyExpiresAt = party.party_expires_at;
+               updateTimestamp();
+            }
+
+            // Update explicit content button states
+            if (party.explicit) {
+               enableExplicitButton.classList.add('hide');
+               disableExplicitButton.classList.remove('hide');
+            } else {
+               disableExplicitButton.classList.add('hide');
+               enableExplicitButton.classList.remove('hide');
+            }
+
+            // Update duplicate blocker button states
+            if (party.duplicate_blocker) {
+               enableDuplicateBlockerButton.classList.add('hide');
+               disableDuplicateBlockerButton.classList.remove('hide');
+            } else {
+               disableDuplicateBlockerButton.classList.add('hide');
+               enableDuplicateBlockerButton.classList.remove('hide');
+            }
+
+            // Show settings and hide create party section
+            if (!createParty.classList.contains('hide')) { createParty.classList.add('hide'); }
+            settings.classList.remove('hide');
+         } else {
+            // No active party, show create party section, hide settings and make sure all modals are closed
+            document.dispatchEvent(new Event('closeCurrentModal'));
+            if (!settings.classList.contains('hide')) { settings.classList.add('hide'); }
+            createParty.classList.remove('hide');
+         }
+         // Remove the loading icon
+         if (!loadingIcon.classList.contains('hide')) {
+            loadingIcon.classList.add('hide');
+         }
+      })
+      .catch(() => {
+         globalThis.location.href = './';
+      });
 }
 
 function startPolling() {
@@ -160,7 +146,6 @@ window.addEventListener('load', () => {
          },
          body: JSON.stringify({
             type: 'createParty',
-            session_id: getCookie('session_id'),
             party_ends_in: document.querySelector('input#party-duration').value,
             explicit: document.querySelector('input#explicit-checkbox').checked ? 1 : 0,
             duplicate_blocker: document.querySelector('input#duplicate-blocker-checkbox').checked ? 1 : 0
@@ -172,7 +157,6 @@ window.addEventListener('load', () => {
                event.target.reset();
                globalThis.location.reload();
             } else {
-               deleteCookie({ name: 'session_id' });
                globalThis.location.href = './';
             }
          })
@@ -194,7 +178,6 @@ window.addEventListener('load', () => {
          },
          body: JSON.stringify({
             type: 'extendPartyDuration',
-            session_id: getCookie('session_id'),
             extend_by: partyDuration
          })
       })
@@ -222,7 +205,6 @@ window.addEventListener('load', () => {
          },
          body: JSON.stringify({
             type: 'updatePartyExplicit',
-            session_id: getCookie('session_id'),
             explicit: 0
          })
       })
@@ -250,7 +232,6 @@ window.addEventListener('load', () => {
          },
          body: JSON.stringify({
             type: 'updatePartyExplicit',
-            session_id: getCookie('session_id'),
             explicit: 1
          })
       })
@@ -279,7 +260,6 @@ window.addEventListener('load', () => {
          },
          body: JSON.stringify({
             type: 'updatePartyDuplicateBlocker',
-            session_id: getCookie('session_id'),
             duplicate_blocker: 0
          })
       })
@@ -307,7 +287,6 @@ window.addEventListener('load', () => {
          },
          body: JSON.stringify({
             type: 'updatePartyDuplicateBlocker',
-            session_id: getCookie('session_id'),
             duplicate_blocker: 1
          })
       })
@@ -335,8 +314,7 @@ window.addEventListener('load', () => {
             'Content-Type': 'application/json'
          },
          body: JSON.stringify({
-            type: 'deleteParty',
-            session_id: getCookie('session_id')
+            type: 'deleteParty'
          })
       })
          .then(response => response.json())

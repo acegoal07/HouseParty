@@ -1,6 +1,7 @@
 <?php
 include '../secrets.php';
-include '../util/sessionHandler.php';
+include '../util/session.php';
+include '../util/cookie.php';
 header("Access-Control-Allow-Origin: {$allowedDomain}");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
@@ -83,6 +84,9 @@ class DatabaseHandler
          // Handle GET requests
          case 'validateSession':
             $this->validateSession();
+            break;
+         case 'validateParty':
+            $this->validateParty();
             break;
          case 'validatePartyAndSession':
             $this->validatePartyAndSession();
@@ -178,9 +182,9 @@ class DatabaseHandler
     */
    private function validateSession()
    {
-      if (!isset($this->input['session_id'])) {
-         http_response_code(400);
-         echo json_encode(['error' => 'Missing session_id']);
+      if (!cookieExists('session_id')) {
+         http_response_code(200);
+         echo json_encode(['validated' => false]);
          exit();
       }
 
@@ -188,15 +192,56 @@ class DatabaseHandler
          $this->input['session_data'] = 'false';
       }
 
-      $sessionHandler = new SessionHelper($this->conn);
-
       http_response_code(200);
 
+      $validation = null;
+
       if ($this->input['session_data'] === 'true') {
-         echo json_encode($sessionHandler->validateSessionGetInfo($this->input['session_id']));
+         $validation = validateSessionGetInfo($this->conn, cookieGet('session_id'));
       } else {
-         echo json_encode($sessionHandler->validateSession($this->input['session_id']));
+         $validation = (validateSession($this->conn, cookieGet('session_id')));
       }
+
+      if (!$validation['validated']) {
+         cookieDelete('session_id');
+      }
+
+      echo json_encode($validation);
+
+      exit();
+   }
+
+   /**
+    * Check if a party exists
+    * @return mixed
+    */
+   private function validateParty() {
+      if (!isset($this->input['party_id'])) {
+         http_response_code(400);
+         echo json_encode(['error' => 'Missing parameters']);
+         exit();
+      }
+
+      $stmt = $this->conn->prepare("SELECT explicit FROM parties WHERE party_id = ? COLLATE latin1_bin");
+      $stmt->bind_param("s", $this->input['party_id']);
+      $stmt->execute();
+
+      if ($stmt->error) {
+         http_response_code(500);
+         echo json_encode(['error' => $stmt->error]);
+         exit();
+      }
+
+      $result = $stmt->get_result();
+
+      http_response_code(200);
+      if ($result->num_rows > 0) {
+         echo json_encode(['party_exists' => true]);
+      } else {
+         echo json_encode(['party_exists' => false]);
+      }
+
+      $stmt->close();
       exit();
    }
 
@@ -225,17 +270,19 @@ class DatabaseHandler
       $result = $stmt->get_result();
 
       $validation = null;
-      if (isset($this->input['session_id'])) {
-         $sessionHandler = new SessionHelper($this->conn);
-         $validation = $sessionHandler->validateSession($this->input['session_id']);
+      if (cookieExists('session_id')) {
+         $validation = validateSession($this->conn, cookieGet('session_id'));
+         if (!$validation['validated']) {
+            cookieDelete('session_id');
+         }
       }
 
       http_response_code(200);
       if ($result->num_rows > 0) {
          $row = $result->fetch_assoc();
-         echo json_encode(['partyExists' => true, 'explicit' => $row['explicit'], 'validated' => $validation ? $validation['validated'] : null, 'extended' => $validation ? $validation['extended'] : null]);
+         echo json_encode(['party_exists' => true, 'explicit' => $row['explicit'], 'validated' => $validation ? $validation['validated'] : null]);
       } else {
-         echo json_encode(['partyExists' => false]);
+         echo json_encode(['party_exists' => false]);
       }
 
       $stmt->close();
@@ -251,14 +298,15 @@ class DatabaseHandler
     */
    private function logoutUser()
    {
-      if (!isset($this->input['session_id'])) {
+      if (!cookieExists('session_id')) {
          http_response_code(400);
          echo json_encode(['error' => 'Missing session_id']);
          exit();
       }
 
-      $sessionHandler = new SessionHelper($this->conn);
-      $sessionHandler->deleteSession($this->input['session_id']);
+      deleteSession($this->conn, cookieGet('session_id'));
+
+      cookieDelete('session_id');
 
       http_response_code(200);
       echo json_encode(['success' => true]);
@@ -271,14 +319,13 @@ class DatabaseHandler
     */
    private function createParty()
    {
-      if (!isset($this->input['session_id']) || !isset($this->input['party_ends_in']) || !isset($this->input['explicit']) || !isset($this->input['duplicate_blocker'])) {
+      if (!cookieExists('session_id') || !isset($this->input['party_ends_in']) || !isset($this->input['explicit']) || !isset($this->input['duplicate_blocker'])) {
          http_response_code(400);
          echo json_encode(['error' => 'Missing parameters']);
          exit();
       }
 
-      $sessionHandler = new SessionHelper($this->conn);
-      $validation = $sessionHandler->validateSessionGetInfo($this->input['session_id']);
+      $validation = validateSessionGetInfo($this->conn, cookieGet('session_id'));
       if (!$validation['validated']) {
          http_response_code(400);
          echo json_encode(['error' => 'Invalid session ID']);
@@ -417,14 +464,13 @@ class DatabaseHandler
     */
    private function deleteParty()
    {
-      if (!isset($this->input['session_id'])) {
+      if (!cookieExists('session_id')) {
          http_response_code(400);
          echo json_encode(['error' => 'Missing parameters']);
          exit();
       }
 
-      $sessionHandler = new SessionHelper($this->conn);
-      $validation = $sessionHandler->validateSession($this->input['session_id'], true);
+      $validation = validateSession($this->conn, cookieGet('session_id'), true);
       if (!$validation['validated']) {
          http_response_code(400);
          echo json_encode(['error' => 'Invalid session ID']);
@@ -460,14 +506,14 @@ class DatabaseHandler
     */
    private function updatePartyExplicit()
    {
-      if (!isset($this->input['session_id']) || !isset($this->input['explicit'])) {
+
+      if (!cookieExists('session_id') || !isset($this->input['explicit'])) {
          http_response_code(400);
          echo json_encode(['error' => 'Missing parameters']);
          exit();
       }
 
-      $sessionHandler = new SessionHelper($this->conn);
-      $validation = $sessionHandler->validateSession($this->input['session_id'], true);
+      $validation = validateSession($this->conn, cookieGet('session_id'), true);
       if (!$validation['validated']) {
          http_response_code(400);
          echo json_encode(['error' => 'Invalid session ID']);
@@ -503,14 +549,13 @@ class DatabaseHandler
     */
    private function updatePartyDuplicateBlocker()
    {
-      if (!isset($this->input['session_id']) || !isset($this->input['duplicate_blocker'])) {
+      if (!cookieExists('session_id') || !isset($this->input['duplicate_blocker'])) {
          http_response_code(400);
          echo json_encode(['error' => 'Missing parameters']);
          exit();
       }
 
-      $sessionHandler = new SessionHelper($this->conn);
-      $validation = $sessionHandler->validateSession($this->input['session_id'], true);
+      $validation = validateSession($this->conn, cookieGet('session_id'), true);
       if (!$validation['validated']) {
          http_response_code(400);
          echo json_encode(['error' => 'Invalid session ID']);
@@ -546,14 +591,13 @@ class DatabaseHandler
     */
    private function extendPartyDuration()
    {
-      if (!isset($this->input['session_id']) || !isset($this->input['extend_by'])) {
+      if (!cookieExists('session_id') || !isset($this->input['extend_by'])) {
          http_response_code(400);
          echo json_encode(['error' => 'Missing parameters']);
          exit();
       }
 
-      $sessionHandler = new SessionHelper($this->conn);
-      $validation = $sessionHandler->validateSession($this->input['session_id'], true);
+      $validation = validateSession($this->conn, cookieGet('session_id'), true);
       if (!$validation['validated']) {
          http_response_code(400);
          echo json_encode(['error' => 'Invalid session ID']);

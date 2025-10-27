@@ -203,10 +203,8 @@ class SpotifyHandler
          exit();
       }
 
-      $searchTerm = urlencode($this->input['search_term']);
-
       $curl = curl_init();
-      curl_setopt($curl, CURLOPT_URL, "https://api.spotify.com/v1/search?q={$searchTerm}&type=track&limit=50");
+      curl_setopt($curl, CURLOPT_URL, "https://api.spotify.com/v1/search?q=" . urlencode($this->input['search_term']) . "&type=track&limit=50");
       curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
       curl_setopt($curl, CURLOPT_HTTPHEADER, [$party_info['auth']]);
       $response = curl_exec($curl);
@@ -219,15 +217,16 @@ class SpotifyHandler
          exit();
       }
 
-      $responseData = json_decode($response, true);
-      $tracks = $responseData['tracks']['items'] ?? [];
+      $tracks = json_decode($response, true)['tracks']['items'] ?? [];
 
       if ($party_info['explicit'] == 0) {
          $tracks = array_filter($tracks, fn($item) => !$item['explicit']);
       }
 
+      $slicedTracks = array_slice($tracks, 0, 20);
+
       http_response_code(200);
-      echo json_encode(['tracks' => $tracks, 'response_code' => 0]);
+      echo json_encode(['tracks' => $slicedTracks, 'response_code' => 0]);
       exit();
    }
 
@@ -253,6 +252,7 @@ class SpotifyHandler
          exit();
       }
 
+      // Check if the player is currently playing so songs can be added
       $curl = curl_init();
       curl_setopt($curl, CURLOPT_URL, "https://api.spotify.com/v1/me/player");
       curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -261,26 +261,27 @@ class SpotifyHandler
       $responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
       curl_close($curl);
 
-      if ($responseCode === 429) {
+      if (!$response || $responseCode === 204) {
          http_response_code(200);
-         echo json_encode(['success' => true, 'response_code' => 4]);
+         echo json_encode(['success' => false, 'response_code' => 0]);
          exit();
       }
 
-      if ($response === false) {
+      if ($responseCode === 429) {
          http_response_code(200);
-         echo json_encode(['success' => true, 'response_code' => 0]);
+         echo json_encode(['success' => false, 'response_code' => 4]);
          exit();
       }
 
       $responseData = json_decode($response, true);
 
-      if ($responseData === null || $responseData['is_playing'] === false) {
+      if ($responseData === null || ($responseData['is_playing'] ?? false) === false) {
          http_response_code(200);
-         echo json_encode(['success' => true, 'response_code' => 3]);
+         echo json_encode(['success' => false, 'response_code' => 3]);
          exit();
       }
 
+      // if explicit content is blocked, check if the song is explicit before adding it
       if ($party_info['explicit'] != 1) {
          $curl = curl_init();
          curl_setopt($curl, CURLOPT_URL, "https://api.spotify.com/v1/tracks/" . explode(":", $this->input['song_id'])[2]);
@@ -288,28 +289,29 @@ class SpotifyHandler
          curl_setopt($curl, CURLOPT_HTTPHEADER, [$party_info['auth']]);
          $response = curl_exec($curl);
          $responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+         $responseData = json_decode($response, true);
          curl_close($curl);
+
+         if (!$response) {
+            http_response_code(200);
+            echo json_encode(['success' => false, 'response_code' => 0]);
+            exit();
+         }
 
          if ($responseCode === 429) {
             http_response_code(200);
-            echo json_encode(['success' => true, 'response_code' => 4]);
+            echo json_encode(['success' => false, 'response_code' => 4]);
             exit();
          }
 
-         if ($response === false) {
-            http_response_code(200);
-            echo json_encode(['success' => true, 'response_code' => 0]);
-            exit();
-         }
-
-         $responseData = json_decode($response, true);
          if ($responseData['explicit'] == 1) {
             http_response_code(200);
-            echo json_encode(['success' => true, 'response_code' => 5]);
+            echo json_encode(['success' => false, 'response_code' => 5]);
             exit();
          }
       }
 
+      // if duplicate blocking is enabled, check the queue for duplicates
       if ($party_info['duplicate_blocker'] == 1) {
          $curl = curl_init();
          curl_setopt($curl, CURLOPT_URL, "https://api.spotify.com/v1/me/player/queue");
@@ -317,23 +319,22 @@ class SpotifyHandler
          curl_setopt($curl, CURLOPT_HTTPHEADER, [$party_info['auth']]);
          $response = curl_exec($curl);
          $responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+         $responseData = json_decode($response, true);
          curl_close($curl);
+
+         if (!$response) {
+            http_response_code(200);
+            echo json_encode(['success' => false, 'response_code' => 0]);
+            exit();
+         }
 
          if ($responseCode === 429) {
             http_response_code(200);
-            echo json_encode(['success' => true, 'response_code' => 4]);
+            echo json_encode(['success' => false, 'response_code' => 4]);
             exit();
          }
 
-         if ($response === false) {
-            http_response_code(200);
-            echo json_encode(['success' => true, 'response_code' => 0]);
-            exit();
-         }
-
-         $responseData = json_decode($response, true);
-
-         if (count($responseData['queue']) > 0) {
+         if (count($responseData['queue'] ?? []) > 0) {
             $duplicate = false;
             foreach ($responseData['queue'] as $item) {
                if ($item['uri'] === $this->input['song_id']) {
@@ -344,34 +345,47 @@ class SpotifyHandler
 
             if ($duplicate) {
                http_response_code(200);
-               echo json_encode(['success' => true, 'response_code' => 2]);
+               echo json_encode(['success' => false, 'response_code' => 2]);
                exit();
             }
          }
       }
 
+      // Add the song to the queue if all checks pass
       $curl = curl_init();
-      curl_setopt($curl, CURLOPT_URL, "https://api.spotify.com/v1/me/player/queue?uri=" . $this->input['song_id']);
-      curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-      curl_setopt($curl, CURLOPT_HTTPHEADER, [$party_info['auth']]);
       curl_setopt($curl, CURLOPT_POST, true);
-      curl_exec($curl);
-      $responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-      curl_close($curl);
+      curl_setopt($curl, CURLOPT_URL, "https://api.spotify.com/v1/me/player/queue?uri=" . urlencode($this->input['song_id']));
+      curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+      curl_setopt($curl, CURLOPT_HTTPHEADER, [
+         $party_info['auth'],
+         'Content-Length: 0'
+      ]);
 
-      if ($responseCode === 429) {
-         http_response_code(200);
-         echo json_encode(['success' => true, 'response_code' => 4]);
-         exit();
-      } elseif ($responseCode !== 200) {
-         http_response_code(200);
-         echo json_encode(['success' => true, 'response_code' => 0]);
-         exit();
+      if (curl_exec($curl)) {
+         $responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+         if ($responseCode === 429) {
+            http_response_code(200);
+            echo json_encode(['success' => false, 'response_code' => 4]);
+            exit();
+         }
+
+         if ($responseCode !== 200) {
+            http_response_code(200);
+            echo json_encode(['success' => false, 'response_code' => 0]);
+            exit();
+         }
       } else {
          http_response_code(200);
-         echo json_encode(['success' => true, 'response_code' => 1]);
+         echo json_encode(['success' => false, 'response_code' => 0]);
          exit();
       }
+
+      curl_close($curl);
+
+      http_response_code(200);
+      echo json_encode(['success' => true, 'response_code' => 1]);
+      exit();
    }
 }
 

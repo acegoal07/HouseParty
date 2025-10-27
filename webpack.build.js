@@ -4,15 +4,15 @@ const TerserPlugin = require('terser-webpack-plugin');
 module.exports = {
    mode: 'none',
    entry: {
-      dashboard: './src/assets/js/page/dashboard.js',
-      index: './src/assets/js/page/index.js',
-      join: './src/assets/js/page/join.js',
-      loginerror: './src/assets/js/page/loginerror.js',
-      party: './src/assets/js/page/party.js'
+      dashboard: './src/assets/js/dashboard.js',
+      index: './src/assets/js/index.js',
+      join: './src/assets/js/join.js',
+      loginerror: './src/assets/js/loginerror.js',
+      party: './src/assets/js/party.js'
    },
    output: {
       filename: '[name]-min.js',
-      path: path.resolve(__dirname, 'src/assets/js/page'),
+      path: path.resolve(__dirname, 'src/assets/js'),
       clean: false
    },
    optimization: {

@@ -1,30 +1,12 @@
-//////////////// Imports ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { deleteCookie, getCookie, extendCookie } from '@/assets/js/util/cookies.js';
-
 //////////////// Variables /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 let pollingInterval;
 let loadingIcon;
 
 //////////////// Polling functions /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function pollingFunction() {
-   if (getCookie('session_id') !== null) {
-      fetch(`api/website/database.php?${new URLSearchParams({
-         type: 'validateSession',
-         session_id: `${getCookie('session_id')}`
-      })}`)
-         .then((response) => { response.json(); })
-         .then((data) => {
-            if (!data.validated) {
-               deleteCookie({ name: 'session_id' });
-            }
-            if (data.extended) {
-               extendCookie({ name: 'session_id', days: 0.5 });
-            }
-         })
-         .catch(() => {
-            deleteCookie({ name: 'session_id' });
-         });
-   }
+   fetch(`api/website/database.php?${new URLSearchParams({
+      type: 'validateSession'
+   })}`);
 }
 
 function startPolling() {
@@ -64,12 +46,12 @@ window.addEventListener('load', () => {
          return;
       }
 
-      fetch(`api/website/database.php?type=validatePartyAndSession&party_id=${partyCode}`, {
+      fetch(`api/website/database.php?type=validateParty&party_id=${partyCode}`, {
          method: 'GET'
       })
          .then(response => response.json())
          .then(data => {
-            if (data.partyExists) {
+            if (data.party_exists) {
                globalThis.location.href = `party.html?session_code=${partyCode}`;
             } else {
                noPartyFoundError.classList.remove('hide');

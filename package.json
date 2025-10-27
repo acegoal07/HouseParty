@@ -6,11 +6,8 @@
     "webpack-cli": "^6.0.1"
   },
   "scripts": {
-    "build": "webpack --config webpack.bundle.js",
-    "package": "webpack --config webpack.package.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/acegoal07/HouseParty.git"
+    "build": "webpack --config webpack.build.js",
+    "package": "webpack --config webpack.package.js",
+    "build+package": "npm run build && npm run package"
   }
 }

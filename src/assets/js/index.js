@@ -1,39 +1,30 @@
-//////////////// Imports ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { deleteCookie, getCookie, extendCookie } from '@/assets/js/util/cookies.js';
-
 //////////////// Variables /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 let pollingInterval;
 let logoutButton;
+let loadingIcon;
+let loggedIn = false;
 
 //////////////// Polling functions /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function pollingFunction() {
-   if (getCookie('session_id') === null) {
-      logoutButton.classList.add('hide');
-   } else {
-      const urlParams = new URLSearchParams({
-         type: 'validateSession',
-         session_id: `${getCookie('session_id')}`
-      });
-      fetch(`api/website/database.php?${urlParams}`)
-         .then((response) => {
-            return response.json();
-         })
-         .then((data) => {
-            if (data.validated) {
-               logoutButton.classList.remove('hide');
-            } else {
-               logoutButton.classList.add('hide');
-               deleteCookie({ name: 'session_id' });
-            }
-            if (data.extended) {
-               extendCookie({ name: 'session_id', days: 0.5 });
-            }
-         })
-         .catch(() => {
+   const urlParams = new URLSearchParams({
+      type: 'validateSession'
+   });
+   fetch(`api/website/database.php?${urlParams}`)
+      .then((response) => {
+         return response.json();
+      })
+      .then((data) => {
+         if (data.validated) {
+            logoutButton.classList.remove('hide');
+            loggedIn = true;
+         } else {
             logoutButton.classList.add('hide');
-            deleteCookie({ name: 'session_id' });
-         });
-   }
+            loggedIn = false;
+         }
+      })
+      .catch(() => {
+         logoutButton.classList.add('hide');
+      });
 }
 
 function startPolling() {
@@ -49,13 +40,14 @@ function stopPolling() {
 window.addEventListener('load', async () => {
    //////////////// Set variables //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    logoutButton = document.querySelector('button#logout-button');
+   loadingIcon = document.querySelector('div#loading-icon');
 
    //////////////// Page polling ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    startPolling();
 
    //////////////// Party manager button ///////////////////////////////////////////////////////////////////////////////////////////////////////////
    document.querySelector('button#party-manager-button').addEventListener('click', () => {
-      if (getCookie('session_id') === null) {
+      if (!loggedIn) {
          globalThis.location.href = `https://accounts.spotify.com/authorize?${new URLSearchParams({
             client_id: '67fa8a1f5eec455495394d8429fede37',
             response_type: 'code',
@@ -70,19 +62,21 @@ window.addEventListener('load', async () => {
 
    //////////////// Logout button //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    logoutButton.addEventListener('click', () => {
+      loadingIcon.classList.remove('hide');
       fetch(`api/website/database.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/json'
          },
          body: JSON.stringify({
-            type: 'logoutUser',
-            session_id: getCookie('session_id')
+            type: 'logoutUser'
          })
       })
          .then(() => {
-            deleteCookie({ name: 'session_id' });
-            globalThis.location.reload();
+            loadingIcon.classList.add('hide');
+         })
+         .catch(() => {
+            loadingIcon.classList.add('hide');
          });
    });
 
@@ -96,5 +90,5 @@ window.addEventListener('load', async () => {
    });
 
    /////////////////////// Final setup /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   document.querySelector('div#loading-icon').classList.add('hide');
+   loadingIcon.classList.add('hide');
 });

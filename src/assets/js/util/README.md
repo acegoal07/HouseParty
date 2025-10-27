@@ -1,6 +1,6 @@
 # House Party - Utilities Documentation
 
-Go back to the main [README](../../../README.md)
+Go back to the main [README](../../../../README.md)
 
 ## Contents
 
@@ -8,9 +8,8 @@ Go back to the main [README](../../../README.md)
   - [Contents](#contents)
   - [clickToCopy](#clicktocopy)
   - [clickToShare](#clicktoshare)
-  - [cookies](#cookies)
   - [modalHandler](#modalhandler)
-  - [qrCode](#qrcode)
+  - [qr-creator](#qr-creator)
   - [collapsibleHandler](#collapsiblehandler)
 
 <hr>
@@ -36,23 +35,6 @@ This is used to make it so the user if available can share something using the n
 
 ```html
   <button class="click-to-share" id="share-party-url" type="button" share-title="Website name" share-text="Check out this website!" share-url="url">Share URL</button>
-```
-
-<hr>
-
-## cookies
-
-This is used to set, get, delete and extended the life of cookies on the website
-
-```javascript
-  // Set cookie
-  setCookie(name, value, sameSite = "Strict" | "Lax" | "None", expires = 1, httpOnly = false);
-  // Get cookie
-  getCookie(name);
-  // Delete cookie
-  deleteCookie(name);
-  // Extend cookie life
-  extendCookie(name, days, sameSite = "Strict" | "Lax" | "None", httpOnly = false);
 ```
 
 <hr>
@@ -96,16 +78,9 @@ The way the modalHandler works means you do not need to write JS to you can use 
 
 <hr>
 
-## qrCode
+## qr-creator
 
-This is used to generate a QR code for the user to scan to join the party this library can be found [here](https://davidshimjs.github.io/qrcodejs/)
-
-```html
-<div id="qrcode"></div>
-<script type="text/javascript">
-  new QRCode(document.getElementById("qrcode"), "http://jindo.dev.naver.com/collie");
-</script>
-```
+This is used to generate a QR code for the user to scan to join the party this library can be found [here](https://github.com/nimiq/qr-creator)
 
 <hr>
 
