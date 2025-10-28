@@ -41,13 +41,13 @@ function pollingFunction() {
                updateTimestamp();
                const websiteUrl = `${globalThis.location.origin}/party.html?session_code=`;
                document.querySelector('span#party-code').textContent = party.party_id;
-               document.querySelector('button#copy-party-url').setAttribute('copy-data', `${websiteUrl}${party.party_id}`);
-               document.querySelector('button#share-party-url').setAttribute('share-url', `${websiteUrl}${party.party_id}`);
+               document.querySelector('button#copy-party-url').setAttribute('copy-data', `${websiteUrl}${encodeURIComponent(party.party_id)}`);
+               document.querySelector('button#share-party-url').setAttribute('share-url', `${websiteUrl}${encodeURIComponent(party.party_id)}`);
                if (document.querySelector('div#party-qrcode').childElementCount > 0) {
                   document.querySelector('div#party-qrcode').innerHTML = '';
                }
                QrCreator.render({
-                  text: `${websiteUrl}${party.party_id}`,
+                  text: `${websiteUrl}${encodeURIComponent(party.party_id)}`,
                   radius: 0.5,
                   ecLevel: 'H',
                   fill: '#fff',
