@@ -18,8 +18,8 @@ This is my final year project for computer science in this project I am aiming t
 - [font-awesome](https://fontawesome.com/)
 - [BootStrap Icons](https://getbootstrap.com/)
 - [google fonts](https://fonts.google.com/specimen/Roboto)
-# Database Layout
-[dbdiagram.io version](database.txt)
+# Database Design
+[dbdiagram.io version](database design.txt)
 - ```users```
   - ```host_id``` - The id of the spotify user (Primary key) 
   - ```refresh_token``` - The refresh token of the spotify user
