@@ -973,3 +973,33 @@ a:hover {
    color: var(--primary-color-hover);
    text-decoration: underline;
 }
+
+/* DIVIDERS */
+.divider-container {
+   max-width: 500px;
+   margin: 0 auto;
+   display: flex;
+   align-items: center;
+   gap: 0.75rem;
+}
+
+.divider-container::after {
+   content: "";
+   width: 100%;
+   flex: 1 1 auto;
+   border-top: 2px solid var(--secondary-body-color-hover);
+}
+
+.divider-text {
+   font-size: 1.5rem;
+   color: var(--primary-color);
+   background-color: var(--primary-body-color);
+   padding: 0 10px;
+   font-weight: bold;
+}
+
+@media screen and (max-width: 600px) {
+   .divider-text {
+      font-size: 1.25rem;
+   }
+}

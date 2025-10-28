@@ -68,7 +68,7 @@
          </form>
       </div>
       <div class="hide" id="settings">
-         <h1 class="logo">Party Settings</h1>
+         <h1 class="logo">Party Dashboard</h1>
          <div class="expires-at-container">
             <h2>Expires at</h2>
             <div>
@@ -77,6 +77,9 @@
             </div>
          </div>
          <div class="collapsible-container">
+            <div class="divider-container">
+               <span class="divider-text">Information</span>
+            </div>
             <div class="collapsible-item" tabindex="0">
                <span class="collapsible-icon"></span>
                <span class="collapsible-title">How this works</span>
@@ -115,16 +118,8 @@
                   </div>
                </div>
             </div>
-            <div class="collapsible-item" tabindex="0">
-               <span class="collapsible-icon"></span>
-               <span class="collapsible-title">New party ID</span>
-               <div class="collapsible-content collapsed-content">
-                  <p>Generating a new party ID will kick everyone out. They'll need to use the new join code to get back in</p>
-                  <div class="btns">
-                     <button class="btn btn-primary modal-opener" modal-target="confirm-generate-new-party-id-modal"
-                        type="button" aria-label="Generate New Party ID">Generate New Party ID</button>
-                  </div>
-               </div>
+            <div class="divider-container">
+               <span class="divider-text">Settings</span>
             </div>
             <div class="collapsible-item" tabindex="0">
                <span class="collapsible-icon"></span>
@@ -167,6 +162,21 @@
                         aria-label="Enable Duplicate Blocker">Enable</button>
                      <button class="btn btn-primary hide" type="button" id="disable-duplicate-blocker"
                         aria-label="Disable Duplicate Blocker">Disable</button>
+                  </div>
+               </div>
+            </div>
+            <div class="divider-container">
+               <span class="divider-text">Management</span>
+            </div>
+            <div class="collapsible-item" tabindex="0">
+               <span class="collapsible-icon"></span>
+               <span class="collapsible-title">New party ID</span>
+               <div class="collapsible-content collapsed-content">
+                  <p>Generating a new party ID will kick everyone out. They'll need to use the new join code to get back
+                     in</p>
+                  <div class="btns">
+                     <button class="btn btn-primary modal-opener" modal-target="confirm-generate-new-party-id-modal"
+                        type="button" aria-label="Generate New Party ID">Generate New Party ID</button>
                   </div>
                </div>
             </div>
