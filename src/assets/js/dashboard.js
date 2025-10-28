@@ -303,6 +303,31 @@ window.addEventListener('load', () => {
          });
    });
 
+   //////////////// Generate new party ID //////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Handle the button press for generating a new party ID
+   document.querySelector('button#confirm-generate-new-party-id-button').addEventListener('click', (event) => {
+      event.preventDefault();
+      loadingIcon.classList.remove('hide');
+      fetch(`api/website/database.php`, {
+         method: 'post',
+         headers: {
+            'Content-Type': 'application/json'
+         },
+         body: JSON.stringify({
+            type: 'generateNewPartyId'
+         })
+      })
+         .then(response => response.json())
+         .then(data => {
+            if (data.success) {
+               globalThis.location.reload();
+            }
+         })
+         .catch(error => {
+            console.error('Generate New Party ID Error:', error);
+         });
+   });
+
    //////////////// End party //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Handle the button press for confirming the end of the party
    document.querySelector('button#confirm-end-party-button').addEventListener('click', (event) => {

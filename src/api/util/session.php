@@ -31,7 +31,8 @@ function createSession($conn, $host_id, $refresh_token)
 
    // Generate a new session ID and expiration time
    $session_id = bin2hex(random_bytes(32));
-   $expires_at = date('Y-m-d H:i:s', time() + $cookieLifespan);
+   $expires_timestamp = time() + $cookieLifespan;
+   $expires_at = date('Y-m-d H:i:s', $expires_timestamp);
 
    // Insert the new session
    $stmt = $conn->prepare(
@@ -41,7 +42,7 @@ function createSession($conn, $host_id, $refresh_token)
    $stmt->execute();
    $stmt->close();
 
-   cookieSet('session_id', $session_id, $expires_at);
+   cookieSet('session_id', $session_id, $expires_timestamp);
 
    $conn->close();
 
@@ -87,12 +88,13 @@ function validateSession($conn, $session_id, $host_id = false)
    $row = $results->fetch_assoc();
 
    if (strtotime($row['expires_at']) < time() + 3600) {
-      $new_expires_at = date('Y-m-d H:i:s', time() + $cookieLifespan);
+      $expires_timestamp = time() + $cookieLifespan;
+      $expires_at = date('Y-m-d H:i:s', $expires_timestamp);
       $stmt = $conn->prepare("UPDATE sessions SET expires_at = ? WHERE session_id = ? COLLATE latin1_bin");
-      $stmt->bind_param("ss", $new_expires_at, $session_id);
+      $stmt->bind_param("ss", $expires_at, $session_id);
       $stmt->execute();
       $stmt->close();
-      cookieSet('session_id', $session_id, $new_expires_at);
+      cookieSet('session_id', $session_id, $expires_at);
    }
 
    if ($results->num_rows === 0) {

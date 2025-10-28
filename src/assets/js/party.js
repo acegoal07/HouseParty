@@ -93,10 +93,8 @@ function addSongToQueue(event, song, artists) {
 //////////////// Search function ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function search() {
    loadingIcon.classList.remove('hide');
-   for (const child of searchResults.children) {
-      if (child.tagName !== 'SPAN') {
-         child.remove();
-      }
+   for (const child of searchResults.querySelectorAll('.search-results-item')) {
+      child.remove();
    }
    const searchInputElement = searchForm.querySelector('input');
    const searchInput = searchInputElement.value || searchResults.dataset.currentSearch;
@@ -131,11 +129,6 @@ function search() {
             noResults.classList.remove('hide');
          } else {
             noResults.classList.add('hide');
-         }
-
-         // Clear previous results
-         while (searchResults.firstChild) {
-            searchResults.firstChild.remove();
          }
 
          // Loop through the tracks and create the result elements
@@ -275,11 +268,10 @@ function pollingFunction() {
             fill: '#fff',
             size: 125
          }, document.querySelector('div#party-qrcode'));
-
       }
       if (data.explicit !== explicitToggle) {
          explicitToggle = data.explicit;
-         if (searchResults.hasChildNodes()) {
+         if (searchResults.querySelectorAll('.search-results-item').length > 0) {
             search();
          }
       }

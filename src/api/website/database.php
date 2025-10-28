@@ -92,6 +92,9 @@ class DatabaseHandler
             $this->validatePartyAndSession();
             break;
          // Handle POST requests
+         case 'logoutUser':
+            $this->logoutUser();
+            break;
          case 'createParty':
             $this->createParty();
             break;
@@ -107,8 +110,8 @@ class DatabaseHandler
          case 'extendPartyDuration':
             $this->extendPartyDuration();
             break;
-         case 'logoutUser':
-            $this->logoutUser();
+         case 'generateNewPartyId':
+            $this->generateNewPartyId();
             break;
          default:
             http_response_code(400);
@@ -215,7 +218,8 @@ class DatabaseHandler
     * Check if a party exists
     * @return mixed
     */
-   private function validateParty() {
+   private function validateParty()
+   {
       if (!isset($this->input['party_id'])) {
          http_response_code(400);
          echo json_encode(['error' => 'Missing parameters']);
@@ -644,6 +648,80 @@ class DatabaseHandler
       http_response_code(200);
       echo json_encode(['success' => true]);
       exit();
+   }
+
+   /**
+    * Generates a new party id for the party replacing the old one
+    * @return void
+    */
+   private function generateNewPartyId()
+   {
+      if (!cookieExists('session_id')) {
+         http_response_code(400);
+         echo json_encode(['error' => 'Missing parameters']);
+         exit();
+      }
+
+      $validation = validateSession($this->conn, cookieGet('session_id'), true);
+      if (!$validation['validated']) {
+         http_response_code(400);
+         echo json_encode(['error' => 'Invalid session ID']);
+         exit();
+      }
+
+      $stmt = $this->conn->prepare("SELECT party_id FROM parties WHERE host_id = ? COLLATE latin1_bin");
+      $stmt->bind_param("s", $validation['host_id']);
+      $stmt->execute();
+
+      if ($stmt->error) {
+         http_response_code(500);
+         echo json_encode(['error' => $stmt->error]);
+         exit();
+      }
+
+      $result = $stmt->get_result();
+      if ($result->num_rows === 0) {
+         http_response_code(400);
+         echo json_encode(['error' => 'No party found']);
+         exit();
+      }
+
+      $stmt->close();
+
+      $partyId = $this->generatePartyId();
+      $stmt = $this->conn->prepare("SELECT * FROM parties WHERE party_id = ? COLLATE latin1_bin LIMIT 1");
+      $stmt->bind_param("s", $partyId);
+      $stmt->execute();
+
+      if ($stmt->error) {
+         http_response_code(500);
+         echo json_encode(['error' => $stmt->error]);
+         exit();
+      }
+
+      $result = $stmt->get_result();
+
+      while ($result->num_rows > 0) {
+         $partyId = $this->generatePartyId();
+         $stmt->execute();
+         $result = $stmt->get_result();
+      }
+
+      $stmt->close();
+
+      $stmt = $this->conn->prepare("UPDATE parties SET party_id = ? WHERE host_id = ? COLLATE latin1_bin");
+      $stmt->bind_param("ss", $partyId, $validation['host_id']);
+      $stmt->execute();
+
+      if ($stmt->error) {
+         http_response_code(500);
+         echo json_encode(['error' => $stmt->error]);
+         exit();
+      }
+
+      $stmt->close();
+      http_response_code(200);
+      echo json_encode(['success' => true]);
    }
 }
 
