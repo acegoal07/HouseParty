@@ -107,7 +107,7 @@ function search() {
    }
    fetch(`api/website/spotify.php?${new URLSearchParams({
       type: 'searchSongByName',
-      search_term: searchInput,
+      search_term: encodeURIComponent(searchInput),
       party_id: partyId
    })}`, {
       method: 'GET'
@@ -259,10 +259,10 @@ function pollingFunction() {
       if (document.querySelector('div#party-qrcode').childElementCount === 0) {
          const websiteUrl = `${globalThis.location.origin}/party.html?session_code=`;
          document.querySelector('span#party-code').textContent = partyId;
-         document.querySelector('button#copy-party-url').setAttribute('copy-data', `${websiteUrl}${partyId}`);
-         document.querySelector('button#share-party-url').setAttribute('share-url', `${websiteUrl}${partyId}`);
+         document.querySelector('button#copy-party-url').setAttribute('copy-data', `${websiteUrl}${encodeURIComponent(partyId)}`);
+         document.querySelector('button#share-party-url').setAttribute('share-url', `${websiteUrl}${encodeURIComponent(partyId)}`);
          QrCreator.render({
-            text: `${websiteUrl}${partyId}`,
+            text: `${websiteUrl}${encodeURIComponent(partyId)}`,
             radius: 0.5,
             ecLevel: 'H',
             fill: '#fff',

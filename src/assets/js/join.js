@@ -46,13 +46,13 @@ window.addEventListener('load', () => {
          return;
       }
 
-      fetch(`api/website/database.php?type=validateParty&party_id=${partyCode}`, {
+      fetch(`api/website/database.php?type=validateParty&party_id=${encodeURIComponent(partyCode)}`, {
          method: 'GET'
       })
          .then(response => response.json())
          .then(data => {
             if (data.party_exists) {
-               globalThis.location.href = `party.html?session_code=${partyCode}`;
+               globalThis.location.href = `party.html?session_code=${encodeURIComponent(partyCode)}`;
             } else {
                noPartyFoundError.classList.remove('hide');
             }
