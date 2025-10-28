@@ -1,0 +1,22 @@
+//////////////// Main Body /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+window.addEventListener('load', () => {
+   const loadingIcon = document.querySelector('div#loading-icon');
+   switch (new URLSearchParams(globalThis.location.search).get('error')) {
+      case '1':
+         document.querySelector('div#main-error').classList.remove('hide');
+         break;
+      case '2':
+         document.querySelector('div#development-error').classList.remove('hide');
+         break;
+      case '3':
+         document.querySelector('div#premium-account-error').classList.remove('hide');
+         break;
+      case '4':
+         document.querySelector('div#request-limit-error').classList.remove('hide');
+         break;
+      default:
+         globalThis.location.href = './';
+         return;
+   }
+   loadingIcon.classList.add('hide');
+});
