@@ -2,4 +2,3 @@ src/api/secrets.php
 node_modules/
 dist/
 src/assets/js/*-min.js
-src/assets/css/*-min.css
