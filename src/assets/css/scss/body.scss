@@ -1,0 +1,56 @@
+@import 'colours';
+
+* {
+   box-sizing: border-box;
+}
+
+html,
+body {
+   height: 100%;
+   margin: 0;
+   padding: 0;
+}
+
+html {
+   font-family: 'Roboto', sans-serif;
+   background-color: $primary-body-color;
+   color: #fff;
+}
+
+body {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-wrap: wrap;
+   height: 100%;
+   width: 100%;
+   overflow: auto;
+   padding: 10px;
+}
+
+main {
+   width: 100%;
+   margin-top: auto;
+}
+
+footer {
+   position: -webkit-sticky;
+   position: sticky;
+   top: 100vh;
+   text-align: center;
+}
+
+footer p {
+   margin: 0;
+   padding: 0.2rem;
+}
+
+p {
+   font-size: 1.2rem;
+}
+
+@media (max-width: 600px) {
+   p {
+      font-size: 1rem;
+   }
+}
