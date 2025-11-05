@@ -1,0 +1,69 @@
+@use '../variables';
+
+.modal-background {
+   display: none;
+   position: fixed;
+   justify-content: center;
+   align-items: center;
+   z-index: 1;
+   left: 0;
+   top: 0;
+   width: 100%;
+   height: 100%;
+   opacity: 0;
+   flex-wrap: wrap;
+   overflow: scroll;
+   backdrop-filter: blur(5px);
+}
+
+.modal-body {
+   background-color: variables.$secondary-body-color;
+   margin: 1rem;
+   padding: 0 20px;
+   width: 100%;
+   max-width: 500px;
+   height: max-content;
+   color: white;
+   border-radius: variables.$border-radius;
+   position: relative;
+   box-shadow: 0 0px 10px variables.$shadow-color;
+}
+
+.modal-close {
+   color: variables.$primary-color;
+   float: right;
+   font-size: 34px;
+   font-weight: bold;
+   cursor: pointer;
+
+   &:hover,
+   &:focus {
+      color: variables.$primary-color-hover;
+      text-decoration: none;
+   }
+}
+
+// ANIMATIONS
+@keyframes modal-open {
+   from {
+      opacity: 0;
+      background-color: rgba(0, 0, 0, 0.0);
+   }
+
+   to {
+      opacity: 1;
+      background-color: rgba(0, 0, 0, 0.6);
+   }
+}
+
+@keyframes modal-close {
+   from {
+      opacity: 1;
+      background-color: rgba(0, 0, 0, 0.6);
+   }
+
+   to {
+      opacity: 0;
+      background-color: rgba(0, 0, 0, 0.0);
+   }
+}

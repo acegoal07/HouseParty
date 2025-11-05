@@ -1,0 +1,19 @@
+@use "sass:color";
+
+// COLORS - Background
+$primary-body-color: #121212;
+$secondary-body-color: color.adjust($primary-body-color, $lightness: 7%);
+$secondary-body-color-hover: color.adjust($secondary-body-color, $lightness: 5%);
+
+// COLORS - Brand
+$primary-color: #1DB954;
+$primary-color-hover: color.adjust($primary-color, $lightness: -20%);
+
+// COLORS - UI States
+$focus-outline-color: #2196F3;
+
+// LAYOUT
+$border-radius: 15px;
+
+// EFFECTS
+$shadow-color: rgba(0, 0, 0, 0.4);

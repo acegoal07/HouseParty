@@ -1,0 +1,35 @@
+@use '../variables';
+
+.copy-toast {
+   position: fixed;
+   top: -50px;
+   left: 50%;
+   transform: translateX(-50%);
+   background-color: variables.$primary-color;
+   color: black;
+   font-weight: bold;
+   padding: 10px 20px;
+   border-radius: 5px;
+   box-shadow: 0 0px 10px variables.$shadow-color;
+   visibility: hidden;
+   animation: slideInOut 2.5s forwards;
+   z-index: 1;
+}
+
+// ANIMATION
+@keyframes slideInOut {
+   0% {
+      top: -50px;
+      visibility: visible;
+   }
+
+   10%,
+   90% {
+      top: 20px;
+   }
+
+   100% {
+      top: -50px;
+      visibility: hidden;
+   }
+}

@@ -1,0 +1,20 @@
+@use 'variables';
+
+// LINK STYLES
+a {
+   color: variables.$primary-color;
+   text-decoration: none;
+
+   &:hover {
+      color: variables.$primary-color-hover;
+      text-decoration: underline;
+   }
+
+   &:visited {
+      color: variables.$primary-color;
+   }
+
+   &:active {
+      color: variables.$primary-color-hover;
+   }
+}

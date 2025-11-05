@@ -1,0 +1,73 @@
+@use '../variables';
+
+div.checkbox-group {
+   display: flex;
+   flex-direction: column;
+   gap: 30px;
+   max-width: 300px;
+   margin: 30px auto 10px auto;
+
+   @media (max-width: 600px) {
+      margin-top: 25px;
+   }
+}
+
+div.custom-checkbox-container {
+   position: relative;
+   display: flex;
+   align-items: center;
+
+   label {
+      position: relative;
+      padding-left: 40px;
+      cursor: pointer;
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+
+      &::before {
+         content: "";
+         position: absolute;
+         left: 0;
+         top: 50%;
+         transform: translateY(-50%);
+         width: 25px;
+         height: 25px;
+         border: 2px solid variables.$secondary-body-color-hover;
+         border-radius: 4px;
+         background-color: variables.$secondary-body-color-hover;
+      }
+   }
+
+   input[type="checkbox"] {
+      opacity: 0;
+      height: 25px;
+      width: 25px;
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+
+      &:checked+label::before {
+         background-color: variables.$primary-color;
+         border: 2px solid variables.$primary-color;
+      }
+
+      &:checked+label::after {
+         content: "";
+         position: absolute;
+         left: 9px;
+         top: 50%;
+         transform: translateY(-65%) rotate(45deg);
+         width: 8px;
+         height: 14px;
+         border: solid #fff;
+         border-width: 0 2px 2px 0;
+      }
+   }
+}

@@ -1,0 +1,115 @@
+@use '../variables';
+
+// SEARCH RESULTS CONTAINER
+div#search-results {
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   gap: 10px;
+   width: 100%;
+   max-width: 500px;
+   margin: 20px auto;
+}
+
+// SEARCH RESULT ITEM
+.search-results-item {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   padding: 10px;
+   background-color: variables.$secondary-body-color;
+   border-radius: variables.$border-radius;
+   width: 100%;
+
+   &:focus {
+      outline: 2px solid variables.$focus-outline-color;
+      outline-offset: 2px;
+   }
+}
+
+.search-results-container {
+   &:focus {
+      outline: 2px solid variables.$focus-outline-color;
+      outline-offset: 2px;
+   }
+}
+
+// SONG INFO
+.search-results-title {
+   font-size: 1.2rem;
+   color: white;
+   margin: 0;
+   word-break: break-word;
+}
+
+.search-results-artists {
+   font-size: 1rem;
+   color: rgb(167, 167, 167);
+   margin: 0;
+   word-break: break-word;
+}
+
+// ALBUM COVER
+.search-results-cover {
+   width: 70px;
+   height: 70px;
+   border-radius: 4px;
+   margin: 0;
+
+   @media screen and (max-width: 600px) {
+      width: 50px;
+      height: 50px;
+      border-radius: 2px;
+   }
+}
+
+// ADD SONG ICON
+svg.search-results-add-song-icon {
+   width: 40px;
+   height: 40px;
+   flex-shrink: 0;
+   fill: variables.$primary-color;
+   margin-left: auto;
+   cursor: pointer;
+   border-radius: 100%;
+
+   @media screen and (max-width: 600px) {
+      width: 35px;
+      height: 35px;
+   }
+
+   &:hover {
+      fill: variables.$primary-color-hover;
+   }
+
+   path {
+      transition: fill ease 0.35s;
+   }
+}
+
+// SPOTIFY LOGO
+.search-results-spotify-logo-link {
+   border-radius: 100%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+
+.search-results-spotify-logo {
+   width: 40px;
+   height: 40px;
+
+   @media screen and (max-width: 600px) {
+      width: 35px;
+      height: 35px;
+   }
+}
+
+// EXPLICIT ICON
+.search-results-explicit-icon {
+   width: 16px;
+   height: 16px;
+   fill: currentColor;
+   margin-left: 5px;
+}

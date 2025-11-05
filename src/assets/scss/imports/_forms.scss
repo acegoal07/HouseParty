@@ -1,0 +1,147 @@
+@use '../variables';
+
+// FORM CONTAINER
+form {
+   display: flex;
+   flex-direction: column;
+   width: 100%;
+   justify-content: center;
+   align-items: center;
+}
+
+// NUMBER INPUT LABELS
+label.number-input,
+label.number-input-secondary {
+   display: flex;
+   flex-direction: column;
+   gap: 5px;
+   width: 100%;
+   max-width: 300px;
+   height: fit-content;
+
+   span {
+      padding: 0 10px;
+      font-size: 15px;
+      color: #8b8e98;
+      font-weight: 600;
+      width: fit-content;
+      top: 14px;
+      position: relative;
+      left: 15px;
+      background: variables.$primary-body-color;
+   }
+
+   input {
+      width: auto;
+      height: 50px;
+      text-indent: 15px;
+      border-radius: variables.$border-radius;
+      outline: none;
+      background-color: transparent;
+      border: 2px solid variables.$secondary-body-color-hover;
+      color: #fff;
+
+      &:focus {
+         outline: 2px solid variables.$focus-outline-color;
+         outline-offset: 2px;
+      }
+   }
+}
+
+label.number-input-secondary {
+   span {
+      background: variables.$secondary-body-color;
+   }
+
+   input {
+      border: 2px solid variables.$secondary-body-color-hover;
+   }
+}
+
+// TEXT & NUMBER INPUTS
+input {
+   &[type="text"] {
+      background-color: variables.$secondary-body-color-hover;
+      color: #fff;
+      border: none;
+      width: 100%;
+      max-width: 500px;
+      padding: 1rem;
+      font-size: 1.5rem;
+      border-radius: variables.$border-radius;
+      margin: 0;
+      text-align: center;
+   }
+
+   &[type="number"] {
+      background-color: variables.$secondary-body-color-hover;
+      color: #fff;
+      border: none;
+      width: 4rem;
+      padding: 0.5rem;
+      font-size: 1.5rem;
+      border-radius: variables.$border-radius;
+   }
+}
+
+// INPUT ERROR
+span.input-error {
+   color: red;
+   font-size: 1.2rem;
+   margin: 0 auto 0.5rem auto;
+   text-align: center;
+   display: block;
+}
+
+// SEARCH CONTAINER
+.search-container {
+   display: flex;
+   align-items: center;
+   width: 100%;
+   max-width: 500px;
+   margin: 20px auto;
+   position: relative;
+
+   input[type="text"] {
+      width: 100%;
+      padding: 15px 60px 15px 15px;
+      border-radius: 15px;
+      text-align: left;
+      margin: 0;
+   }
+
+   button {
+      position: absolute;
+      right: 0px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      border-top-right-radius: 15px;
+      border-bottom-right-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+
+      svg {
+         width: 25px;
+         height: 25px;
+         margin: auto 10px;
+         fill: variables.$primary-color;
+
+         &:hover {
+            fill: variables.$primary-color-hover;
+         }
+
+         path {
+            transition: fill ease 0.35s;
+         }
+      }
+
+      &:focus {
+         outline: none;
+         box-shadow: 0 0 0 2px variables.$focus-outline-color;
+      }
+   }
+}

@@ -1,0 +1,52 @@
+@use '../variables';
+
+// BUTTON CONTAINER
+div.btns {
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+   justify-content: center;
+   gap: 1.25rem;
+   margin: 1.25rem;
+
+   @media (max-width: 600px) {
+      flex-direction: column;
+      margin: 0.9375rem;
+   }
+}
+
+// BUTTONS
+a.btn,
+button.btn {
+   display: inline-block;
+   padding: 10px 20px;
+   font-size: 1.5rem;
+   color: #fff !important;
+   background-color: variables.$secondary-body-color;
+   text-decoration: none !important;
+   border-radius: variables.$border-radius;
+   transition: background-color ease 0.2s;
+   cursor: pointer;
+   border: none;
+   font-weight: bold;
+   text-align: center;
+
+   @media (max-width: 600px) {
+      font-size: 1.3rem;
+      padding: 8px 16px;
+   }
+
+   &:hover {
+      background-color: variables.$secondary-body-color-hover;
+   }
+
+   // PRIMARY VARIANT
+   &.btn-primary {
+      background-color: variables.$primary-color;
+      color: #000 !important;
+
+      &:hover {
+         background-color: variables.$primary-color-hover;
+      }
+   }
+}

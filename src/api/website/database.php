@@ -608,6 +608,44 @@ class DatabaseHandler
       exit();
    }
 
+   private function updatePauseStatus()
+   {
+      if (!cookieExists('session_id') || !isset($this->input['paused'])) {
+         http_response_code(400);
+         echo json_encode(['error' => 'Missing parameters']);
+         exit();
+      }
+
+      $validation = validateSession($this->conn, cookieGet('session_id'), true);
+      if (!$validation['validated']) {
+         http_response_code(400);
+         echo json_encode(['error' => 'Invalid session ID']);
+         exit();
+      }
+
+      $stmt = $this->conn->prepare("UPDATE parties SET paused = ? WHERE host_id = ? COLLATE latin1_bin");
+      $stmt->bind_param("is", $this->input['paused'], $validation['host_id']);
+      $stmt->execute();
+
+      if ($stmt->error) {
+         http_response_code(500);
+         echo json_encode(['error' => $stmt->error]);
+         exit();
+      }
+
+      if ($stmt->affected_rows === 0) {
+         http_response_code(400);
+         echo json_encode(['error' => 'No active party']);
+         exit();
+      }
+
+      $stmt->close();
+
+      http_response_code(200);
+      echo json_encode(['success' => true]);
+      exit();
+   }
+
    /**
     * Generates a new party id for the party replacing the old one
     * @return void

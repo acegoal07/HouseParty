@@ -1,0 +1,18 @@
+@use 'variables';
+
+// VISIBILITY
+.hide {
+   display: none !important;
+}
+
+// SCROLL CONTROL
+.stop-scrolling {
+   height: 100%;
+   overflow: hidden;
+}
+
+// TEXT STYLING
+.special-text {
+   color: variables.$primary-color;
+   font-weight: bold;
+}

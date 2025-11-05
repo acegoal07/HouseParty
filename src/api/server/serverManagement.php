@@ -15,7 +15,7 @@ switch ($targetFunction) {
    case 'cleanupExpiredData':
       // Delete expired parties, sessions, and users without active sessions or parties
       // Set to run every minute
-      $conn->query("DELETE FROM parties WHERE party_expires_at <= UTC_TIMESTAMP()");
+      $conn->query("DELETE FROM parties WHERE party_expires_at <= UTC_TIMESTAMP() AND permanent = 0");
       $conn->query("DELETE FROM sessions WHERE expires_at <= UTC_TIMESTAMP()");
       $conn->query("
             DELETE u

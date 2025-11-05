@@ -1,0 +1,103 @@
+@use '../variables';
+
+div.collapsible-container {
+   width: 100%;
+
+   >div.collapsible-item {
+      cursor: pointer;
+      margin: 1.25rem auto;
+      background-color: variables.$secondary-body-color;
+      border-radius: variables.$border-radius;
+      padding: 1.25rem;
+      max-width: 500px;
+      width: 100%;
+
+      @media (max-width: 600px) {
+         margin: 0.9375rem auto;
+         padding: 0.9375rem;
+      }
+
+      div.btns {
+         margin-bottom: 5px;
+      }
+
+      &:nth-child(1) {
+         margin-top: 0;
+      }
+
+      &:nth-last-child(1) {
+         margin-bottom: 0;
+      }
+
+      span.collapsible-title {
+         font-size: 1.5rem;
+         font-weight: bold;
+         color: #fff;
+
+         @media (max-width: 600px) {
+            font-size: 1.3rem;
+         }
+      }
+
+      span.collapsible-icon {
+         border: solid;
+         border-color: variables.$primary-color;
+         border-width: 0 0.25rem 0.25rem 0;
+         padding: 0.25rem;
+         margin: auto 6px 0.22rem auto;
+         transform: rotate(-45deg);
+         transition: 0.5s ease-in-out;
+         display: inline-block;
+      }
+
+      &.open span.collapsible-icon {
+         transform: rotate(45deg);
+      }
+
+      div.collapsible-content {
+         height: 0;
+         overflow: hidden;
+         display: none;
+
+         ol {
+            @media (max-width: 600px) {
+               padding-left: 25px;
+            }
+         }
+
+         p {
+            color: #fff;
+            margin-bottom: 0;
+         }
+      }
+   }
+}
+
+// ANIMATIONS
+@keyframes expand-collapsible-item {
+   0% {
+      height: 0;
+   }
+
+   99% {
+      height: var(--content-height);
+   }
+
+   100% {
+      height: auto;
+   }
+}
+
+@keyframes collapse-collapsible-item {
+   0% {
+      height: auto;
+   }
+
+   1% {
+      height: var(--content-height);
+   }
+
+   100% {
+      height: 0;
+   }
+}

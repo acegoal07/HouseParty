@@ -1,0 +1,28 @@
+@use 'variables';
+
+@mixin focus-outline {
+   outline: 2px solid variables.$focus-outline-color;
+   outline-offset: 2px;
+}
+
+input:focus,
+button:focus,
+select:focus {
+   @include focus-outline;
+}
+
+a:focus {
+   @include focus-outline;
+}
+
+.custom-checkbox-container input:focus~.custom-checkbox {
+   @include focus-outline;
+}
+
+div.collapsible-item:focus {
+   @include focus-outline;
+}
+
+svg.search-results-add-song-icon:focus {
+   @include focus-outline;
+}
