@@ -10,24 +10,15 @@ class CollapsibleHandler {
     */
    _setupCollapsibleItems() {
       for (const item of document.querySelectorAll('.collapsible-item')) {
-         console.log(item);
          item.addEventListener('click', (e) => {
             if (e.target.closest('.collapsible-content')) { return; }
-            this._toggle(item);
+            if (this.collapsible === item) {
+               this.close();
+            } else {
+               if (this.collapsible) { this.close(); }
+               this.open(item);
+            }
          });
-      }
-   }
-
-   /**
-    * Toggles a collapsible item.
-    * @param {Element} item The collapsible item to toggle
-    */
-   _toggle(item) {
-      if (this.collapsible === item) {
-         this.close();
-      } else {
-         if (this.collapsible) { this.close(); }
-         this.open(item);
       }
    }
 
@@ -38,11 +29,11 @@ class CollapsibleHandler {
     */
    open(item) {
       if (item === this.collapsible) { return; }
-      this.collapsible = item;
       item.querySelector('.collapsible-header')?.setAttribute('aria-expanded', 'true');
       item.classList.add('open');
       const content = item.querySelector('.collapsible-content');
       content.style.setProperty('--content-height', `${content.scrollHeight}px`);
+      this.collapsible = item;
    }
 
    /**
@@ -50,18 +41,16 @@ class CollapsibleHandler {
     * @returns {void}
     */
    close() {
-      if (!this.collapsible) {
-         return;
-      }
+      if (!this.collapsible) { return; }
       const item = this.collapsible;
       item.classList.remove('open');
-      item.querySelector('.collapsible-header')?.setAttribute('aria-expanded', 'false');
       item.classList.add('closing');
       setTimeout(() => {
          item.classList.remove('closing');
       }, 500);
       const content = item.querySelector('.collapsible-content');
       content.style.setProperty('--content-height', `${content.scrollHeight}px`);
+      item.querySelector('.collapsible-header')?.setAttribute('aria-expanded', 'false');
       this.collapsible = null;
    }
 }
