@@ -6,8 +6,10 @@
     "webpack-cli": "^6.0.1"
   },
   "scripts": {
-    "build": "webpack --config webpack.build.js",
+    "build:js": "webpack --config webpack.build.js",
+    "build:css": "sass src/assets/scss/style.scss src/assets/css/style-min.css --no-source-map --style=compressed",
+    "build:all": "npm run build:js && npm run build:css",
     "package": "webpack --config webpack.package.js",
-    "build+package": "npm run build && npm run package"
+    "build+package": "npm run build:all && npm run package"
   }
 }

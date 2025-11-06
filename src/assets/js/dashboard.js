@@ -8,7 +8,7 @@ import '@/assets/js/util/clickToShare.js';
 //////////////// Variables /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 let pollingInterval;
 let loadingIcon;
-let settings;
+let dashboard;
 let createParty;
 let enableExplicitButton;
 let disableExplicitButton;
@@ -81,11 +81,11 @@ function pollingFunction() {
 
             // Show settings and hide create party section
             if (!createParty.classList.contains('hide')) { createParty.classList.add('hide'); }
-            settings.classList.remove('hide');
+            dashboard.classList.remove('hide');
          } else {
             // No active party, show create party section, hide settings and make sure all modals are closed
             document.dispatchEvent(new Event('closeCurrentModal'));
-            if (!settings.classList.contains('hide')) { settings.classList.add('hide'); }
+            if (!dashboard.classList.contains('hide')) { dashboard.classList.add('hide'); }
             createParty.classList.remove('hide');
          }
          // Remove the loading icon
@@ -124,7 +124,7 @@ window.addEventListener('load', () => {
 
    //////////////// Set variables //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    loadingIcon = document.querySelector('div#loading-icon');
-   settings = document.querySelector('div#settings');
+   dashboard = document.querySelector('div#dashboard');
    createParty = document.querySelector('div#create-party');
    enableExplicitButton = document.querySelector('button#enable-explicit-content');
    disableExplicitButton = document.querySelector('button#disable-explicit-content');
@@ -353,7 +353,7 @@ window.addEventListener('load', () => {
          });
    });
 
-   /////////////////////// Stop Polling while off the page /////////////////////////////////////////////////////////////////////////////////////////
+   /////////////// Stop Polling while off the page /////////////////////////////////////////////////////////////////////////////////////////////////
    document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
          stopPolling();

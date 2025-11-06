@@ -11,6 +11,7 @@ let partyId;
 let loadingIcon;
 let searchForm;
 let searchResults;
+let backToTop;
 let noResults;
 let explicitToggle;
 
@@ -102,6 +103,7 @@ function search() {
    searchInputElement.value = '';
    if (!searchInput || searchInput.trim() === '') {
       noResults.classList.remove('hide');
+      backToTop.classList.add('hide');
       loadingIcon.classList.add('hide');
       return;
    }
@@ -127,8 +129,10 @@ function search() {
          const tracks = Object.values(data.tracks);
          if (tracks.length === 0) {
             noResults.classList.remove('hide');
+            backToTop.classList.add('hide');
          } else {
             noResults.classList.add('hide');
+            backToTop.classList.remove('hide');
          }
 
          // Loop through the tracks and create the result elements
@@ -238,6 +242,7 @@ function search() {
             // Append the result container to the search results
             searchResults.appendChild(resultContainer);
          }
+
          loadingIcon.classList.add('hide');
       })
       .catch(error => {
@@ -300,6 +305,7 @@ window.addEventListener('load', () => {
    searchForm = document.querySelector('form#search-song-form');
    searchResults = document.querySelector('div#search-results');
    noResults = document.querySelector('span#no-results');
+   backToTop = document.querySelector('button#back-to-top');
 
    //////////////// Page polling //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    startPolling();
@@ -310,13 +316,20 @@ window.addEventListener('load', () => {
       search();
    });
 
-   /////////////////////// Stop Polling while off the page /////////////////////////////////////////////////////////////////////////////////////////
+   /////////////// Stop Polling while off the page /////////////////////////////////////////////////////////////////////////////////////////////////
    document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
          stopPolling();
       } else {
          startPolling();
       }
+   });
+
+   /////////////// Back to Top ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   document.querySelector('#back-to-top').addEventListener('click', (event) => {
+      event.preventDefault();
+      window.scrollTo(0, 0);
+      document.firstElementChild.focus();
    });
 
    /////////////// Finishing up ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

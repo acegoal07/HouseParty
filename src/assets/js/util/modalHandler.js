@@ -1,7 +1,4 @@
 class ModalHandler {
-   modal = null;
-   lastFocusedElement = null;
-
    constructor() {
       this._init();
    }
@@ -11,122 +8,93 @@ class ModalHandler {
     */
    _init() {
       window.addEventListener('load', () => {
-         this._setupModalOpeners();
-         this._setupModalClosers();
-         this._setupCustomEvents();
+         this._setupOpeners();
+         this._setupClosers();
+         this._setupEvents();
       });
    }
 
    /**
     * Setup event listeners for modal openers
     */
-   _setupModalOpeners() {
-      document.body.addEventListener('click', (event) => {
-         const opener = event.target.closest('.modal-opener');
-         if (opener) {
-            const target = opener.getAttribute('modal-target');
-            this.open(`div#${target}`);
-         }
-      });
+   _setupOpeners() {
+      for (const opener of document.querySelectorAll('.modal-opener')) {
+         opener.addEventListener('click', () => {
+            this.open(opener.dataset.modalTarget);
+         });
+      }
    }
 
    /**
     * Setup event listeners for modal closers
     */
-   _setupModalClosers() {
-      document.body.addEventListener('click', (event) => {
-         const closer = event.target.closest('.modal-closer');
-         if (closer && this.modal?.contains(closer)) {
-            this.close();
-         }
-      });
+   _setupClosers() {
+      for (const closer of document.querySelectorAll('.modal-closer')) {
+         closer.addEventListener('click', () => {
+            const dialog = closer.closest('dialog');
+            if (dialog.getAttribute('open') !== null) {
+               this.close();
+            }
+         });
+      }
    }
 
    /**
     * Setup custom event listeners for opening and closing modals
     */
-   _setupCustomEvents() {
+   _setupEvents() {
       document.addEventListener('openModal', (event) => {
-         if (event.detail) {
-            const { target, callback } = event.detail;
-            this.open(`div#${target}`, callback);
-         } else {
-            this.open(`div#${target}`);
-         }
+         const { target, callback } = event.detail || {};
+         this.open(target, callback);
       });
 
       document.addEventListener('closeCurrentModal', (event) => {
-         if (event.detail) {
-            const { callback } = event.detail;
-            this.close(callback);
-         } else {
-            this.close();
+         const { callback } = event.detail || {};
+         this.close(callback);
+      });
+
+      document.addEventListener('keydown', (event) => {
+         if (event.key === 'Escape') {
+            const modal = document.querySelector('dialog[open]');
+            if (modal) {
+               event.preventDefault();
+               this.close();
+            }
          }
       });
    }
 
    /**
-    * Trap focus within the modal
+    * Open a modal dialog
+    * @param {String} target The element id
+    * @param {Function} callback The callback function
     */
-   _trapFocus() {
-      const focusableElements = Array.from(this.modal.querySelectorAll('a, button, input, textarea, select, details, [tabindex]:not([tabindex="-1"])'));
-      const firstElement = focusableElements.at(0);
-      const lastElement = focusableElements.at(-1);
-      this.modal.addEventListener('keydown', (event) => {
-         const isTabPressed = (event.key === 'Tab' || event.keyCode === 9);
-         if (!isTabPressed) {
-            return;
+   open(target, callback = null) {
+      const modal = document.querySelector(`dialog#${target}`);
+      if (modal) {
+         if (callback) {
+            callback();
          }
-         if (event.shiftKey && document.activeElement === firstElement) {
-            lastElement.focus();
-            event.preventDefault();
-         } else if (document.activeElement === lastElement) {
-            firstElement.focus();
-            event.preventDefault();
-         } else {
-            return;
-         }
-      });
-      firstElement.focus();
-   }
-
-   /**
-    * Open a modal
-    * @param {String} modalId The id of the modal to open
-    * @param {Function} callback A function to call after the modal is opened
-    */
-   open(modalId, callback) {
-      if (this.modal || !modalId) { return; }
-      const modal = document.querySelector(modalId);
-      if (!modal) {
-         console.error(`Modal with id ${modalId} not found`);
-         return;
+         modal.showModal();
       }
-      this.lastFocusedElement = document.activeElement;
-      document.body.classList.add('stop-scrolling');
-      if (callback) { callback(); }
-      this.modal = modal;
-      this.modal.style.animation = "modal-open 0.4s forwards";
-      this.modal.style.display = 'flex';
-      this._trapFocus();
    }
 
    /**
-    * Close the current modal
-    * @param {Function} callback A function to call after the modal is closed
+    * Close the currently open modal
+    * @param {Function} callback The callback function
     */
-   close(callback) {
-      if (!this.modal) { return; }
-      this.modal.style.animation = "modal-close 0.4s forwards";
-      document.body.classList.remove('stop-scrolling');
-      setTimeout(() => {
-         this.modal.style.display = 'none';
-         this.modal = null;
-         if (callback) { callback(); }
-         if (this.lastFocusedElement) {
-            this.lastFocusedElement.focus();
-         }
-      }, 400);
+   close(callback = null) {
+      const modal = document.querySelector('dialog[open]');
+      if (modal) {
+         modal.classList.add('closing');
+         setTimeout(() => {
+            modal.close();
+            modal.classList.remove('closing');
+            if (callback) {
+               callback();
+            }
+         }, 300);
+      }
    }
 }
 

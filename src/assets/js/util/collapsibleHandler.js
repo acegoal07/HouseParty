@@ -2,39 +2,7 @@ class CollapsibleHandler {
    collapsible = null;
 
    constructor() {
-      this._init();
-   }
-
-   /**
-    * Initialize event listeners
-    */
-   _init() {
       this._setupCollapsibleItems();
-   }
-
-   /**
-    * Toggle the collapsible item
-    * @param {Event} event The event in which the function will be responding to
-    * @param {Element} item The element in which the function will be targetting
-    * @returns {void}
-    */
-   _toggleCollapsible(event, item) {
-      if (event.type === 'click' || (event.type === 'keydown' && (event.key === 'Enter' || event.key === ' '))) {
-         if (!(event.target.classList.contains('collapsible-item') || event.target.classList.contains('collapsible-title') || event.target.classList.contains('collapsible-icon'))) {
-            return;
-         } else if (this.collapsible === null) {
-            if (this.collapsible === item) {
-               this.close();
-            } else {
-               this.open(item);
-            }
-         } else if (this.collapsible === item) {
-            this.close();
-         } else {
-            this.close();
-            this.open(item);
-         }
-      }
    }
 
    /**
@@ -42,42 +10,59 @@ class CollapsibleHandler {
     */
    _setupCollapsibleItems() {
       for (const item of document.querySelectorAll('.collapsible-item')) {
-         item.addEventListener('click', (event) => this._toggleCollapsible(event, item));
-         item.addEventListener('keydown', (event) => this._toggleCollapsible(event, item));
+         console.log(item);
+         item.addEventListener('click', (e) => {
+            if (e.target.closest('.collapsible-content')) { return; }
+            this._toggle(item);
+         });
       }
    }
 
    /**
-    * Open a collapsible
-    * @param {HTMLElement} target The collapsible to open
-    * @param {Function} callback The function to call before the collapsible is opened
+    * Toggles a collapsible item.
+    * @param {Element} item The collapsible item to toggle
     */
-   open(target, callback) {
-      if (target === this.collapsible) { return; }
-      if (callback) { callback(); }
-      this.collapsible = target;
-      this.collapsible.classList.add('open');
-      const content = this.collapsible.querySelector('div.collapsible-content');
-      content.style.display = 'block';
-      content.style.setProperty('--content-height', content.scrollHeight + 'px');
-      content.style.animation = 'expand-collapsible-item 0.5s forwards';
+   _toggle(item) {
+      if (this.collapsible === item) {
+         this.close();
+      } else {
+         if (this.collapsible) { this.close(); }
+         this.open(item);
+      }
    }
 
    /**
-    * Close the current collapsible
-    * @param {Function} callback The function to call after the collapsible is closed
+    * Opens a collapsible item.
+    * @param {Element} item The collapsible item to open
+    * @returns {void}
     */
-   close(callback) {
-      if (!this.collapsible) { return; }
-      this.collapsible.classList.remove('open');
-      const content = this.collapsible.querySelector('div.collapsible-content');
-      content.style.setProperty('--content-height', content.scrollHeight + 'px');
-      content.style.animation = 'collapse-collapsible-item 0.5s forwards';
-      this.collapsible = null;
+   open(item) {
+      if (item === this.collapsible) { return; }
+      this.collapsible = item;
+      item.querySelector('.collapsible-header')?.setAttribute('aria-expanded', 'true');
+      item.classList.add('open');
+      const content = item.querySelector('.collapsible-content');
+      content.style.setProperty('--content-height', `${content.scrollHeight}px`);
+   }
+
+   /**
+    * Closes the currently open collapsible item.
+    * @returns {void}
+    */
+   close() {
+      if (!this.collapsible) {
+         return;
+      }
+      const item = this.collapsible;
+      item.classList.remove('open');
+      item.querySelector('.collapsible-header')?.setAttribute('aria-expanded', 'false');
+      item.classList.add('closing');
       setTimeout(() => {
-         if (callback) { callback(); }
-         content.style.display = 'none';
+         item.classList.remove('closing');
       }, 500);
+      const content = item.querySelector('.collapsible-content');
+      content.style.setProperty('--content-height', `${content.scrollHeight}px`);
+      this.collapsible = null;
    }
 }
 

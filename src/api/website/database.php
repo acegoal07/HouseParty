@@ -420,33 +420,16 @@ class DatabaseHandler
 
       $result = json_decode($response, true);
 
-      $timezone = new DateTimeZone('Europe/London');
-      date_default_timezone_set($timezone->getName());
-      $timestamp_formatted = 'Y-m-d H:i:s';
-
       $accessToken = $result['access_token'];
 
-      $tokenExpiresAt = new DateTime();
-      $tokenExpiresAt->setTimezone($timezone);
-      $tokenExpiresAt->setTimestamp(time() + 3600);
-      $tokenExpiresAtFormatted = $tokenExpiresAt->format($timestamp_formatted);
+      $tokenExpiresAt = gmdate('Y-m-d H:i:00',  time() + 3600);
 
-      $partyExpiresAt = new DateTime();
-      $partyExpiresAt->setTimezone($timezone);
-      $partyExpiresAt->setTimestamp(time() + $this->input['party_ends_in'] * 3600);
-      $seconds = (int)$partyExpiresAt->format('s');
-      if ($seconds >= 30) {
-         $partyExpiresAt->modify('+1 minute');
-      }
-      $partyExpiresAt->setTime(
-         (int)$partyExpiresAt->format('H'),
-         (int)$partyExpiresAt->format('i'),
-         0
-      );
-      $partyExpiresAtFormatted = $partyExpiresAt->format($timestamp_formatted);
+      $partyExpiresAt = time() + $this->input['party_ends_in'] * 3600;
+      $partyExpiresAt = (int) (round($partyExpiresAt / 60) * 60);
+      $partyExpiresAt = gmdate('Y-m-d H:i:00', $partyExpiresAt);
 
       $stmt = $this->conn->prepare("INSERT INTO parties (party_id, host_id, access_token, party_expires_at, token_expires_at, explicit, duplicate_blocker) VALUES (?, ?, ?, ?, ?, ?, ?)");
-      $stmt->bind_param("sssssii", $partyId, $validation['host_id'], $accessToken, $partyExpiresAtFormatted, $tokenExpiresAtFormatted, $this->input['explicit'], $this->input['duplicate_blocker']);
+      $stmt->bind_param("sssssii", $partyId, $validation['host_id'], $accessToken, $partyExpiresAt, $tokenExpiresAt, $this->input['explicit'], $this->input['duplicate_blocker']);
       $stmt->execute();
 
       if ($stmt->error) {
@@ -608,8 +591,8 @@ class DatabaseHandler
          exit();
       }
 
-      $stmt = $this->conn->prepare("SELECT party_expires_at FROM parties WHERE host_id = ? COLLATE latin1_bin");
-      $stmt->bind_param("s", $validation['host_id']);
+      $stmt = $this->conn->prepare("UPDATE parties SET party_expires_at = DATE_ADD(party_expires_at, INTERVAL ? HOUR) WHERE host_id = ? COLLATE latin1_bin");
+      $stmt->bind_param("is", $this->input['extend_by'], $validation['host_id']);
       $stmt->execute();
 
       if ($stmt->error) {
@@ -618,28 +601,41 @@ class DatabaseHandler
          exit();
       }
 
-      $result = $stmt->get_result();
-
-      if ($result->num_rows === 0) {
-         http_response_code(400);
-         echo json_encode(['error' => 'No party found']);
-         exit();
-      }
-
-      $row = $result->fetch_assoc();
-      $partyExpiresAt = new DateTime($row['party_expires_at']);
       $stmt->close();
-      $partyExpiresAtSeconds = $partyExpiresAt->getTimestamp() + $this->input['extend_by'] * 3600;
-      $partyExpiresAt->setTimestamp($partyExpiresAtSeconds);
-      $partyExpiresAtFormatted = $partyExpiresAt->format('Y-m-d H:i:s');
 
-      $stmt = $this->conn->prepare("UPDATE parties SET party_expires_at = ? WHERE host_id = ? COLLATE latin1_bin");
-      $stmt->bind_param("ss", $partyExpiresAtFormatted, $validation['host_id']);
+      http_response_code(200);
+      echo json_encode(['success' => true]);
+      exit();
+   }
+
+   private function updatePauseStatus()
+   {
+      if (!cookieExists('session_id') || !isset($this->input['paused'])) {
+         http_response_code(400);
+         echo json_encode(['error' => 'Missing parameters']);
+         exit();
+      }
+
+      $validation = validateSession($this->conn, cookieGet('session_id'), true);
+      if (!$validation['validated']) {
+         http_response_code(400);
+         echo json_encode(['error' => 'Invalid session ID']);
+         exit();
+      }
+
+      $stmt = $this->conn->prepare("UPDATE parties SET paused = ? WHERE host_id = ? COLLATE latin1_bin");
+      $stmt->bind_param("is", $this->input['paused'], $validation['host_id']);
       $stmt->execute();
 
       if ($stmt->error) {
          http_response_code(500);
          echo json_encode(['error' => $stmt->error]);
+         exit();
+      }
+
+      if ($stmt->affected_rows === 0) {
+         http_response_code(400);
+         echo json_encode(['error' => 'No active party']);
          exit();
       }
 

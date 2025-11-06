@@ -1,0 +1,50 @@
+@use 'variables';
+
+// UNIVERSAL
+* {
+   box-sizing: border-box;
+}
+
+// HTML & BODY
+html,
+body {
+   height: 100%;
+   margin: 0;
+   padding: 0;
+}
+
+html {
+   font-family: 'Roboto', sans-serif;
+   background-color: variables.$bg-primary;
+   color: #fff;
+}
+
+body {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-wrap: wrap;
+   height: 100%;
+   width: 100%;
+   overflow: auto;
+   padding: 10px;
+}
+
+// MAIN CONTENT
+main {
+   width: 100%;
+   margin-top: auto;
+}
+
+// FOOTER
+footer {
+   position: -webkit-sticky;
+   position: sticky;
+   top: 100vh;
+   text-align: center;
+
+   p {
+      margin: 0;
+      padding: 0.2rem;
+   }
+}

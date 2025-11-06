@@ -1,0 +1,20 @@
+@use "sass:color";
+
+// COLORS - Background
+$bg-primary: #121212;
+$bg-secondary: color.adjust($bg-primary, $lightness: 7%);
+$bg-secondary-hover: color.adjust($bg-secondary, $lightness: 5%);
+
+// COLORS - Accent
+$color-primary: #1DB954;
+$color-primary-hover: color.adjust($color-primary, $lightness: -20%);
+
+// COLORS - UI States
+$color-focus: #2196F3;
+$color-error: #FF4C4C;
+
+// LAYOUT
+$border-radius: 15px;
+
+// EFFECTS
+$shadow-color: rgba(0, 0, 0, 0.4);
