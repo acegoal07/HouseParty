@@ -1,7 +1,7 @@
 @use 'variables';
 
 @mixin focus-outline {
-   outline: 2px solid variables.$focus-outline-color;
+   outline: 2px solid variables.$color-focus;
    outline-offset: 2px;
 }
 
@@ -16,10 +16,6 @@ a:focus {
 }
 
 .custom-checkbox-container input:focus~.custom-checkbox {
-   @include focus-outline;
-}
-
-div.collapsible-item:focus {
    @include focus-outline;
 }
 

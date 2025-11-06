@@ -11,15 +11,16 @@
    &::after {
       content: "";
       flex: 1 1 auto;
-      border-top: 2px solid variables.$secondary-body-color-hover;
+      border-top: 2px solid variables.$bg-secondary-hover;
    }
 }
 
 .divider-text {
    font-size: 1.5rem;
-   color: variables.$primary-color;
-   background-color: variables.$primary-body-color;
+   color: variables.$color-primary;
+   background-color: variables.$bg-primary;
    padding: 0 0.5rem;
+   margin: 0;
    font-weight: bold;
 
    @media screen and (max-width: 600px) {

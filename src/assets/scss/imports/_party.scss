@@ -5,7 +5,7 @@ div.party-code-container {
    display: flex;
    align-items: center;
    justify-content: space-between;
-   background-color: variables.$primary-body-color;
+   background-color: variables.$bg-primary;
    padding: 0.3125rem 0.9375rem;
    margin-top: 0.625rem;
    border-radius: variables.$border-radius;
@@ -38,7 +38,9 @@ div#party-qrcode {
    justify-content: center;
    padding: 0.625rem 0.9375rem;
    border-radius: variables.$border-radius;
-   background-color: variables.$secondary-body-color;
+   background-color: variables.$bg-secondary;
+   width: -webkit-max-content;
+   width: -moz-max-content;
    width: max-content;
    margin: 1.25rem auto;
 
@@ -55,7 +57,7 @@ div#party-qrcode {
    }
 
    >div {
-      border-left: variables.$primary-color 3px solid;
+      border-left: variables.$color-primary 3px solid;
       padding-left: 15px;
 
       #expires-at-time,

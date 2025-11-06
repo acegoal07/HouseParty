@@ -37,9 +37,9 @@ div.custom-checkbox-container {
          transform: translateY(-50%);
          width: 25px;
          height: 25px;
-         border: 2px solid variables.$secondary-body-color-hover;
+         border: 2px solid variables.$bg-secondary-hover;
          border-radius: 4px;
-         background-color: variables.$secondary-body-color-hover;
+         background-color: variables.$bg-secondary-hover;
       }
    }
 
@@ -54,8 +54,8 @@ div.custom-checkbox-container {
       cursor: pointer;
 
       &:checked+label::before {
-         background-color: variables.$primary-color;
-         border: 2px solid variables.$primary-color;
+         background-color: variables.$color-primary;
+         border: 2px solid variables.$color-primary;
       }
 
       &:checked+label::after {

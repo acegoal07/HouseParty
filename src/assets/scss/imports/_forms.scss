@@ -17,6 +17,8 @@ label.number-input-secondary {
    gap: 5px;
    width: 100%;
    max-width: 300px;
+   height: -webkit-fit-content;
+   height: -moz-fit-content;
    height: fit-content;
 
    span {
@@ -24,11 +26,13 @@ label.number-input-secondary {
       font-size: 15px;
       color: #8b8e98;
       font-weight: 600;
+      width: -webkit-fit-content;
+      width: -moz-fit-content;
       width: fit-content;
       top: 14px;
       position: relative;
       left: 15px;
-      background: variables.$primary-body-color;
+      background: variables.$bg-primary;
    }
 
    input {
@@ -38,11 +42,11 @@ label.number-input-secondary {
       border-radius: variables.$border-radius;
       outline: none;
       background-color: transparent;
-      border: 2px solid variables.$secondary-body-color-hover;
+      border: 2px solid variables.$bg-secondary-hover;
       color: #fff;
 
       &:focus {
-         outline: 2px solid variables.$focus-outline-color;
+         outline: 2px solid variables.$color-focus;
          outline-offset: 2px;
       }
    }
@@ -50,18 +54,18 @@ label.number-input-secondary {
 
 label.number-input-secondary {
    span {
-      background: variables.$secondary-body-color;
+      background: variables.$bg-secondary;
    }
 
    input {
-      border: 2px solid variables.$secondary-body-color-hover;
+      border: 2px solid variables.$bg-secondary-hover;
    }
 }
 
 // TEXT & NUMBER INPUTS
 input {
    &[type="text"] {
-      background-color: variables.$secondary-body-color-hover;
+      background-color: variables.$bg-secondary-hover;
       color: #fff;
       border: none;
       width: 100%;
@@ -74,7 +78,7 @@ input {
    }
 
    &[type="number"] {
-      background-color: variables.$secondary-body-color-hover;
+      background-color: variables.$bg-secondary-hover;
       color: #fff;
       border: none;
       width: 4rem;
@@ -86,7 +90,7 @@ input {
 
 // INPUT ERROR
 span.input-error {
-   color: red;
+   color: variables.$color-error;
    font-size: 1.2rem;
    margin: 0 auto 0.5rem auto;
    text-align: center;
@@ -128,10 +132,10 @@ span.input-error {
          width: 25px;
          height: 25px;
          margin: auto 10px;
-         fill: variables.$primary-color;
+         fill: variables.$color-primary;
 
          &:hover {
-            fill: variables.$primary-color-hover;
+            fill: variables.$color-primary-hover;
          }
 
          path {
@@ -141,7 +145,7 @@ span.input-error {
 
       &:focus {
          outline: none;
-         box-shadow: 0 0 0 2px variables.$focus-outline-color;
+         box-shadow: 0 0 0 2px variables.$color-focus;
       }
    }
 }

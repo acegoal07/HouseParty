@@ -352,4 +352,13 @@ window.addEventListener('load', () => {
             console.error('End Party Error:', error);
          });
    });
+
+   /////////////// Stop Polling while off the page /////////////////////////////////////////////////////////////////////////////////////////////////
+   document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+         stopPolling();
+      } else {
+         startPolling();
+      }
+   });
 });

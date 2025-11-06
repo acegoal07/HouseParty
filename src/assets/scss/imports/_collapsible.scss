@@ -6,11 +6,16 @@ div.collapsible-container {
    >div.collapsible-item {
       cursor: pointer;
       margin: 1.25rem auto;
-      background-color: variables.$secondary-body-color;
+      background-color: variables.$bg-secondary;
       border-radius: variables.$border-radius;
       padding: 1.25rem;
       max-width: 500px;
       width: 100%;
+
+      &:has(.collapsible-header:focus) {
+         outline: 2px solid variables.$color-focus;
+         outline-offset: 2px;
+      }
 
       @media (max-width: 600px) {
          margin: 0.9375rem auto;
@@ -29,35 +34,59 @@ div.collapsible-container {
          margin-bottom: 0;
       }
 
-      span.collapsible-title {
-         font-size: 1.5rem;
-         font-weight: bold;
-         color: #fff;
+      .collapsible-header {
+         background: transparent;
+         border: none;
+         padding: 0;
+         margin: 0;
+         cursor: pointer;
 
-         @media (max-width: 600px) {
-            font-size: 1.3rem;
+         &:focus {
+            outline: none;
          }
-      }
 
-      span.collapsible-icon {
-         border: solid;
-         border-color: variables.$primary-color;
-         border-width: 0 0.25rem 0.25rem 0;
-         padding: 0.25rem;
-         margin: auto 6px 0.22rem auto;
-         transform: rotate(-45deg);
-         transition: 0.5s ease-in-out;
-         display: inline-block;
+         span.collapsible-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+
+            @media (max-width: 600px) {
+               font-size: 1.3rem;
+            }
+         }
+
+         span.collapsible-icon {
+            border: solid;
+            border-color: variables.$color-primary;
+            border-width: 0 0.25rem 0.25rem 0;
+            padding: 0.25rem;
+            margin: auto 6px 0.22rem auto;
+            transform: rotate(-45deg);
+            transition: 0.5s ease-in-out;
+            display: inline-block;
+         }
       }
 
       &.open span.collapsible-icon {
          transform: rotate(45deg);
       }
 
+      &.open div.collapsible-content {
+         display: block;
+         -webkit-animation: expand-collapsible-item 0.5s forwards;
+         animation: expand-collapsible-item 0.5s forwards;
+      }
+
+      &.closing div.collapsible-content {
+         display: block;
+         -webkit-animation: collapse-collapsible-item 0.5s forwards;
+         animation: collapse-collapsible-item 0.5s forwards;
+      }
+
       div.collapsible-content {
+         display: none;
          height: 0;
          overflow: hidden;
-         display: none;
 
          ol {
             @media (max-width: 600px) {
@@ -74,8 +103,9 @@ div.collapsible-container {
 }
 
 // ANIMATIONS
-@keyframes expand-collapsible-item {
+@-webkit-keyframes expand-collapsible-item {
    0% {
+      display: none;
       height: 0;
    }
 
@@ -84,12 +114,30 @@ div.collapsible-container {
    }
 
    100% {
+      display: block;
       height: auto;
    }
 }
 
-@keyframes collapse-collapsible-item {
+@keyframes expand-collapsible-item {
    0% {
+      display: none;
+      height: 0;
+   }
+
+   99% {
+      height: var(--content-height);
+   }
+
+   100% {
+      display: block;
+      height: auto;
+   }
+}
+
+@-webkit-keyframes collapse-collapsible-item {
+   0% {
+      display: block;
       height: auto;
    }
 
@@ -98,6 +146,23 @@ div.collapsible-container {
    }
 
    100% {
+      display: none;
+      height: 0;
+   }
+}
+
+@keyframes collapse-collapsible-item {
+   0% {
+      display: block;
+      height: auto;
+   }
+
+   1% {
+      height: var(--content-height);
+   }
+
+   100% {
+      display: none;
       height: 0;
    }
 }

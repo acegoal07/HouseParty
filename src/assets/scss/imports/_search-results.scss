@@ -25,19 +25,19 @@ div#search-results {
    align-items: center;
    gap: 10px;
    padding: 10px;
-   background-color: variables.$secondary-body-color;
+   background-color: variables.$bg-secondary;
    border-radius: variables.$border-radius;
    width: 100%;
 
    &:focus {
-      outline: 2px solid variables.$focus-outline-color;
+      outline: 2px solid variables.$color-focus;
       outline-offset: 2px;
    }
 }
 
 .search-results-container {
    &:focus {
-      outline: 2px solid variables.$focus-outline-color;
+      outline: 2px solid variables.$color-focus;
       outline-offset: 2px;
    }
 }
@@ -76,7 +76,7 @@ svg.search-results-add-song-icon {
    width: 40px;
    height: 40px;
    flex-shrink: 0;
-   fill: variables.$primary-color;
+   fill: variables.$color-primary;
    margin-left: auto;
    cursor: pointer;
    border-radius: 100%;
@@ -87,7 +87,7 @@ svg.search-results-add-song-icon {
    }
 
    &:hover {
-      fill: variables.$primary-color-hover;
+      fill: variables.$color-primary-hover;
    }
 
    path {
@@ -132,7 +132,7 @@ button#back-to-top {
       outline: none;
 
       svg {
-         outline: 2px solid variables.$focus-outline-color;
+         outline: 2px solid variables.$color-focus;
          outline-offset: 2px;
       }
    }
@@ -140,7 +140,7 @@ button#back-to-top {
    svg {
       width: 45px;
       height: 45px;
-      fill: variables.$primary-color;
+      fill: variables.$color-primary;
       cursor: pointer;
       border-radius: 100%;
 
@@ -154,7 +154,7 @@ button#back-to-top {
       }
 
       &:hover {
-         fill: variables.$primary-color-hover;
+         fill: variables.$color-primary-hover;
       }
    }
 }

@@ -22,7 +22,7 @@ button.btn {
    padding: 10px 20px;
    font-size: 1.5rem;
    color: #fff !important;
-   background-color: variables.$secondary-body-color;
+   background-color: variables.$bg-secondary;
    text-decoration: none !important;
    border-radius: variables.$border-radius;
    transition: background-color ease 0.2s;
@@ -37,16 +37,16 @@ button.btn {
    }
 
    &:hover {
-      background-color: variables.$secondary-body-color-hover;
+      background-color: variables.$bg-secondary-hover;
    }
 
    // PRIMARY VARIANT
    &.btn-primary {
-      background-color: variables.$primary-color;
+      background-color: variables.$color-primary;
       color: #000 !important;
 
       &:hover {
-         background-color: variables.$primary-color-hover;
+         background-color: variables.$color-primary-hover;
       }
    }
 }

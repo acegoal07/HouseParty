@@ -3,7 +3,7 @@
 // HEADINGS
 h1.logo {
    font-size: 4.5rem;
-   color: variables.$primary-color;
+   color: variables.$color-primary;
    margin: 0;
    text-align: center;
 
@@ -46,7 +46,7 @@ ol {
       line-height: 1.5;
 
       &::marker {
-         color: variables.$primary-color;
+         color: variables.$color-primary;
          font-weight: bold;
       }
    }

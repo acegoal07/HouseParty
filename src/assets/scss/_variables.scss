@@ -1,16 +1,17 @@
 @use "sass:color";
 
 // COLORS - Background
-$primary-body-color: #121212;
-$secondary-body-color: color.adjust($primary-body-color, $lightness: 7%);
-$secondary-body-color-hover: color.adjust($secondary-body-color, $lightness: 5%);
+$bg-primary: #121212;
+$bg-secondary: color.adjust($bg-primary, $lightness: 7%);
+$bg-secondary-hover: color.adjust($bg-secondary, $lightness: 5%);
 
-// COLORS - Brand
-$primary-color: #1DB954;
-$primary-color-hover: color.adjust($primary-color, $lightness: -20%);
+// COLORS - Accent
+$color-primary: #1DB954;
+$color-primary-hover: color.adjust($color-primary, $lightness: -20%);
 
 // COLORS - UI States
-$focus-outline-color: #2196F3;
+$color-focus: #2196F3;
+$color-error: #FF4C4C;
 
 // LAYOUT
 $border-radius: 15px;

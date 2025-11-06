@@ -2,19 +2,20 @@
 
 // LINK STYLES
 a {
-   color: variables.$primary-color;
+   color: variables.$color-primary;
    text-decoration: none;
+   transition: color 0.3s ease;
 
    &:hover {
-      color: variables.$primary-color-hover;
+      color: variables.$color-primary-hover;
       text-decoration: underline;
    }
 
    &:visited {
-      color: variables.$primary-color;
+      color: variables.$color-primary;
    }
 
    &:active {
-      color: variables.$primary-color-hover;
+      color: variables.$color-primary-hover;
    }
 }

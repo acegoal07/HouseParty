@@ -15,7 +15,7 @@ body {
 
 html {
    font-family: 'Roboto', sans-serif;
-   background-color: variables.$primary-body-color;
+   background-color: variables.$bg-primary;
    color: #fff;
 }
 
@@ -38,6 +38,7 @@ main {
 
 // FOOTER
 footer {
+   position: -webkit-sticky;
    position: sticky;
    top: 100vh;
    text-align: center;
