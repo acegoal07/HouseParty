@@ -3,16 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
    for (const button of document.querySelectorAll('.click-to-copy, .click-to-copy-target')) {
       // Add an event listener to the button that copies the text to the clipboard
       button.addEventListener('click', () => {
-         // Get the text to copy based on the button's class
-         let copyText = '';
-         if (button.classList.contains('click-to-copy-target')) {
-            const targetElement = document.getElementById(button.getAttribute('copy-target'));
-            copyText = targetElement ? targetElement.textContent : '';
-         } else {
-            copyText = button.getAttribute('copy-data');
-         }
-         // Remove any leading or trailing whitespace
-         copyText = copyText.trim();
+         // Determine the text to copy based on the button's class
+         const copyText = (button.classList.contains('click-to-copy-target') ? document.querySelector(`#${button.dataset.copyTarget}`).textContent : button.dataset.copyText).trim();
          // If the text exists, copy it to the clipboard and show a copy message
          if (copyText !== '' && copyText) {
             navigator.clipboard.writeText(copyText)

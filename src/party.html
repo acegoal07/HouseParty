@@ -99,15 +99,16 @@
                <p>Bellow are different ways to invite people to join</p>
                <div class="party-code-container">
                   <span id="party-code"></span>
-                  <button class="btn btn-primary click-to-copy-target" copy-target="party-code" type="button"
+                  <button class="btn btn-primary click-to-copy-target" data-copy-target="party-code" type="button"
                      aria-label="Copy Party Code">Copy</button>
                </div>
                <div id="party-qrcode"></div>
                <div class="btns">
                   <button class="btn btn-primary click-to-copy" id="copy-party-url" type="button"
                      aria-label="Copy URL">Copy URL</button>
-                  <button class="btn btn-primary click-to-share hide" id="share-party-url" share-title="House Party"
-                     share-text="Join my party on House Party!" type="button" aria-label="Share URL">Share URL</button>
+                  <button class="btn btn-primary click-to-share hide" id="share-party-url"
+                     data-share-title="House Party" data-share-text="Join my party on House Party!" type="button"
+                     aria-label="Share URL">Share URL</button>
                </div>
             </div>
          </div>
@@ -123,10 +124,9 @@
       </form>
       <div id="search-results-container">
          <span id="no-results" class="hide">No Results Found</span>
-         <div id="search-results"> </div>
+         <div id="search-results"></div>
          <button class="hide" id="back-to-top" type="button" aria-label="Back to top">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-               class="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
                <path
                   d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0m-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707z" />
             </svg>

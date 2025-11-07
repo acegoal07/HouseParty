@@ -19,9 +19,7 @@ class ModalHandler {
     */
    _setupOpeners() {
       for (const opener of document.querySelectorAll('.modal-opener')) {
-         opener.addEventListener('click', () => {
-            this.open(opener.dataset.modalTarget);
-         });
+         opener.addEventListener('click', () => this.open(opener.dataset.modalTarget))
       }
    }
 
@@ -72,9 +70,7 @@ class ModalHandler {
    open(target, callback = null) {
       const modal = document.querySelector(`dialog#${target}`);
       if (modal) {
-         if (callback) {
-            callback();
-         }
+         if (callback) { callback(); }
          modal.showModal();
       }
    }

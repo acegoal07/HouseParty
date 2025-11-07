@@ -67,14 +67,16 @@ div.collapsible-container {
          }
       }
 
-      &.open span.collapsible-icon {
-         transform: rotate(45deg);
-      }
+      &.open {
+         span.collapsible-icon {
+            transform: rotate(45deg);
+         }
 
-      &.open div.collapsible-content {
-         display: block;
-         -webkit-animation: expand-collapsible-item 0.5s forwards;
-         animation: expand-collapsible-item 0.5s forwards;
+         div.collapsible-content {
+            display: block;
+            -webkit-animation: expand-collapsible-item 0.5s forwards;
+            animation: expand-collapsible-item 0.5s forwards;
+         }
       }
 
       &.closing div.collapsible-content {
