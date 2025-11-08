@@ -12,7 +12,7 @@
 
 <body>
    <div class="loading-icon-container" id="loading-icon" aria-live="polite">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-label="Loading" role="img">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-label="Loading">
          <path
             d="M304 48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zm0 416a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM48 304a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm464-48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM142.9 437A48 48 0 1 0 75 369.1 48 48 0 1 0 142.9 437zm0-294.2A48 48 0 1 0 75 75a48 48 0 1 0 67.9 67.9zM369.1 437A48 48 0 1 0 437 369.1 48 48 0 1 0 369.1 437z" />
       </svg>
@@ -110,7 +110,7 @@
                   <p>Bellow are different ways to invite people to join</p>
                   <div class="party-code-container">
                      <span id="party-code"></span>
-                     <button class="btn btn-primary click-to-copy-target" copy-target="party-code" type="button"
+                     <button class="btn btn-primary click-to-copy-target" data-copy-target="party-code" type="button"
                         aria-label="Copy Party Code">Copy</button>
                   </div>
                   <div id="party-qrcode"></div>
@@ -118,8 +118,8 @@
                      <button class="btn btn-primary click-to-copy" id="copy-party-url" type="button"
                         aria-label="Copy URL">Copy
                         URL</button>
-                     <button class="btn btn-primary click-to-share hide" id="share-party-url" share-title="House Party"
-                        share-text="Join my party on House Party!" type="button" aria-label="Share URL">Share
+                     <button class="btn btn-primary click-to-share hide" id="share-party-url" data-share-title="House Party"
+                        data-share-text="Join my party on House Party!" type="button" aria-label="Share URL">Share
                         URL</button>
                   </div>
                </div>

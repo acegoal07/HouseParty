@@ -10,39 +10,31 @@ class CollapsibleHandler {
     */
    _setupCollapsibleItems() {
       for (const item of document.querySelectorAll('.collapsible-item')) {
-         console.log(item);
-         item.addEventListener('click', (e) => {
-            if (e.target.closest('.collapsible-content')) { return; }
-            this._toggle(item);
+         if (item.classList.contains('open')) { this.open(item); }
+         item.addEventListener('click', (event) => {
+            if (event.target.closest('.collapsible-content')) { return; }
+            if (this.collapsible === item) {
+               this.close();
+            } else {
+               if (this.collapsible) { this.close(); }
+               this.open(item);
+            }
          });
       }
    }
 
    /**
-    * Toggles a collapsible item.
-    * @param {Element} item The collapsible item to toggle
-    */
-   _toggle(item) {
-      if (this.collapsible === item) {
-         this.close();
-      } else {
-         if (this.collapsible) { this.close(); }
-         this.open(item);
-      }
-   }
-
-   /**
     * Opens a collapsible item.
-    * @param {Element} item The collapsible item to open
+    * @param {Element} target The collapsible to open
     * @returns {void}
     */
-   open(item) {
-      if (item === this.collapsible) { return; }
-      this.collapsible = item;
-      item.querySelector('.collapsible-header')?.setAttribute('aria-expanded', 'true');
-      item.classList.add('open');
-      const content = item.querySelector('.collapsible-content');
+   open(target) {
+      if (target === this.collapsible) { return; }
+      target.querySelector('.collapsible-header')?.setAttribute('aria-expanded', 'true');
+      target.classList.add('open');
+      const content = target.querySelector('.collapsible-content');
       content.style.setProperty('--content-height', `${content.scrollHeight}px`);
+      this.collapsible = target;
    }
 
    /**
@@ -50,18 +42,16 @@ class CollapsibleHandler {
     * @returns {void}
     */
    close() {
-      if (!this.collapsible) {
-         return;
-      }
-      const item = this.collapsible;
-      item.classList.remove('open');
-      item.querySelector('.collapsible-header')?.setAttribute('aria-expanded', 'false');
-      item.classList.add('closing');
+      if (!this.collapsible) { return; }
+      const target = this.collapsible;
+      target.classList.remove('open');
+      target.classList.add('closing');
       setTimeout(() => {
-         item.classList.remove('closing');
+         target.classList.remove('closing');
       }, 500);
-      const content = item.querySelector('.collapsible-content');
-      content.style.setProperty('--content-height', `${content.scrollHeight}px`);
+      const targetContent = target.querySelector('.collapsible-content');
+      targetContent.style.setProperty('--content-height', `${targetContent.scrollHeight}px`);
+      target.querySelector('.collapsible-header')?.setAttribute('aria-expanded', 'false');
       this.collapsible = null;
    }
 }

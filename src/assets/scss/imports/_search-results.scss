@@ -1,4 +1,5 @@
 @use '../variables';
+@use "sass:color";
 
 // SEARCH RESULTS CONTAINER
 div#search-results-container {
@@ -72,14 +73,17 @@ div#search-results {
 }
 
 // ADD SONG ICON
-svg.search-results-add-song-icon {
+button.add-song-button {
    width: 40px;
    height: 40px;
-   flex-shrink: 0;
+   padding: 0;
    fill: variables.$color-primary;
-   margin-left: auto;
    cursor: pointer;
+   margin-left: auto;
    border-radius: 100%;
+   background: none;
+   border: none;
+   flex-shrink: 0;
 
    @media screen and (max-width: 600px) {
       width: 35px;
@@ -87,7 +91,9 @@ svg.search-results-add-song-icon {
    }
 
    &:hover {
-      fill: variables.$color-primary-hover;
+      svg {
+         fill: variables.$color-primary-hover;
+      }
    }
 
    path {
@@ -95,21 +101,29 @@ svg.search-results-add-song-icon {
    }
 }
 
-// SPOTIFY LOGO
-.search-results-spotify-logo-link {
-   border-radius: 100%;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-}
 
-.search-results-spotify-logo {
+// SPOTIFY LOGO
+a.spotify-link {
    width: 40px;
    height: 40px;
+   border-radius: 100%;
+   display: flex;
+   fill: #fff;
+   flex-shrink: 0;
 
    @media screen and (max-width: 600px) {
       width: 35px;
       height: 35px;
+   }
+
+   &:hover {
+      svg {
+         fill: color.adjust(#fff, $lightness: -25%);
+      }
+   }
+
+   path {
+      transition: fill ease 0.35s;
    }
 }
 
@@ -123,38 +137,29 @@ svg.search-results-add-song-icon {
 
 // BACK TO TOP ICON
 button#back-to-top {
-   background-color: transparent;
+   background: none;
    border: none;
    margin-top: 1.25rem;
    margin-bottom: 0.75rem;
+   width: 45px;
+   height: 45px;
+   fill: variables.$color-primary;
+   cursor: pointer;
+   border-radius: 100%;
+   padding: 0;
 
-   &:focus {
-      outline: none;
+   @media screen and (max-width: 600px) {
+      width: 40px;
+      height: 40px;
+   }
 
+   &:hover {
       svg {
-         outline: 2px solid variables.$color-focus;
-         outline-offset: 2px;
+         fill: variables.$color-primary-hover;
       }
    }
 
-   svg {
-      width: 45px;
-      height: 45px;
-      fill: variables.$color-primary;
-      cursor: pointer;
-      border-radius: 100%;
-
-      @media screen and (max-width: 600px) {
-         width: 40px;
-         height: 40px;
-      }
-
-      path {
-         transition: fill ease 0.35s;
-      }
-
-      &:hover {
-         fill: variables.$color-primary-hover;
-      }
+   path {
+      transition: fill ease 0.35s;
    }
 }

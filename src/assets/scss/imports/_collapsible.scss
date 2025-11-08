@@ -67,14 +67,16 @@ div.collapsible-container {
          }
       }
 
-      &.open span.collapsible-icon {
-         transform: rotate(45deg);
-      }
+      &.open {
+         span.collapsible-icon {
+            transform: rotate(45deg);
+         }
 
-      &.open div.collapsible-content {
-         display: block;
-         -webkit-animation: expand-collapsible-item 0.5s forwards;
-         animation: expand-collapsible-item 0.5s forwards;
+         div.collapsible-content {
+            display: block;
+            -webkit-animation: expand-collapsible-item 0.5s forwards;
+            animation: expand-collapsible-item 0.5s forwards;
+         }
       }
 
       &.closing div.collapsible-content {
@@ -105,7 +107,6 @@ div.collapsible-container {
 // ANIMATIONS
 @-webkit-keyframes expand-collapsible-item {
    0% {
-      display: none;
       height: 0;
    }
 
@@ -114,14 +115,12 @@ div.collapsible-container {
    }
 
    100% {
-      display: block;
       height: auto;
    }
 }
 
 @keyframes expand-collapsible-item {
    0% {
-      display: none;
       height: 0;
    }
 
@@ -130,14 +129,12 @@ div.collapsible-container {
    }
 
    100% {
-      display: block;
       height: auto;
    }
 }
 
 @-webkit-keyframes collapse-collapsible-item {
    0% {
-      display: block;
       height: auto;
    }
 
@@ -146,14 +143,12 @@ div.collapsible-container {
    }
 
    100% {
-      display: none;
       height: 0;
    }
 }
 
 @keyframes collapse-collapsible-item {
    0% {
-      display: block;
       height: auto;
    }
 
@@ -162,7 +157,6 @@ div.collapsible-container {
    }
 
    100% {
-      display: none;
       height: 0;
    }
 }
