@@ -1,0 +1,95 @@
+@use '../variables';
+
+// FIELD WITH ACTION STYLES
+.field-with-actions {
+   display: flex;
+   justify-content: center;
+   width: 100%;
+
+   .field-body {
+      display: inline-flex;
+      align-items: center;
+      background-color: variables.$bg-primary;
+      border-radius: variables.$border-radius;
+      gap: 5px;
+      width: 100%;
+
+      &.secondary {
+         background-color: variables.$bg-secondary;
+      }
+
+      .field-value {
+         flex-grow: 2;
+         white-space: nowrap;
+         overflow: auto;
+         cursor: default;
+         font-size: 1.5rem;
+         padding: 1rem;
+         color: #ffff;
+         background-color: transparent;
+         border-bottom-left-radius: 15px;
+         border-top-left-radius: 15px;
+         border-top-right-radius: 0;
+         border-bottom-right-radius: 0;
+         text-align: left;
+         border: none;
+
+         &:focus {
+            outline: 2px solid variables.$color-focus;
+            outline-offset: 2px;
+            outline-offset: unset;
+         }
+      }
+
+      .field-actions {
+         align-self: stretch;
+         display: inline-flex;
+         padding: 0;
+         margin: 0;
+
+         .field-action {
+            display: inline;
+
+            &:last-child button {
+               border-top-right-radius: 15px;
+               border-bottom-right-radius: 15px;
+            }
+
+            button {
+               background-color: transparent;
+               border: none;
+               cursor: pointer;
+               height: 100%;
+               display: flex;
+               align-items: center;
+               padding: 0.5rem;
+
+               svg {
+                  width: 1.875rem;
+                  height: 1.875rem;
+                  fill: variables.$color-primary;
+
+                  @media (max-width: 600px) {
+                     width: 1.563rem;
+                     height: 1.563rem;
+
+                  }
+
+                  &:hover {
+                     fill: variables.$color-primary-hover;
+                  }
+
+                  path {
+                     transition: fill ease 0.35s;
+                  }
+               }
+
+               &:focus {
+                  outline: none;
+                  box-shadow: 0 0 0 2px variables.$color-focus;
+               }
+            }
+         }
+      }
+   }
+}

@@ -1,12 +1,12 @@
 //////////////// Variables /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-let pollingInterval;
 let loadingIcon;
+let pollingInterval;
+let noPartyFoundError;
+let partyCodeInput;
 
 //////////////// Polling functions /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function pollingFunction() {
-   fetch(`api/website/database.php?${new URLSearchParams({
-      type: 'validateSession'
-   })}`);
+   fetch(`api/website/database.php?${new URLSearchParams({ type: 'validateSession' })}`);
 }
 
 function startPolling() {
@@ -19,21 +19,31 @@ function stopPolling() {
 }
 
 //////////////// Main Body /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-window.addEventListener('load', () => {
+globalThis.addEventListener('load', () => {
    //////////////// Set variables //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    loadingIcon = document.querySelector('div#loading-icon');
+   noPartyFoundError = document.querySelector('p#no-party-found-error');
+   partyCodeInput = document.querySelector('input#party-code');
 
    //////////////// Page polling ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    startPolling();
+
+   /////////////////////// Stop Polling while off the page /////////////////////////////////////////////////////////////////////////////////////////
+   document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+         stopPolling();
+      } else {
+         startPolling();
+      }
+   });
 
    //////////////// Join Form //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    document.querySelector('form#join-form').addEventListener('submit', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
-      const noPartyFoundError = document.querySelector('span#no-party-found-error');
       noPartyFoundError.classList.add('hide');
-      const PartyCodeInput = event.target.querySelector('input#party-code');
-      let partyCode = PartyCodeInput.value;
+      let partyCode = partyCodeInput.value;
+      event.target.reset();
 
       if (partyCode !== '') {
          partyCode = partyCode.trim();
@@ -42,7 +52,6 @@ window.addEventListener('load', () => {
       if (partyCode === '') {
          noPartyFoundError.classList.remove('hide');
          loadingIcon.classList.add("hide");
-         PartyCodeInput.value = '';
          return;
       }
 
@@ -60,16 +69,7 @@ window.addEventListener('load', () => {
          })
          .catch(error => {
             console.error('Join Error:', error);
+            loadingIcon.classList.add("hide");
          });
-      PartyCodeInput.value = '';
-   });
-
-   /////////////////////// Stop Polling while off the page /////////////////////////////////////////////////////////////////////////////////////////
-   document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-         stopPolling();
-      } else {
-         startPolling();
-      }
    });
 });

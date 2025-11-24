@@ -1,5 +1,5 @@
 //////////////// Main Body /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-window.addEventListener('load', () => {
+globalThis.addEventListener('load', () => {
    const loadingIcon = document.querySelector('div#loading-icon');
    switch (new URLSearchParams(globalThis.location.search).get('error')) {
       case '1':

@@ -5,14 +5,95 @@
    display: none !important;
 }
 
-// SCROLL CONTROL
-.stop-scrolling {
-   height: 100%;
-   overflow: hidden;
+// MARGIN UTILITIES
+.mt-1 {
+   margin-top: 1.3rem;
+
+   @media (max-width: 600px) {
+      margin-top: 1.15rem;
+   }
 }
 
-// TEXT STYLING
-.special-text {
-   color: variables.$color-primary;
-   font-weight: bold;
+.mb-0 {
+   margin-bottom: 0 !important;
+}
+
+.mb-1 {
+   margin-bottom: 1.3rem;
+
+   @media (max-width: 600px) {
+      margin-bottom: 1.15rem;
+   }
+}
+
+// BACK TO THE TOP BUTTON  
+.back-to-top {
+   background: none;
+   border: none;
+   margin-top: 1.3rem;
+   width: 2.813rem;
+   height: 2.813rem;
+   fill: variables.$color-primary;
+   cursor: pointer;
+   border-radius: 100%;
+   padding: 0;
+
+   @media screen and (max-width: 600px) {
+      width: 2.5rem;
+      height: 2.5rem;
+      margin-top: 1.15rem;
+   }
+
+   &:hover {
+      svg {
+         fill: variables.$color-primary-hover;
+      }
+   }
+
+   path {
+      transition: fill ease 0.35s;
+   }
+}
+
+// QR CODE CONTAINER
+.qr-code-container {
+   display: flex;
+   justify-content: center;
+}
+
+// EXPIRY TIME CONTAINER
+.expires-at-container {
+   display: flex;
+   align-items: center;
+   padding: 0.625rem 0.9375rem;
+   border-radius: variables.$border-radius;
+   background-color: variables.$bg-secondary;
+   width: -webkit-max-content;
+   width: -moz-max-content;
+   width: max-content;
+   margin: auto;
+   margin-top: 1.3rem;
+
+   @media screen and (max-width: 600px) {
+      margin-top: 1.15rem;
+   }
+
+   h2 {
+      margin: 0;
+      padding-right: 15px;
+      font-size: 1.2rem;
+   }
+
+   >div {
+      border-left: variables.$color-primary 3px solid;
+      padding-left: 15px;
+
+      #expires-at-time,
+      #expires-at-date {
+         font-size: 1.2rem;
+         font-weight: bold;
+         color: white;
+         text-align: center;
+      }
+   }
 }

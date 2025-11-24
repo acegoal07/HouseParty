@@ -191,16 +191,20 @@ class DatabaseHandler
          exit();
       }
 
-      if (!isset($this->input['session_data'])) {
-         $this->input['session_data'] = 'false';
+      if (!isset($this->input['party_data'])) {
+         $this->input['party_data'] = 'false';
       }
+
+      if (!isset($this->input['partial_data']))
 
       http_response_code(200);
 
       $validation = null;
 
-      if ($this->input['session_data'] === 'true') {
+      if ($this->input['party_data'] === 'true') {
          $validation = validateSessionGetInfo($this->conn, cookieGet('session_id'));
+      } elseif ($this->input['partial_data'] === 'true') {
+         $validation = validateSessionGetPartialInfo($this->conn, cookieGet('session_id'));
       } else {
          $validation = (validateSession($this->conn, cookieGet('session_id')));
       }

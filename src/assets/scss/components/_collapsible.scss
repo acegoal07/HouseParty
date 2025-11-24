@@ -1,0 +1,143 @@
+@use '../variables';
+
+// COLLAPSIBLE
+div.collapsible-group {
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   gap: 1.3rem;
+   max-width: 500px;
+   width: 100%;
+
+   @media (max-width: 600px) {
+      gap: 1.15rem !important;
+   }
+}
+
+details.collapsible-item {
+   background-color: variables.$bg-secondary;
+   border-radius: variables.$border-radius;
+   padding: 1rem;
+   max-width: 500px;
+   width: 100%;
+   cursor: pointer;
+   overflow: hidden;
+
+   &[open] {
+      summary::before {
+         transform: rotate(45deg);
+      }
+
+      .collapsible-content {
+         display: block;
+         overflow: visible;
+         -webkit-animation: open-collapsible 500ms forwards;
+         animation: open-collapsible 500ms forwards;
+      }
+   }
+
+   &.closing {
+      summary::before {
+         transform: rotate(-45deg);
+      }
+
+      .collapsible-content {
+         display: block;
+         overflow: hidden;
+         -webkit-animation: close-collapsible 500ms forwards;
+         animation: close-collapsible 500ms forwards;
+      }
+   }
+
+   &:has(summary:focus) {
+      outline: 2px solid variables.$color-focus;
+      outline-offset: 2px;
+   }
+
+   summary {
+      font-size: 1.5rem;
+      font-weight: bold;
+      list-style: none;
+
+      &:focus {
+         outline: none;
+         border: none;
+      }
+
+      &::before {
+         content: '';
+         display: inline-block;
+         border: solid;
+         border-color: variables.$color-primary;
+         border-width: 0 0.25rem 0.25rem 0;
+         padding: 0.25rem;
+         margin: auto 0.5rem 0.22rem auto;
+         transform: rotate(-45deg);
+         transition: transform 500ms ease-in-out;
+      }
+   }
+
+   .collapsible-content {
+      display: none;
+      overflow: hidden;
+      height: 0;
+   }
+}
+
+// ANIMATIONS
+@-webkit-keyframes open-collapsible {
+   0% {
+      height: 0;
+   }
+
+   99% {
+      height: var(--content-height);
+   }
+
+   100% {
+      height: auto;
+   }
+}
+
+@keyframes open-collapsible {
+   0% {
+      height: 0;
+   }
+
+   99% {
+      height: var(--content-height);
+   }
+
+   100% {
+      height: auto;
+   }
+}
+
+@-webkit-keyframes close-collapsible {
+   0% {
+      height: auto;
+   }
+
+   1% {
+      height: var(--content-height);
+   }
+
+   100% {
+      height: 0;
+   }
+}
+
+@keyframes close-collapsible {
+   0% {
+      height: auto;
+   }
+
+   1% {
+      height: var(--content-height);
+   }
+
+   100% {
+      height: 0;
+   }
+}

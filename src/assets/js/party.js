@@ -10,6 +10,7 @@ let pollingInterval;
 let partyId;
 let loadingIcon;
 let searchForm;
+let searchInput;
 let searchResults;
 let backToTop;
 let noResults;
@@ -97,11 +98,10 @@ function search() {
    for (const child of searchResults.querySelectorAll('.search-results-item')) {
       child.remove();
    }
-   const searchInputElement = searchForm.querySelector('input');
-   const searchInput = searchInputElement.value || searchResults.dataset.currentSearch;
-   searchResults.dataset.currentSearch = searchInput;
-   searchInputElement.value = '';
-   if (!searchInput || searchInput.trim() === '') {
+   const searchTerm = searchInput.value || searchResults.dataset.currentSearch;
+   searchInput.value = '';
+   searchResults.dataset.currentSearch = searchTerm;
+   if (!searchTerm || searchTerm.trim() === '') {
       noResults.classList.remove('hide');
       backToTop.classList.add('hide');
       loadingIcon.classList.add('hide');
@@ -109,7 +109,7 @@ function search() {
    }
    fetch(`api/website/spotify.php?${new URLSearchParams({
       type: 'searchSongByName',
-      search_term: encodeURIComponent(searchInput),
+      search_term: encodeURIComponent(searchTerm),
       party_id: partyId
    })}`, {
       method: 'GET'
@@ -207,11 +207,11 @@ function search() {
             addIcon.setAttribute('aria-label', `Add ${song.name} by ${artists} to the queue`);
 
             const addIconSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            addIconSvg.setAttribute('viewBox', '0 0 512 512');
+            addIconSvg.setAttribute('viewBox', '0 0 16 16');
             addIcon.appendChild(addIconSvg);
 
             const addIconPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            addIconPath.setAttribute('d', 'M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z');
+            addIconPath.setAttribute('d', 'M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z');
             addIconSvg.appendChild(addIconPath);
 
             // Add event listener to the add icon
@@ -263,8 +263,9 @@ function pollingFunction() {
       }
       if (document.querySelector('div#party-qrcode').childElementCount === 0) {
          const websiteUrl = `${globalThis.location.origin}/party.html?session_code=`;
-         document.querySelector('span#party-code').textContent = partyId;
-         document.querySelector('button#copy-party-url').dataset.copyData = `${websiteUrl}${encodeURIComponent(partyId)}`;
+         document.querySelector('code#party-id').textContent = partyId;
+         document.querySelector('a#party-url-link').href = `${websiteUrl}${encodeURIComponent(partyId)}`;
+         document.querySelector('code#party-url').textContent = `${websiteUrl}${encodeURIComponent(partyId)}`;
          document.querySelector('button#share-party-url').dataset.shareUrl = `${websiteUrl}${encodeURIComponent(partyId)}`;
          QrCreator.render({
             text: `${websiteUrl}${encodeURIComponent(partyId)}`,
@@ -295,26 +296,21 @@ function stopPolling() {
 }
 
 //////////////// Main Body /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-window.addEventListener('load', () => {
+globalThis.addEventListener('load', () => {
    //////////////// Set variables //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    partyId = new URLSearchParams(globalThis.location.search).get('session_code')?.trim();
    loadingIcon = document.querySelector('div#loading-icon');
    if (!partyId) {
       globalThis.location.href = './join.html';
    }
-   searchForm = document.querySelector('form#search-song-form');
+   searchForm = document.querySelector('form#search-songs-form');
+   searchInput = searchForm.querySelector('input');
    searchResults = document.querySelector('div#search-results');
    noResults = document.querySelector('span#no-results');
    backToTop = document.querySelector('button#back-to-top');
 
    //////////////// Page polling //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    startPolling();
-
-   //////////////// Search submit //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   searchForm.addEventListener('submit', (event) => {
-      event.preventDefault();
-      search();
-   });
 
    /////////////// Stop Polling while off the page /////////////////////////////////////////////////////////////////////////////////////////////////
    document.addEventListener('visibilitychange', () => {
@@ -325,10 +321,16 @@ window.addEventListener('load', () => {
       }
    });
 
-   /////////////// Back to Top ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   document.querySelector('#back-to-top').addEventListener('click', (event) => {
+   //////////////// Search submit //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   searchForm.addEventListener('submit', (event) => {
       event.preventDefault();
-      window.scrollTo(0, 0);
+      search();
+   });
+
+   /////////////// Back to Top ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   document.querySelector('button#back-to-top').addEventListener('click', (event) => {
+      event.preventDefault();
+      globalThis.scrollTo({ top: 0, behavior: 'smooth' });
       document.firstElementChild.focus();
    });
 

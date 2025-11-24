@@ -1,0 +1,55 @@
+@use '../variables';
+
+// BUTTON STYLES
+.btn-container {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-wrap: wrap;
+   gap: 1rem;
+
+   @media (max-width: 600px) {
+      flex-direction: column;
+   }
+
+   .btn {
+      width: -webkit-fit-content;
+      width: -moz-fit-content;
+      width: fit-content;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1.5rem;
+      padding: 0.625rem 1.25rem;
+      color: #fff;
+      text-decoration: none;
+      background-color: variables.$bg-secondary;
+      border-radius: variables.$border-radius;
+      transition: background-color ease 0.2s;
+      text-align: center;
+
+      @media (max-width: 600px) {
+         font-size: 1.3rem;
+         padding: 0.5rem 1rem;
+      }
+
+      &:hover {
+         background-color: variables.$bg-secondary-hover;
+      }
+
+      &:focus {
+         outline: 2px solid variables.$color-focus;
+         outline-offset: 2px;
+      }
+
+      // PRIMARY VARIANT
+      &.btn-primary {
+         background-color: variables.$color-primary;
+         color: #000;
+
+         &:hover {
+            background-color: variables.$color-primary-hover;
+         }
+      }
+   }
+}
