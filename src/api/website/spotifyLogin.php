@@ -146,9 +146,7 @@ class SpotifyLoginHandler
 
       $hashed_host_id = hash('sha256', $result['id']);
 
-      [$session_id, $expires_at] = createSession($this->conn, $hashed_host_id, $refresh_token);
-
-      cookieSet("session_id", $session_id, $expires_at);
+      createSession($this->conn, $hashed_host_id, $refresh_token);
 
       header("Location: /create.html");
       exit();

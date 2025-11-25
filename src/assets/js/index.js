@@ -56,19 +56,16 @@ globalThis.addEventListener('load', async () => {
    document.querySelector('button#party-manager-button').addEventListener('click', () => {
       if (loggedIn) {
          loadingIcon.classList.remove('hide');
-         fetch(`api/website/database.php`, {
-            method: 'post',
-            headers: {
-               'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-               type: 'validateSession',
-               partial_data: true
-            })
+         fetch(`api/website/database.php?${new URLSearchParams({
+            type: 'validateSession',
+            partial_data: 'true'
+         })}`, {
+            method: 'GET'
          })
             .then(response => response.json())
             .then(data => {
                if (data.validated) {
+                  console.log(data);
                   if (data.active_party) {
                      globalThis.location.href = './dashboard.html';
                   } else {
