@@ -17,7 +17,7 @@ function pollingFunction() {
       .then(response => response.json())
       .then(data => {
          if (!data.validated) { return globalThis.location.href = './'; }
-         if (data.active_party) { return globalThis.location.href = './settings.html'; }
+         if (data.active_party) { return globalThis.location.href = './dashboard.html'; }
       })
       .catch(() => {
          return globalThis.location.href = './';
@@ -74,7 +74,7 @@ globalThis.addEventListener("load", () => {
          .then(data => {
             if (data.success) {
                event.target.reset();
-               return globalThis.location.href = `./settings.html`;
+               return globalThis.location.href = `./dashboard.html`;
             } else {
                loadingIcon.classList.add("hide");
             }

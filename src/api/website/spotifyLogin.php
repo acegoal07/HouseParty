@@ -70,7 +70,7 @@ class SpotifyLoginHandler
       curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
          'grant_type' => 'authorization_code',
          'code' => $_GET['code'],
-         'redirect_uri' => 'https://beta.acegoal07.dev/api/website/spotifyLogin.php',
+         'redirect_uri' => 'https://houseparty.acegoal07.dev/api/website/spotifyLogin.php',
          'client_id' => $this->spotifyClientId,
          'client_secret' => $this->spotifyClientSecret
       ]));
