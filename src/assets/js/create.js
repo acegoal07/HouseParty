@@ -8,7 +8,7 @@ let duplicateBlockerCheckbox;
 //////////////// Polling functions /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function pollingFunction() {
    // Check if the party exists, retrieve the required data and validate the user session
-   fetch(`api/website/database.php?${new URLSearchParams({
+   fetch(`api/v1/website/database.php?${new URLSearchParams({
       type: 'validateSession',
       partial_data: 'true'
    })}`, {
@@ -58,7 +58,7 @@ globalThis.addEventListener("load", () => {
       event.preventDefault();
       loadingIcon.classList.remove("hide");
 
-      fetch(`api/website/database.php`, {
+      fetch(`api/v1/website/database.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/json'

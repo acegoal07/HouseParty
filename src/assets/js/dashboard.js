@@ -28,7 +28,7 @@ let disableDuplicateBlockerButton;
 //////////////// Polling functions /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function pollingFunction() {
    // Check if the party exists, retrieve the required data and validate the user session
-   fetch(`api/website/database.php?${new URLSearchParams({
+   fetch(`api/v1/website/database.php?${new URLSearchParams({
       type: 'validateSession',
       party_data: true
    })}`, {
@@ -149,7 +149,7 @@ globalThis.addEventListener("load", () => {
    document.querySelector('form#extend-party-form').addEventListener('submit', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
-      fetch(`api/website/database.php`, {
+      fetch(`api/v1/website/database.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/json'
@@ -176,7 +176,7 @@ globalThis.addEventListener("load", () => {
    disableExplicitButton.addEventListener('click', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
-      fetch(`api/website/database.php`, {
+      fetch(`api/v1/website/database.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/json'
@@ -203,7 +203,7 @@ globalThis.addEventListener("load", () => {
    enableExplicitButton.addEventListener('click', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
-      fetch(`api/website/database.php`, {
+      fetch(`api/v1/website/database.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/json'
@@ -231,7 +231,7 @@ globalThis.addEventListener("load", () => {
    disableDuplicateBlockerButton.addEventListener('click', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
-      fetch(`api/website/database.php`, {
+      fetch(`api/v1/website/database.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/json'
@@ -258,7 +258,7 @@ globalThis.addEventListener("load", () => {
    enableDuplicateBlockerButton.addEventListener('click', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
-      fetch(`api/website/database.php`, {
+      fetch(`api/v1/website/database.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/json'
@@ -286,7 +286,7 @@ globalThis.addEventListener("load", () => {
    document.querySelector('button#confirm-generate-new-party-id-button').addEventListener('click', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
-      fetch(`api/website/database.php`, {
+      fetch(`api/v1/website/database.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/json'
@@ -311,7 +311,7 @@ globalThis.addEventListener("load", () => {
    document.querySelector('button#confirm-end-party-button').addEventListener('click', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
-      fetch(`api/website/database.php`, {
+      fetch(`api/v1/website/database.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/json'

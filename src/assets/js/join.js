@@ -6,7 +6,7 @@ let partyCodeInput;
 
 //////////////// Polling functions /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function pollingFunction() {
-   fetch(`api/website/database.php?${new URLSearchParams({ type: 'validateSession' })}`);
+   fetch(`api/v1/website/database.php?${new URLSearchParams({ type: 'validateSession' })}`);
 }
 
 function startPolling() {
@@ -55,7 +55,7 @@ globalThis.addEventListener('load', () => {
          return;
       }
 
-      fetch(`api/website/database.php?type=validateParty&party_id=${encodeURIComponent(partyCode)}`, {
+      fetch(`api/v1/website/database.php?type=validateParty&party_id=${encodeURIComponent(partyCode)}`, {
          method: 'GET'
       })
          .then(response => response.json())

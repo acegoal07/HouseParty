@@ -9,7 +9,7 @@ function pollingFunction() {
    const urlParams = new URLSearchParams({
       type: 'validateSession'
    });
-   fetch(`api/website/database.php?${urlParams}`)
+   fetch(`api/v1/website/database.php?${urlParams}`)
       .then((response) => response.json())
       .then((data) => {
          if (data.validated) {
@@ -56,7 +56,7 @@ globalThis.addEventListener('load', async () => {
    document.querySelector('button#party-manager-button').addEventListener('click', () => {
       if (loggedIn) {
          loadingIcon.classList.remove('hide');
-         fetch(`api/website/database.php?${new URLSearchParams({
+         fetch(`api/v1/website/database.php?${new URLSearchParams({
             type: 'validateSession',
             partial_data: 'true'
          })}`, {
@@ -81,7 +81,7 @@ globalThis.addEventListener('load', async () => {
          globalThis.location.href = `https://accounts.spotify.com/authorize?${new URLSearchParams({
             client_id: '67fa8a1f5eec455495394d8429fede37',
             response_type: 'code',
-            redirect_uri: 'https://houseparty.acegoal07.dev/api/website/spotifyLogin.php',
+            redirect_uri: 'https://houseparty.acegoal07.dev/api/v1/website/spotifyLogin.php',
             scope: 'user-read-playback-state user-modify-playback-state user-read-currently-playing user-read-private user-read-email',
             show_dialog: true
          })}`;
@@ -91,7 +91,7 @@ globalThis.addEventListener('load', async () => {
    //////////////// Logout button //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    logoutButton.addEventListener('click', () => {
       loadingIcon.classList.remove('hide');
-      fetch(`api/website/database.php`, {
+      fetch(`api/v1/website/database.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/json'

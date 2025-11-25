@@ -20,7 +20,7 @@ let explicitToggle;
 function addSongToQueue(event, song, artists) {
    if (event.type === 'click' || (event.type === 'keydown' && (event.key === 'Enter' || event.key === ' '))) {
       loadingIcon.classList.remove('hide');
-      fetch(`api/website/spotify.php`, {
+      fetch(`api/v1/website/spotify.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/json'
@@ -107,7 +107,7 @@ function search() {
       loadingIcon.classList.add('hide');
       return;
    }
-   fetch(`api/website/spotify.php?${new URLSearchParams({
+   fetch(`api/v1/website/spotify.php?${new URLSearchParams({
       type: 'searchSongByName',
       search_term: encodeURIComponent(searchTerm),
       party_id: partyId
@@ -252,7 +252,7 @@ function search() {
 
 //////////////// Polling functions /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function pollingFunction() {
-   fetch(`api/website/database.php?${new URLSearchParams({
+   fetch(`api/v1/website/database.php?${new URLSearchParams({
       type: 'validatePartyAndSession',
       party_id: partyId
    })}`, {
