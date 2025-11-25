@@ -150,7 +150,7 @@ class SpotifyLoginHandler
 
       cookieSet("session_id", $session_id, $expires_at);
 
-      header("Location: /dashboard.html");
+      header("Location: /create.html");
       exit();
    }
 }

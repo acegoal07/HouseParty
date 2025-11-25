@@ -7,11 +7,9 @@ class ModalHandler {
     * Initialize event listeners
     */
    _init() {
-      window.addEventListener('load', () => {
-         this._setupOpeners();
-         this._setupClosers();
-         this._setupEvents();
-      });
+      this._setupOpeners();
+      this._setupClosers();
+      this._setupEvents();
    }
 
    /**

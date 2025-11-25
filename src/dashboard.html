@@ -3,38 +3,40 @@
 
 <head>
    <meta charset="utf-8">
-   <title>Dashboard</title>
+   <title>Settings</title>
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
    <link rel="stylesheet" type="text/css" media="screen" href="assets/css/style-min.css">
    <script src="assets/js/dashboard-min.js" defer></script>
 </head>
 
 <body>
-   <div class="loading-icon-container" id="loading-icon" aria-live="polite">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-label="Loading">
+   <!-- LOADING ICON -->
+   <div class="loading-container" id="loading-icon" aria-live="polite">
+      <svg class="loading-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-label="Loading">
          <path
             d="M304 48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zm0 416a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM48 304a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm464-48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM142.9 437A48 48 0 1 0 75 369.1 48 48 0 1 0 142.9 437zm0-294.2A48 48 0 1 0 75 75a48 48 0 1 0 67.9 67.9zM369.1 437A48 48 0 1 0 437 369.1 48 48 0 1 0 369.1 437z" />
       </svg>
    </div>
+   <!-- END PARTY MODAL -->
    <dialog class="modal-background" id="confirm-end-party-modal" aria-labelledby="end-party-title"
       aria-describedby="end-party-description">
       <div class="modal-body">
          <h1 id="end-party-title">End party</h1>
          <p id="end-party-description">Are you sure you want to end the party?</p>
-         <div class="btns">
+         <div class="btn-container mb-1">
             <button class="btn btn-primary" id="confirm-end-party-button" type="button"
                aria-label="Confirm End Party">Yes</button>
             <button class="btn btn-primary modal-closer" type="button" aria-label="Cancel End Party">No</button>
          </div>
       </div>
    </dialog>
+   <!-- GENERATE NEW PARTY ID MODAL -->
    <dialog class="modal-background" id="confirm-generate-new-party-id-modal"
       aria-labelledby="generate-new-party-id-title" aria-describedby="generate-new-party-id-description">
       <div class="modal-body">
          <h1 id="generate-new-party-id-title">Generate New Party ID</h1>
          <p id="generate-new-party-id-description">Are you sure you want to generate a new party ID?</p>
-         <div class="btns">
+         <div class="btn-container mb-1">
             <button class="btn btn-primary" id="confirm-generate-new-party-id-button" type="button"
                aria-label="Confirm Generate New Party ID">Yes</button>
             <button class="btn btn-primary modal-closer" type="button"
@@ -42,187 +44,181 @@
          </div>
       </div>
    </dialog>
-   <main>
-      <div class="hide" id="create-party">
-         <h1 class="logo">Create Party</h1>
-         <form id="party-creation-form">
-            <label for="party-duration" class="number-input">
-               <span>Party Duration (hours)</span>
-               <input id="party-duration" type="number" name="party-duration" title="Party Duration" minlength="1"
-                  maxlength="2" min="1" max="24" required value="4" />
-            </label>
-            <div class="checkbox-group">
-               <div class="custom-checkbox-container">
-                  <input type="checkbox" id="explicit-checkbox" name="explicitCheckbox">
-                  <label for="explicit-checkbox">Allow explicit content</label>
-               </div>
-               <div class="custom-checkbox-container">
-                  <input type="checkbox" id="duplicate-blocker-checkbox" name="duplicateCheckbox">
-                  <label for="duplicate-blocker-checkbox">Block duplicate songs</label>
-               </div>
-            </div>
-            <div class="btns">
-               <button class="btn btn-primary" type="submit" aria-label="Create Party">Create Party</button>
-               <a class="btn" href="./" aria-label="Go Back">Go Back</a>
-            </div>
-         </form>
+   <!-- HEADER -->
+   <header>
+      <h1 class="heading" aria-describedby="page-description">Settings</h1>
+      <p class="description" id="page-description">Adjust your party settings below</p>
+      <div class="expires-at-container">
+         <h2>Expires at</h2>
+         <div>
+            <div id="expires-at-time"></div>
+            <div id="expires-at-date"></div>
+         </div>
       </div>
-      <div class="hide" id="dashboard">
-         <h1 class="logo">Party Dashboard</h1>
-         <div class="expires-at-container">
-            <h2>Expires at</h2>
-            <div>
-               <div id="expires-at-time"></div>
-               <div id="expires-at-date"></div>
-            </div>
+   </header>
+   <!-- MAIN -->
+   <main>
+      <div class="collapsible-group">
+         <!-- INFORMATION DIVIDER -->
+         <div class="divider-container">
+            <h2 class="divider-text">Information</h2>
          </div>
-         <div class="collapsible-container">
-            <div class="divider-container">
-               <h2 class="divider-text">Information</h2>
+         <!-- HOW IT WORKS COLLAPSIBLE -->
+         <details class="collapsible-item">
+            <summary>How this works</summary>
+            <div class="collapsible-content">
+               <ol>
+                  <li>Open spotify, press play and then leave the app running in the background like usual</li>
+                  <li>Invite your friends to the session using the QR code, invite link or session code which can be
+                     found on
+                     the dashboard</li>
+                  <li>Then sit back and listen to the music you and your party adds to your queue</li>
+               </ol>
+               <p class="mb-0">Participants in the session can only add songs to the queue. Don't worry about songs
+                  being skipped
+                  or
+                  the
+                  music being paused those controls are reserved for the host in the spotify app only.</p>
             </div>
-            <div class="collapsible-item">
-               <button class="collapsible-header" type="button" aria-expanded="false"
-                  aria-controls="party-info-content">
-                  <span class="collapsible-icon"></span>
-                  <span class="collapsible-title">How this works</span>
-               </button>
-               <div class="collapsible-content">
-                  <ol>
-                     <li>Open spotify, press play and then leave the app running in the background like usual</li>
-                     <li>Invite your friends to the session using the QR code, invite link or session code which can be
-                        found on
-                        the dashboard</li>
-                     <li>Then sit back and listen to the music you and your party adds to your queue</li>
-                  </ol>
-                  <p>Participants in the session can only add songs to the queue. Don't worry about songs being skipped
-                     or
-                     the
-                     music being paused those controls are reserved for the host in the spotify app only.</p>
-               </div>
-            </div>
-            <div class="collapsible-item">
-               <button class="collapsible-header" type="button" aria-expanded="false"
-                  aria-controls="party-info-content">
-                  <span class="collapsible-icon"></span>
-                  <span class="collapsible-title">Party join info</span>
-               </button>
-               <div class="collapsible-content">
-                  <p>Bellow are different ways to invite people to join</p>
-                  <div class="party-code-container">
-                     <span id="party-code"></span>
-                     <button class="btn btn-primary click-to-copy-target" data-copy-target="party-code" type="button"
-                        aria-label="Copy Party Code">Copy</button>
-                  </div>
-                  <div id="party-qrcode"></div>
-                  <div class="btns">
-                     <button class="btn btn-primary click-to-copy" id="copy-party-url" type="button"
-                        aria-label="Copy URL">Copy
-                        URL</button>
-                     <button class="btn btn-primary click-to-share hide" id="share-party-url" data-share-title="House Party"
-                        data-share-text="Join my party on House Party!" type="button" aria-label="Share URL">Share
-                        URL</button>
+         </details>
+         <!-- PARTY JOIN INFO COLLAPSIBLE -->
+         <details class="collapsible-item">
+            <summary>Party join info</summary>
+            <div class="collapsible-content">
+               <p>Bellow are different ways to invite people to join</p>
+               <div class="field-with-actions mt-1">
+                  <div class="field-body">
+                     <code class="field-value" id="party-id"></code>
+                     <ul class="field-actions">
+                        <li class="field-action">
+                           <button class="click-to-copy-target" data-copy-target="party-id" type="button"
+                              aria-label="Copy Party ID">
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                                 <path
+                                    d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z" />
+                              </svg>
+                           </button>
+                        </li>
+                     </ul>
                   </div>
                </div>
-            </div>
-            <div class="divider-container">
-               <h2 class="divider-text">Settings</h2>
-            </div>
-            <div class="collapsible-item">
-               <button class="collapsible-header" type="button" aria-expanded="false"
-                  aria-controls="party-info-content">
-                  <span class="collapsible-icon"></span>
-                  <span class="collapsible-title">Extend party duration</span>
-               </button>
-               <div class="collapsible-content">
-                  <p>Enter how many hours you would like to extend the party</p>
-                  <form id="extend-party-form">
-                     <label for="extend-party-duration" class="number-input-secondary">
-                        <span>Party Duration (hours)</span>
-                        <input id="extend-party-duration" type="number" name="extend-party-duration"
-                           title="Extend Party Duration" minlength="1" maxlength="2" min="1" max="24" required
-                           value="4" />
-                     </label>
-                     <div class="btns">
-                        <button class="btn btn-primary" type="submit" aria-label="Extend Party">Extend Party</button>
-                     </div>
-                  </form>
-               </div>
-            </div>
-            <div class="collapsible-item">
-               <button class="collapsible-header" type="button" aria-expanded="false"
-                  aria-controls="party-info-content">
-                  <span class="collapsible-icon"></span>
-                  <span class="collapsible-title">Explicit content</span>
-               </button>
-               <div class="collapsible-content collapsed-content">
-                  <p>This setting is used to allow explicit content to be added to the queue</p>
-                  <div class="btns">
-                     <button class="btn btn-primary hide" type="button" id="enable-explicit-content"
-                        aria-label="Enable Explicit Content">Enable</button>
-                     <button class="btn btn-primary hide" type="button" id="disable-explicit-content"
-                        aria-label="Disable Explicit Content">Disable</button>
+               <div class="field-with-actions mt-1">
+                  <div class="field-body">
+                     <a class="field-value" target="_blank" rel="noopener" id="party-url-link">
+                        <code id="party-url"></code>
+                     </a>
+                     <ul class="field-actions">
+                        <li class="field-action">
+                           <button id="party-url-link-share" type="button" class="click-to-share hide"
+                              data-share-title="House Party" data-share-text="Join my party on House Party!"
+                              aria-label="Share Party URL">
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                                 <path
+                                    d="M3.5 6a.5.5 0 0 0-.5.5v8a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-8a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 1 0-1h2A1.5 1.5 0 0 1 14 6.5v8a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 14.5v-8A1.5 1.5 0 0 1 3.5 5h2a.5.5 0 0 1 0 1z" />
+                                 <path
+                                    d="M7.646.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 1.707V10.5a.5.5 0 0 1-1 0V1.707L5.354 3.854a.5.5 0 1 1-.708-.708z" />
+                              </svg>
+                           </button>
+                        </li>
+                        <li class="field-action">
+                           <button class="click-to-copy-target" data-copy-target="party-url" type="button"
+                              aria-label="Copy Party Code">
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                                 <path
+                                    d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z" />
+                              </svg>
+                           </button>
+                        </li>
+                     </ul>
                   </div>
                </div>
+               <div id="party-qrcode" class="qr-code-container mt-1"></div>
             </div>
-            <div class="collapsible-item">
-               <button class="collapsible-header" type="button" aria-expanded="false"
-                  aria-controls="party-info-content">
-                  <span class="collapsible-icon"></span>
-                  <span class="collapsible-title">Duplicate blocker</span>
-               </button>
-               <div class="collapsible-content">
-                  <p>This setting is used to prevent the same song from being added to the queue multiple times</p>
-                  <div class="btns">
-                     <button class="btn btn-primary hide" type="button" id="enable-duplicate-blocker"
-                        aria-label="Enable Duplicate Blocker">Enable</button>
-                     <button class="btn btn-primary hide" type="button" id="disable-duplicate-blocker"
-                        aria-label="Disable Duplicate Blocker">Disable</button>
-                  </div>
-               </div>
-            </div>
-            <div class="divider-container">
-               <h2 class="divider-text">Management</h2>
-            </div>
-            <div class="collapsible-item">
-               <button class="collapsible-header" type="button" aria-expanded="false"
-                  aria-controls="party-info-content">
-                  <span class="collapsible-icon"></span>
-                  <span class="collapsible-title">New party ID</span>
-               </button>
-
-               <div class="collapsible-content">
-                  <p>Generating a new party ID will kick everyone out. They'll need to use the new join code to get back
-                     in</p>
-                  <div class="btns">
-                     <button class="btn btn-primary modal-opener"
-                        data-modal-target="confirm-generate-new-party-id-modal" type="button"
-                        aria-label="Generate New Party ID">Generate New Party ID</button>
-                  </div>
-               </div>
-            </div>
-            <div class="collapsible-item">
-               <button class="collapsible-header" type="button" aria-expanded="false"
-                  aria-controls="party-info-content">
-                  <span class="collapsible-icon"></span>
-                  <span class="collapsible-title">End Party</span>
-               </button>
-               <div class="collapsible-content">
-                  <p>This will end the party and close the session stopping anyone from using the party to edit your
-                     queue
-                  </p>
-                  <div class="btns">
-                     <button class="btn btn-primary modal-opener" data-modal-target="confirm-end-party-modal"
-                        type="button" aria-label="End Party">End
-                        party</button>
-                  </div>
-               </div>
-            </div>
+         </details>
+         <!-- SETTINGS DIVIDER -->
+         <div class="divider-container">
+            <h2 class="divider-text">Settings</h2>
          </div>
-         <div class="btns">
-            <a class="btn" href="./" aria-label="Go Back">Go Back</a>
+         <!-- EXTEND PARTY DURATION COLLAPSIBLE -->
+         <details class="collapsible-item">
+            <summary>Extend party duration</summary>
+            <div class="collapsible-content">
+               <p>Enter how many hours you would like to extend the party</p>
+               <form id="extend-party-form" class="form-container">
+                  <div class="input-label-container">
+                     <label class="input-label" for="party-extension">Party Extension (hours)</label>
+                     <input id="party-extension" class="short-input input-secondary" type="number" name="party-extension"
+                        title="Party Extension (hours)" minlength="1" maxlength="2" min="1" max="24" required value="4" />
+                  </div>
+                  <div class="btn-container">
+                     <button class="btn btn-primary" type="submit" aria-label="Extend Party">Extend Party</button>
+                  </div>
+               </form>
+            </div>
+         </details>
+         <!-- EXPLICIT CONTENT COLLAPSIBLE -->
+         <details class="collapsible-item">
+            <summary>Explicit content</summary>
+            <div class="collapsible-content">
+               <p>This setting is used to allow explicit content to be added to the queue</p>
+               <div class="btn-container mt-1">
+                  <button class="btn btn-primary hide" type="button" id="enable-explicit-content"
+                     aria-label="Enable Explicit Content">Enable</button>
+                  <button class="btn btn-primary hide" type="button" id="disable-explicit-content"
+                     aria-label="Disable Explicit Content">Disable</button>
+               </div>
+            </div>
+         </details>
+         <!-- DUPLICATE BLOCKER COLLAPSIBLE -->
+         <details class="collapsible-item">
+            <summary>Duplicate blocker</summary>
+            <div class="collapsible-content">
+               <p>This setting is used to prevent the same song from being added to the queue multiple times</p>
+               <div class="btn-container mt-1">
+                  <button class="btn btn-primary hide" type="button" id="enable-duplicate-blocker"
+                     aria-label="Enable Duplicate Blocker">Enable</button>
+                  <button class="btn btn-primary hide" type="button" id="disable-duplicate-blocker"
+                     aria-label="Disable Duplicate Blocker">Disable</button>
+               </div>
+            </div>
+         </details>
+         <!-- MANAGEMENT DIVIDER -->
+         <div class="divider-container">
+            <h2 class="divider-text">Management</h2>
+         </div>
+         <!-- NEW PARTY ID COLLAPSIBLE -->
+         <details class="collapsible-item">
+            <summary>New party ID</summary>
+            <div class="collapsible-content">
+               <p>Generating a new party ID will kick everyone out. They'll need to use the new join code to get back
+                  in
+               </p>
+               <div class="btn-container mt-1">
+                  <button class="btn btn-primary modal-opener" data-modal-target="confirm-generate-new-party-id-modal"
+                     type="button" aria-label="Generate">Generate</button>
+               </div>
+            </div>
+         </details>
+         <!-- END PARTY COLLAPSIBLE -->
+         <details class="collapsible-item">
+            <summary>End Party</summary>
+            <div class="collapsible-content">
+               <p>This will end the party and close the session stopping anyone from using the party to edit your
+                  queue
+               </p>
+               <div class="btn-container mt-1">
+                  <button class="btn btn-primary modal-opener" data-modal-target="confirm-end-party-modal" type="button"
+                     aria-label="End Party">End
+                     party</button>
+               </div>
+            </div>
+         </details>
+         <div class="btn-container">
+            <a class="btn" href="./" aria-label="Go Back to Dashboard">Go Back</a>
          </div>
       </div>
    </main>
+   <!-- FOOTER -->
    <footer>
       <p>Developed by <a href="https://acegoal07.dev" rel="noopener" target="_blank">acegoal07</a> powered by <a
             href="https://developer.spotify.com/documentation/web-api/" rel="noopener" target="_blank">Spotify</a>

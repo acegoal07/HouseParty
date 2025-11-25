@@ -11,11 +11,10 @@ a {
       text-decoration: underline;
    }
 
-   &:visited {
-      color: variables.$color-primary;
-   }
-
-   &:active {
-      color: variables.$color-primary-hover;
+   &:focus {
+      border-radius: variables.$border-radius;
+      outline: 2px solid variables.$color-focus;
+      outline-offset: 2px;
+      text-decoration: underline;
    }
 }

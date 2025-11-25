@@ -2,16 +2,19 @@ class CollapsibleHandler {
    collapsible = null;
 
    constructor() {
-      this._setupCollapsibleItems();
+      this._init();
    }
 
    /**
-    * Setup event listeners for collapsible items
+    * Initializes collapsible items by setting their state and adding event listeners.
+    * @returns {void}
     */
-   _setupCollapsibleItems() {
-      for (const item of document.querySelectorAll('.collapsible-item')) {
-         if (item.classList.contains('open')) { this.open(item); }
+   _init() {
+      for (const item of document.querySelectorAll('details.collapsible-item')) {
+         if (item.hasAttribute('open')) { this.open(item); }
+         item.setAttribute('aria-expanded', item.hasAttribute('open') ? 'true' : 'false');
          item.addEventListener('click', (event) => {
+            event.preventDefault();
             if (event.target.closest('.collapsible-content')) { return; }
             if (this.collapsible === item) {
                this.close();
@@ -24,34 +27,34 @@ class CollapsibleHandler {
    }
 
    /**
-    * Opens a collapsible item.
-    * @param {Element} target The collapsible to open
+    * Opens the specified collapsible element.
+    * @param {HTMLElement} target The collapsible element
     * @returns {void}
     */
    open(target) {
       if (target === this.collapsible) { return; }
-      target.querySelector('.collapsible-header')?.setAttribute('aria-expanded', 'true');
-      target.classList.add('open');
+      target.setAttribute('aria-expanded', 'true');
+      target.open = true;
       const content = target.querySelector('.collapsible-content');
       content.style.setProperty('--content-height', `${content.scrollHeight}px`);
       this.collapsible = target;
    }
 
    /**
-    * Closes the currently open collapsible item.
+    * Closes the currently open collapsible element.
     * @returns {void}
     */
    close() {
       if (!this.collapsible) { return; }
       const target = this.collapsible;
-      target.classList.remove('open');
+      target.setAttribute('aria-expanded', 'false');
       target.classList.add('closing');
       setTimeout(() => {
+         target.open = false;
          target.classList.remove('closing');
+         const content = target.querySelector('.collapsible-content');
+         content.style.removeProperty('--content-height');
       }, 500);
-      const targetContent = target.querySelector('.collapsible-content');
-      targetContent.style.setProperty('--content-height', `${targetContent.scrollHeight}px`);
-      target.querySelector('.collapsible-header')?.setAttribute('aria-expanded', 'false');
       this.collapsible = null;
    }
 }

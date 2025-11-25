@@ -5,40 +5,43 @@
    <meta charset="utf-8">
    <title>Party</title>
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
    <link rel="stylesheet" type="text/css" media="screen" href="assets/css/style-min.css">
    <script src="assets/js/party-min.js" defer></script>
 </head>
 
 <body>
-   <div class="loading-icon-container" id="loading-icon" aria-live="polite">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-label="Loading">
+   <!-- LOADING ICON -->
+   <div class="loading-container" id="loading-icon" aria-live="polite">
+      <svg class="loading-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-label="Loading">
          <path
             d="M304 48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zm0 416a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM48 304a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm464-48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM142.9 437A48 48 0 1 0 75 369.1 48 48 0 1 0 142.9 437zm0-294.2A48 48 0 1 0 75 75a48 48 0 1 0 67.9 67.9zM369.1 437A48 48 0 1 0 437 369.1 48 48 0 1 0 369.1 437z" />
       </svg>
    </div>
+   <!-- SONG ADDED TO QUEUE SUCCESSFULLY MODAL -->
    <dialog class="modal-background" id="add-to-queue-successfully-modal"
       aria-labelledby="add-to-queue-successfully-title" aria-describedby="add-to-queue-successfully-description">
       <div class="modal-body">
          <h1 id="add-to-queue-successfully-title">Song added to queue</h1>
          <p id="add-to-queue-successfully-description"><span class="special-text"
                id="add-queue-successfully-song-name"></span> has been added to the song queue</p>
-         <div class="btns">
+         <div class="btn-container mb-1">
             <button class="btn btn-primary modal-closer" type="button" aria-label="Close">Ok</button>
          </div>
       </div>
    </dialog>
+   <!-- FAILED TO ADD SONG MODAL -->
    <dialog class="modal-background" id="add-to-queue-failed-modal" aria-labelledby="add-to-queue-failed-title"
       aria-describedby="add-to-queue-failed-description">
       <div class="modal-body">
          <h1 id="add-to-queue-failed-title">Failed to add song</h1>
          <p id="add-to-queue-failed-description">Whoops something went wrong please try again!</p>
-         <div class="btns">
+         <div class="btn-container mb-1">
             <button class="btn btn-primary modal-closer" type="button" aria-label="I'll try again">I'll try
                again</button>
          </div>
       </div>
    </dialog>
+   <!-- DUPLICATE SONG MODAL-->
    <dialog class="modal-background" id="add-to-queue-duplicate-modal" aria-labelledby="add-to-queue-duplicate-title"
       aria-describedby="add-to-queue-duplicate-description">
       <div class="modal-body">
@@ -46,93 +49,142 @@
          <p id="add-to-queue-duplicate-description"><span class="special-text"
                id="add-queue-duplicate-song-name"></span> is already in the queue and duplicate songs are not allowed in
             this queue</p>
-         <div class="btns">
+         <div class="btn-container mb-1">
             <button class="btn btn-primary modal-closer" type="button" aria-label="I'll waitWait">I'll wait</button>
          </div>
       </div>
    </dialog>
+   <!-- MUSIC NOT PLAYING MODAL -->
    <dialog class="modal-background" id="add-to-queue-not-playing-modal" aria-labelledby="add-to-queue-not-playing-title"
       aria-describedby="add-to-queue-not-playing-description">
       <div class="modal-body">
          <h1 id="add-to-queue-not-playing-title">Music not playing</h1>
          <p id="add-to-queue-not-playing-description">It appears that the queue you are trying to add songs to isn't
             playing. Tell the host to start playing music so you can add songs.</p>
-         <div class="btns">
+         <div class="btn-container mb-1">
             <button class="btn btn-primary modal-closer" type="button" aria-label="I'll tell the
                host">I'll tell the
                host</button>
          </div>
       </div>
    </dialog>
+   <!-- TOO MANY REQUESTS MODAL -->
    <dialog class="modal-background" id="too-many-requests-modal" aria-labelledby="too-many-requests-title">
       <div class="modal-body">
          <h1 id="too-many-requests-title">Request limit</h1>
          <p id="too-many-requests-description">Unfortunately the request limit has been reached please wait a couple
             minutes and try again</p>
-         <div class="btns">
+         <div class="btn-container mb-1">
             <button class="btn btn-primary modal-closer" type="button" aria-label="Ok will do">Ok will do</button>
          </div>
       </div>
    </dialog>
+   <!-- EXPLICIT CONTENT BLOCKED MODAL -->
    <dialog class="modal-background" id="add-to-queue-explicit-blocked-modal"
       aria-labelledby="add-to-queue-explicit-blocked-title">
       <div class="modal-body">
          <h1 id="add-to-queue-explicit-blocked-title">explicit content blocked</h1>
          <p id="add-to-queue-explicit-blocked-description">You are trying to add a explicit song to a queue where they
             are blocked</p>
-         <div class="btns">
+         <div class="btn-container mb-1">
             <button class="btn btn-primary modal-closer" type="button" aria-label="Oh sorry">Oh sorry</button>
          </div>
       </div>
    </dialog>
+   <!-- MAIN -->
    <main>
-      <div class="btns">
+      <!-- NAVIGATION -->
+      <div class="btn-container">
          <a class="btn" href="./" aria-label="Go Back">Go Back</a>
       </div>
-      <div class="collapsible-container">
-         <div class="collapsible-item">
-            <button class="collapsible-header" type="button" aria-expanded="false" aria-controls="party-info-content">
-               <span class="collapsible-icon"></span>
-               <span class="collapsible-title">Party join info</span>
-            </button>
-            <div class="collapsible-content collapsed-content">
-               <p>Bellow are different ways to invite people to join</p>
-               <div class="party-code-container">
-                  <span id="party-code"></span>
-                  <button class="btn btn-primary click-to-copy-target" data-copy-target="party-code" type="button"
-                     aria-label="Copy Party Code">Copy</button>
-               </div>
-               <div id="party-qrcode"></div>
-               <div class="btns">
-                  <button class="btn btn-primary click-to-copy" id="copy-party-url" type="button"
-                     aria-label="Copy URL">Copy URL</button>
-                  <button class="btn btn-primary click-to-share hide" id="share-party-url"
-                     data-share-title="House Party" data-share-text="Join my party on House Party!" type="button"
-                     aria-label="Share URL">Share URL</button>
+      <!-- JOIN INFO COLLAPSIBLE -->
+      <details class="collapsible-item mt-1">
+         <summary>Party join info</summary>
+         <div class="collapsible-content">
+            <p>Bellow are different ways to invite people to join</p>
+            <!-- JOIN CODE FIELD WITH ACTION -->
+            <div class="field-with-actions mt-1">
+               <div class="field-body">
+                  <code class="field-value" id="party-id"></code>
+                  <ul class="field-actions">
+                     <li class="field-action">
+                        <button class="click-to-copy-target" data-copy-target="party-id" type="button"
+                           aria-label="Copy Party ID">
+                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                              <path
+                                 d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z" />
+                           </svg>
+                        </button>
+                     </li>
+                  </ul>
                </div>
             </div>
+            <!-- URL FIELD WITH ACTION -->
+            <div class="field-with-actions mt-1">
+               <div class="field-body">
+                  <a class="field-value" target="_blank" rel="noopener" id="party-url-link">
+                     <code id="party-url"></code>
+                  </a>
+                  <ul class="field-actions">
+                     <li class="field-action">
+                        <button type="button" class="click-to-share hide" data-share-title="House Party"
+                           data-share-text="Join my party on House Party!" aria-label="Share Party URL"
+                           id="share-party-url">
+                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                              <path
+                                 d="M3.5 6a.5.5 0 0 0-.5.5v8a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-8a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 1 0-1h2A1.5 1.5 0 0 1 14 6.5v8a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 14.5v-8A1.5 1.5 0 0 1 3.5 5h2a.5.5 0 0 1 0 1z" />
+                              <path
+                                 d="M7.646.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 1.707V10.5a.5.5 0 0 1-1 0V1.707L5.354 3.854a.5.5 0 1 1-.708-.708z" />
+                           </svg>
+                        </button>
+                     </li>
+                     <li class="field-action">
+                        <button class="click-to-copy-target" data-copy-target="party-url" type="button"
+                           aria-label="Copy Party Code">
+                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                              <path
+                                 d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z" />
+                           </svg>
+                        </button>
+                     </li>
+                  </ul>
+               </div>
+            </div>
+            <!-- QR CODE -->
+            <div id="party-qrcode" class="qr-code-container mt-1"></div>
          </div>
-      </div>
-      <form id="search-song-form" class="search-container">
-         <input type="text" placeholder="Search..." aria-label="Search Songs">
-         <button type="submit" aria-label="Search">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-hidden="true">
-               <path
-                  d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
-            </svg>
-         </button>
+      </details>
+      <!-- SEARCH FORM -->
+      <form id="search-songs-form" class="form-container mt-1" aria-label="Search Songs Form">
+         <div class="field-with-actions">
+            <div class="field-body secondary">
+               <input class="field-value" type="text" placeholder="Search..." aria-label="Search Songs">
+               <ul class="field-actions">
+                  <li class="field-action">
+                     <button type="submit" aria-label="Search">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-hidden="true">
+                           <path
+                              d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+                        </svg>
+                     </button>
+                  </li>
+               </ul>
+            </div>
+         </div>
       </form>
-      <div id="search-results-container">
-         <span id="no-results" class="hide">No Results Found</span>
-         <div id="search-results"></div>
-         <button class="hide" id="back-to-top" type="button" aria-label="Back to top">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-               <path
-                  d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0m-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707z" />
-            </svg>
-         </button>
-      </div>
+      <!-- NO RESULTS -->
+      <span id="no-results" class="hide mt-1">No Results Found</span>
+      <!-- SEARCH RESULTS -->
+      <div id="search-results" class="search-results-container"></div>
+      <!-- BACK TO TOP BUTTON -->
+      <button id="back-to-top" class="hide back-to-top" type="button" aria-label="Back to top">
+         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+            <path
+               d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0m-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707z" />
+         </svg>
+      </button>
    </main>
+   <!-- FOOTER -->
    <footer>
       <p>Developed by <a href="https://acegoal07.dev" rel="noopener" target="_blank">acegoal07</a> powered by <a
             href="https://developer.spotify.com/documentation/web-api/" rel="noopener" target="_blank">Spotify</a>

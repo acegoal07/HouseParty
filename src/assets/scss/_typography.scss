@@ -1,49 +1,11 @@
 @use 'variables';
 
-// HEADINGS
-h1.logo {
-   font-size: 4.5rem;
-   color: variables.$color-primary;
-   margin: 0;
-   text-align: center;
-
-   @media (max-width: 600px) {
-      display: flex;
-      flex-direction: column;
-      font-size: 3.5rem;
-      line-height: 3.5rem;
-   }
-}
-
-h2.description {
-   font-size: 1.5rem;
-   margin: 0.625rem 0 1.25rem 0;
-   text-align: center;
-
-   @media (max-width: 600px) {
-      font-size: 1.3rem;
-      margin-bottom: 0.9375rem;
-   }
-}
-
-// PARAGRAPHS
-p {
-   font-size: 1.2rem;
-
-   @media (max-width: 600px) {
-      font-size: 1rem;
-   }
-}
-
 // LISTS
 ol {
-   padding-left: 1rem;
-   margin: 1rem 0;
-   font-family: 'Roboto', sans-serif;
+   padding-left: 1.5rem;
 
    li {
       margin-bottom: 0.5rem;
-      line-height: 1.5;
 
       &::marker {
          color: variables.$color-primary;
