@@ -144,11 +144,11 @@
             <summary>Extend party duration</summary>
             <div class="collapsible-content">
                <p>Enter how many hours you would like to extend the party</p>
-               <form id="extend-party-form" class="form-container">
+               <form id="extend-party-form" class="form-container" action="javascript:void(0);">
                   <div class="input-label-container">
                      <label class="input-label" for="party-extension">Party Extension (hours)</label>
-                     <input id="party-extension" class="short-input input-secondary" type="number" name="party-extension"
-                        title="Party Extension (hours)" minlength="1" maxlength="2" min="1" max="24" required value="4" />
+                     <input id="party-extension" class="short-input input-secondary" type="number"
+                        name="party-extension" title="Party Extension (hours)" min="1" max="24" value="4" required />
                   </div>
                   <div class="btn-container">
                      <button class="btn btn-primary" type="submit" aria-label="Extend Party">Extend Party</button>

@@ -1,6 +1,6 @@
 <?php
 include __DIR__ . '/../secrets.php';
-include __DIR__ . '/cookieHandler.php';
+include_once __DIR__ . '/cookieManager.php';
 
 // Only allow CLI or cron execution
 if (php_sapi_name() !== 'cli' && realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE__) {
@@ -109,7 +109,7 @@ function validateSession($conn, $session_id, $host_id = false)
  * Validates the session and retrieves associated party information
  * @param mysqli $conn The MySQLi connection
  * @param string $session_id The session ID to validate
- * @return array{validated:bool, active_party:bool, party:array|null} Tuple [validated, extended, active_party, parties]
+ * @return array{validated:bool, active_party:bool, party:array|null} Tuple [validated, extended, active_party, party]
  */
 function validateSessionGetInfo($conn, $session_id)
 {
@@ -129,30 +129,4 @@ function validateSessionGetInfo($conn, $session_id)
 
    $hasParty = $row !== null && $row !== false;
    return ['validated' => true, 'host_id' => $validation['host_id'], 'active_party' => $hasParty, 'party' => $hasParty ? $row : null];
-}
-
-/**
- * Validates the session and checks for an active party
- * @param mysqli $conn The MySQLi connection
- * @param string $session_id The session ID to validate
- * @return array{validated:bool, active_party:bool} Tuple [validated, active_party]
- */
-function validateSessionGetPartialInfo($conn, $session_id)
-{
-   $validation = validateSession($conn, $session_id, true);
-   if (!$validation['validated']) {
-      cookieDelete('session_id');
-      return $validation;
-   }
-
-   // Check for any party associated with this host by session — only fetch one row
-   $stmt = $conn->prepare("SELECT p.party_id FROM parties p JOIN sessions s ON p.host_id = s.host_id WHERE s.session_id = ? COLLATE latin1_bin LIMIT 1");
-   $stmt->bind_param("s", $session_id);
-   $stmt->execute();
-   $results = $stmt->get_result();
-   $row = $results->fetch_assoc();
-   $stmt->close();
-
-   $hasParty = $row !== null && $row !== false;
-   return ['validated' => true, 'active_party' => $hasParty];
 }

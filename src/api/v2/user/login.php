@@ -1,7 +1,6 @@
 <?php
-include '../secrets.php';
-include '../util/session.php';
-include '../util/cookie.php';
+include __DIR__ . '/../secrets.php';
+include __DIR__ . '/../util/sessionManager.php';
 header("Access-Control-Allow-Origin: {$allowedDomain}");
 header("Access-Control-Allow-Methods: GET");
 
@@ -70,7 +69,7 @@ class SpotifyLoginHandler
       curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
          'grant_type' => 'authorization_code',
          'code' => $_GET['code'],
-         'redirect_uri' => 'https://houseparty.acegoal07.dev/api/website/spotifyLogin.php',
+         'redirect_uri' => 'https://houseparty.acegoal07.dev/api/v2/user/login.php',
          'client_id' => $this->spotifyClientId,
          'client_secret' => $this->spotifyClientSecret
       ]));

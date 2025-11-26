@@ -1,9 +1,14 @@
 <?php
 include __DIR__ . '/../secrets.php';
 
+// Only allow CLI or cron execution
+if (php_sapi_name() !== 'cli' && realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE__) {
+   http_response_code(403);
+   exit();
+}
+
 /**
  * Parse input based on request method and content type and return sanitized data.
- *
  * @param mixed|null $conn Optional DB connection (e.g. mysqli) used for escaping.
  * @return mixed|null Sanitized input data, or null on error (e.g. invalid JSON).
  */
@@ -41,7 +46,6 @@ function parseInput($conn = null)
 
 /**
  * Sanitize input data
- *
  * @param mixed $data The input data
  * @param mixed|null $conn Optional DB connection (e.g. mysqli) used for real_escape_string
  * @return mixed The sanitized data

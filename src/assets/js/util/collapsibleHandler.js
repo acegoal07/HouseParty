@@ -14,8 +14,8 @@ class CollapsibleHandler {
          if (item.hasAttribute('open')) { this.open(item); }
          item.setAttribute('aria-expanded', item.hasAttribute('open') ? 'true' : 'false');
          item.addEventListener('click', (event) => {
+            if (event.target.tagName.toLowerCase() !== 'summary') { return; }
             event.preventDefault();
-            if (event.target.closest('.collapsible-content')) { return; }
             if (this.collapsible === item) {
                this.close();
             } else {
