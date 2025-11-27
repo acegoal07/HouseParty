@@ -1,59 +1,43 @@
-//////////////// Variables /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Initialize variables
 let loadingIcon;
-let pollingInterval;
 let partyDurationInput;
 let explicitCheckbox;
 let duplicateBlockerCheckbox;
 
-//////////////// Polling functions /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function pollingFunction() {
-   // Check if the party exists, retrieve the required data and validate the user session
-   fetch(`api/v1/website/database.php?${new URLSearchParams({
-      type: 'validateSession',
-      partial_data: 'true'
-   })}`, {
-      method: 'GET'
-   })
-      .then(response => response.json())
-      .then(data => {
-         if (!data.validated) { return globalThis.location.href = './'; }
-         if (data.active_party) { return globalThis.location.href = './dashboard.html'; }
-      })
-      .catch(() => {
-         return globalThis.location.href = './';
-      });
-}
+// Set up EventSource listeners 
+const eventSource = new EventSource('api/v2/user/sse/sessionInfo.php?datalevel=minimal', { withCredentials: true });
 
-function startPolling() {
-   pollingFunction();
-   pollingInterval = setInterval(pollingFunction, 1000);
-}
+eventSource.addEventListener('init', event => {
+   const data = JSON.parse(event.data);
+   if (data.active_party) {
+      return globalThis.location.href = './dashboard.html';
+   }
+   loadingIcon.classList.add('hide');
+});
 
-function stopPolling() {
-   clearInterval(pollingInterval);
-}
+eventSource.addEventListener('partyStatusChange', event => {
+   const data = JSON.parse(event.data);
+   if (data.active_party) {
+      return globalThis.location.href = './dashboard.html';
+   }
+});
 
-//////////////// Main Body /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-globalThis.addEventListener("load", () => {
-   //////////////// Set variables //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+eventSource.addEventListener('invalidSessionId', () => {
+   return globalThis.location.href = './';
+});
+
+eventSource.addEventListener('noSessionId', () => {
+   return globalThis.location.href = './';
+});
+
+globalThis.addEventListener('load', () => {
+   // Get DOM elements
    loadingIcon = document.getElementById("loading-icon");
    partyDurationInput = document.getElementById("party-duration");
    explicitCheckbox = document.getElementById("explicit-checkbox");
    duplicateBlockerCheckbox = document.getElementById("duplicate-blocker-checkbox");
 
-   //////////////// Page polling ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   startPolling();
-
-   /////////////// Stop Polling while off the page /////////////////////////////////////////////////////////////////////////////////////////////////
-   document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-         stopPolling();
-      } else {
-         startPolling();
-      }
-   });
-
-   //////////////// Create party form //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Handle Create Party Form submission
    document.querySelector("form#create-party").addEventListener("submit", (event) => {
       event.preventDefault();
       loadingIcon.classList.remove("hide");
@@ -83,7 +67,4 @@ globalThis.addEventListener("load", () => {
             console.error('Create Party Error:', error);
          });
    });
-
-   //////////////// Hide loading icon //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   loadingIcon.classList.add("hide");
 });

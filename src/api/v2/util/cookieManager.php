@@ -43,7 +43,7 @@ function cookieDelete($name)
  */
 function cookieGet($name)
 {
-   return $_COOKIE[$name] ?? null;
+   return $_COOKIE[$name] ?? '';
 }
 
 /**

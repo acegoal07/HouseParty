@@ -3,20 +3,23 @@ include __DIR__ . '/../secrets.php';
 include __DIR__ . '/../util/sessionManager.php';
 include_once __DIR__ . '/../util/cookieManager.php';
 include __DIR__ . '/../util/checkOrigin.php';
+include __DIR__ . '/../util/parseInput.php';
 header("Access-Control-Allow-Origin: {$allowedDomain}");
-header("Access-Control-Allow-Methods: GET, OPTIONS");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json");
 
-class HasParty
+class UpdateDuplicateBlocker
 {
    private $conn;
+   private $input;
 
    public function __construct()
    {
       $this->conn = $GLOBALS['conn'];
       checkOrigin();
+      $this->input = parseInput();
    }
 
    public function __destruct()
@@ -30,16 +33,21 @@ class HasParty
 
       if (empty($sessionId)) {
          http_response_code(401);
-         echo json_encode(['success' => false, 'error' => 'Unauthorized: No session id provided']);
+         echo json_encode(['success' => false, 'error' => 'Unauthorized: No session token provided']);
          exit();
       }
 
-      $stmt = $this->conn->prepare("SELECT count(*) FROM parties p JOIN sessions s ON p.host_id = s.host_id WHERE s.session_id = ?");
-      $stmt->bind_param('s', $sessionId);
+      $duplicateBlocker = $this->input['duplicate_blocker'] ?? null;
+
+      if (!is_bool($duplicateBlocker)) {
+         http_response_code(400);
+         echo json_encode(['success' => false, 'error' => 'Bad Request: duplicate_blocker must be a boolean']);
+         exit();
+      }
+
+      $stmt = $this->conn->prepare("UPDATE parties p JOIN sessions s ON p.host_id = s.host_id SET p.duplicate_blocker = ? WHERE s.session_id = ?");
+      $stmt->bind_param('is', $duplicateBlocker, $sessionId);
       $stmt->execute();
-      $count = 0;
-      $stmt->bind_result($count);
-      $stmt->fetch();
 
       if ($stmt->error) {
          http_response_code(500);
@@ -50,10 +58,7 @@ class HasParty
       $stmt->close();
 
       http_response_code(200);
-      echo json_encode([
-         'success' => true,
-         'has_active_party' => $count > 0,
-      ]);
+      echo json_encode(['success' => true, 'message' => 'Duplicate blocker preference updated successfully']);
       exit();
    }
 }
@@ -63,11 +68,11 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
    exit();
 }
 
-if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
    http_response_code(405);
    echo json_encode(['success' => false, 'error' => 'Method not allowed']);
    exit();
 }
 
-$hasParty = new HasParty();
-$hasParty->handleRequest();
+$updateDuplicateBlocker = new UpdateDuplicateBlocker();
+$updateDuplicateBlocker->handleRequest();

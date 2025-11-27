@@ -27,18 +27,20 @@ class Logout
 
    public function handleRequest()
    {
-      if (empty($_COOKIE['session_id'] ?? '')) {
+      $sessionId = cookieGet('session_id');
+
+      if (empty($sessionId)) {
          http_response_code(401);
-         echo json_encode(['error' => 'Unauthorized: No session id provided']);
+         echo json_encode(['success' => false, 'error' => 'Unauthorized: No session id provided']);
          exit();
       }
 
-      deleteSession($this->conn, $_COOKIE['session_id']);
+      deleteSession($this->conn, $sessionId);
 
       cookieDelete('session_id');
 
       http_response_code(200);
-      echo json_encode(['message' => 'Successfully logged out']);
+      echo json_encode(['success' => true, 'message' => 'Successfully logged out']);
       exit();
    }
 }
@@ -50,7 +52,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
    http_response_code(405);
-   echo json_encode(['error' => 'Method not allowed']);
+   echo json_encode(['success' => false, 'error' => 'Method not allowed']);
    exit();
 }
 

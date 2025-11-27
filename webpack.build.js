@@ -9,8 +9,7 @@ module.exports = {
       join: './src/assets/js/join.js',
       loginerror: './src/assets/js/loginerror.js',
       party: './src/assets/js/party.js',
-      dashboard: './src/assets/js/dashboard.js',
-      dashboardnew: './src/assets/js/dashboardnew.js',
+      dashboard: './src/assets/js/dashboard.js'
    },
    output: {
       filename: '[name]-min.js',

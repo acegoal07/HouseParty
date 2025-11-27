@@ -1,15 +1,16 @@
-//////////////// Imports ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Imports
 import '@/assets/js/util/qrcode.js';
 import '@/assets/js/util/modalHandler.js';
 import '@/assets/js/util/collapsibleHandler.js';
 import '@/assets/js/util/clickToCopy.js';
 import '@/assets/js/util/clickToShare.js';
 
-//////////////// Variables /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Initialize variables
 let loadingIcon;
-let pollingInterval;
 
 let partyExpiresAt;
+let partyExpiresAtTime;
+let partyExpiresAtDate;
 
 let partyIdDisplay;
 let partyUrlLink;
@@ -25,99 +26,133 @@ let disableExplicitButton;
 let enableDuplicateBlockerButton;
 let disableDuplicateBlockerButton;
 
-//////////////// Polling functions /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function pollingFunction() {
-   // Check if the party exists, retrieve the required data and validate the user session
-   fetch(`api/v1/website/database.php?${new URLSearchParams({
-      type: 'validateSession',
-      party_data: true
-   })}`, {
-      method: 'GET'
-   })
-      .then(response => response.json())
-      .then(data => {
-         if (!data.validated) { return globalThis.location.href = './'; }
-         if (!data.active_party) { return globalThis.location.href = './create.html'; }
+// Set up EventSource listeners 
+const eventSource = new EventSource('api/v2/user/sse/sessionInfo.php?datalevel=full', { withCredentials: true });
 
-         if (data.party.party_id !== partyIdDisplay.textContent || qrCodeDisplay.childElementCount === 0) {
-            partyExpiresAt = data.party.expires_at;
-            updateTimestamp();
+eventSource.addEventListener('init', event => {
+   const data = JSON.parse(event.data);
+   if (!data.active_party) {
+      return globalThis.location.href = './create.html';
+   }
 
-            partyIdDisplay.textContent = data.party.party_id;
+   partyExpiresAt = data.party.party_expires_at;
+   updateTimestamp();
 
-            const partyUrl = `${globalThis.location.origin}/party.html?session_code=${encodeURIComponent(data.party.party_id)}`;
+   partyIdDisplay.textContent = data.party.party_id;
 
-            partyUrlDisplay.textContent = partyUrl;
-            partyUrlLink.href = partyUrl;
-            partyLinkClickToShare.dataset.shareUrl = partyUrl;
+   const partyUrl = `${globalThis.location.origin}/party.html?session_code=${encodeURIComponent(data.party.party_id)}`;
 
-            if (qrCodeDisplay.childElementCount > 0) {
-               qrCodeDisplay.removeChild(qrCodeDisplay.firstChild);
-            }
-            QrCreator.render({
-               text: `${partyUrl}`,
-               radius: 0.5,
-               ecLevel: 'H',
-               fill: '#fff',
-               size: 125
-            }, qrCodeDisplay);
-         }
+   partyUrlDisplay.textContent = partyUrl;
+   partyUrlLink.href = partyUrl;
+   partyLinkClickToShare.dataset.shareUrl = partyUrl;
 
-         // Update the party expiration time if it has changed
-         if (data.party.party_expires_at !== partyExpiresAt) {
-            partyExpiresAt = data.party.party_expires_at;
-            updateTimestamp();
-         }
+   QrCreator.render({
+      text: `${partyUrl}`,
+      radius: 0.5,
+      ecLevel: 'H',
+      fill: '#fff',
+      size: 125
+   }, qrCodeDisplay);
 
-         // Update explicit content button states
-         if (data.party.explicit) {
-            enableExplicitButton.classList.add('hide');
-            disableExplicitButton.classList.remove('hide');
-         } else {
-            disableExplicitButton.classList.add('hide');
-            enableExplicitButton.classList.remove('hide');
-         }
+   if (data.party.explicit) {
+      enableExplicitButton.classList.add('hide');
+      disableExplicitButton.classList.remove('hide');
+   } else {
+      disableExplicitButton.classList.add('hide');
+      enableExplicitButton.classList.remove('hide');
+   }
 
-         // Update duplicate blocker button states
-         if (data.party.duplicate_blocker) {
-            enableDuplicateBlockerButton.classList.add('hide');
-            disableDuplicateBlockerButton.classList.remove('hide');
-         } else {
-            disableDuplicateBlockerButton.classList.add('hide');
-            enableDuplicateBlockerButton.classList.remove('hide');
-         }
-      }).then(() => {
-         // Hide loading icon after first successful poll
-         if (!loadingIcon.classList.contains('hide')) {
-            loadingIcon.classList.add('hide');
-         }
-      })
-      .catch(() => {
-         return globalThis.location.href = './';
-      });
-}
+   if (data.party.duplicate_blocker) {
+      enableDuplicateBlockerButton.classList.add('hide');
+      disableDuplicateBlockerButton.classList.remove('hide');
+   } else {
+      disableDuplicateBlockerButton.classList.add('hide');
+      enableDuplicateBlockerButton.classList.remove('hide');
+   }
 
-function startPolling() {
-   pollingFunction();
-   pollingInterval = setInterval(pollingFunction, 1000);
-}
+   loadingIcon.classList.add('hide');
+});
 
-function stopPolling() {
-   clearInterval(pollingInterval);
-}
+eventSource.addEventListener('partyUpdate', event => {
+   const data = JSON.parse(event.data);
 
-//////////////// Update Timestamp //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   if (!data.party || !data.active_party) {
+      return globalThis.location.href = './create.html';
+   }
+
+   if (data.party.party_expires_at !== partyExpiresAt) {
+      partyExpiresAt = data.party.party_expires_at;
+      updateTimestamp();
+   }
+
+   if (data.party.party_id !== partyIdDisplay.textContent) {
+      partyIdDisplay.textContent = data.party.party_id;
+
+      const partyUrl = `${globalThis.location.origin}/party.html?session_code=${encodeURIComponent(data.party.party_id)}`;
+
+      partyUrlDisplay.textContent = partyUrl;
+      partyUrlLink.href = partyUrl;
+      partyLinkClickToShare.dataset.shareUrl = partyUrl;
+
+      qrCodeDisplay.removeChild(qrCodeDisplay.firstChild);
+
+      QrCreator.render({
+         text: `${partyUrl}`,
+         radius: 0.5,
+         ecLevel: 'H',
+         fill: '#fff',
+         size: 125
+      }, qrCodeDisplay);
+   }
+
+   if (data.party.explicit) {
+      enableExplicitButton.classList.add('hide');
+      disableExplicitButton.classList.remove('hide');
+   } else {
+      disableExplicitButton.classList.add('hide');
+      enableExplicitButton.classList.remove('hide');
+   }
+
+   if (data.party.duplicate_blocker) {
+      enableDuplicateBlockerButton.classList.add('hide');
+      disableDuplicateBlockerButton.classList.remove('hide');
+   } else {
+      disableDuplicateBlockerButton.classList.add('hide');
+      enableDuplicateBlockerButton.classList.remove('hide');
+   }
+
+   loadingIcon.classList.add('hide');
+});
+
+eventSource.addEventListener('partyStatusChange', event => {
+   const data = JSON.parse(event.data);
+   if (data.active_party) {
+      return globalThis.location.href = './create.html';
+   }
+});
+
+eventSource.addEventListener('invalidSessionId', () => {
+   return globalThis.location.href = './';
+});
+
+eventSource.addEventListener('noSessionId', () => {
+   return globalThis.location.href = './';
+});
+
+// Update timestamp display
 function updateTimestamp() {
    if (!partyExpiresAt) { return; }
    const date = new Date(partyExpiresAt);
-   document.querySelector("div#expires-at-time").textContent = `${date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: true })}`;
-   document.querySelector("div#expires-at-date").textContent = `${date.toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}`;
+   partyExpiresAtTime.textContent = `${date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: true })}`;
+   partyExpiresAtDate.textContent = `${date.toLocaleDateString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })}`;
 }
 
-//////////////// Main Body /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-globalThis.addEventListener("load", () => {
-   //////////////// Set variables //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+globalThis.addEventListener('load', () => {
+   // Get DOM elements
    loadingIcon = document.querySelector("#loading-icon");
+
+   partyExpiresAtTime = document.querySelector("div#expires-at-time");
+   partyExpiresAtDate = document.querySelector("div#expires-at-date");
 
    partyIdDisplay = document.querySelector("#party-id");
    partyUrlLink = document.querySelector("#party-url-link");
@@ -125,7 +160,7 @@ globalThis.addEventListener("load", () => {
    partyLinkClickToShare = document.querySelector("#party-url-link-share");
    qrCodeDisplay = document.querySelector("#party-qrcode");
 
-   partyExtensionInput = document.querySelector("#party-extension-input");
+   partyExtensionInput = document.querySelector("input#party-extension");
 
    enableExplicitButton = document.querySelector("#enable-explicit-content");
    disableExplicitButton = document.querySelector("#disable-explicit-content");
@@ -133,19 +168,7 @@ globalThis.addEventListener("load", () => {
    enableDuplicateBlockerButton = document.querySelector("#enable-duplicate-blocker");
    disableDuplicateBlockerButton = document.querySelector("#disable-duplicate-blocker");
 
-   //////////////// Page polling ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   startPolling();
-
-   /////////////// Stop Polling while off the page /////////////////////////////////////////////////////////////////////////////////////////////////
-   document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-         stopPolling();
-      } else {
-         startPolling();
-      }
-   });
-
-   //////////////// Extend party //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Handle Extend Party Form submission
    document.querySelector('form#extend-party-form').addEventListener('submit', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
@@ -160,30 +183,25 @@ globalThis.addEventListener("load", () => {
          })
       })
          .then(response => response.json())
-         .then(data => {
+         .then(() => {
             event.target.reset();
-            if (data.success) {
-               loadingIcon.classList.remove('hide');
-            }
          })
          .catch(error => {
             console.error('Extend Party Error:', error);
          });
    });
 
-   //////////////// Explicit enable/disable buttons //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Handle the button press for disabling explicit songs
    disableExplicitButton.addEventListener('click', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
-      fetch(`api/v1/website/database.php`, {
+      fetch(`api/v2/party/updateExplicit.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/json'
          },
          body: JSON.stringify({
-            type: 'updatePartyExplicit',
-            explicit: 0
+            explicit: false
          })
       })
          .then(response => response.json())
@@ -191,7 +209,6 @@ globalThis.addEventListener("load", () => {
             if (data.success) {
                disableExplicitButton.classList.add('hide');
                enableExplicitButton.classList.remove('hide');
-               loadingIcon.classList.add('hide');
             }
          })
          .catch(error => {
@@ -203,14 +220,13 @@ globalThis.addEventListener("load", () => {
    enableExplicitButton.addEventListener('click', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
-      fetch(`api/v1/website/database.php`, {
+      fetch(`api/v2/party/updateExplicit.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/json'
          },
          body: JSON.stringify({
-            type: 'updatePartyExplicit',
-            explicit: 1
+            explicit: true
          })
       })
          .then(response => response.json())
@@ -218,7 +234,6 @@ globalThis.addEventListener("load", () => {
             if (data.success) {
                enableExplicitButton.classList.add('hide');
                disableExplicitButton.classList.remove('hide');
-               loadingIcon.classList.add('hide');
             }
          })
          .catch(error => {
@@ -226,19 +241,17 @@ globalThis.addEventListener("load", () => {
          });
    });
 
-   //////////////// Duplicate blocker enable/disable buttons //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Handle the button press for disabling duplicate blocker
    disableDuplicateBlockerButton.addEventListener('click', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
-      fetch(`api/v1/website/database.php`, {
+      fetch(`api/v2/party/updateDuplicateBlocker.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/json'
          },
          body: JSON.stringify({
-            type: 'updatePartyDuplicateBlocker',
-            duplicate_blocker: 0
+            duplicate_blocker: false
          })
       })
          .then(response => response.json())
@@ -246,7 +259,6 @@ globalThis.addEventListener("load", () => {
             if (data.success) {
                disableDuplicateBlockerButton.classList.add('hide');
                enableDuplicateBlockerButton.classList.remove('hide');
-               loadingIcon.classList.add('hide');
             }
          })
          .catch(error => {
@@ -258,14 +270,13 @@ globalThis.addEventListener("load", () => {
    enableDuplicateBlockerButton.addEventListener('click', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
-      fetch(`api/v1/website/database.php`, {
+      fetch(`api/v2/party/updateDuplicateBlocker.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/json'
          },
          body: JSON.stringify({
-            type: 'updatePartyDuplicateBlocker',
-            duplicate_blocker: 1
+            duplicate_blocker: true
          })
       })
          .then(response => response.json())
@@ -281,7 +292,6 @@ globalThis.addEventListener("load", () => {
          });
    });
 
-   //////////////// Generate new party ID //////////////////////////////////////////////////////////////////////////////////////////////////////
    // Handle the button press for generating a new party ID
    document.querySelector('button#confirm-generate-new-party-id-button').addEventListener('click', (event) => {
       event.preventDefault();
@@ -306,7 +316,6 @@ globalThis.addEventListener("load", () => {
          });
    });
 
-   //////////////// End party //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    // Handle the button press for confirming the end of the party
    document.querySelector('button#confirm-end-party-button').addEventListener('click', (event) => {
       event.preventDefault();
@@ -323,7 +332,7 @@ globalThis.addEventListener("load", () => {
          .then(response => response.json())
          .then(data => {
             if (data.success) {
-               globalThis.location.reload();
+               return globalThis.location.href = './create.html';
             }
          })
          .catch(error => {

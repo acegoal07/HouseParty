@@ -1,6 +1,7 @@
 <?php
 include __DIR__ . '/../../secrets.php';
 include __DIR__ . '/../../util/sessionManager.php';
+include_once __DIR__ . '/../../util/cookieManager.php';
 include __DIR__ . '/../../util/checkOrigin.php';
 include __DIR__ . '/../../util/parseInput.php';
 header("Access-Control-Allow-Origin: {$allowedDomain}");
@@ -19,8 +20,8 @@ class SessionInfo
    public function __construct()
    {
       $this->conn = $GLOBALS['conn'];
-      $this->input = parseInput($this->conn);
       checkOrigin();
+      $this->input = parseInput($this->conn);
    }
 
    public function __destruct()
@@ -30,12 +31,12 @@ class SessionInfo
 
    public function handleRequest()
    {
-      $sessionToken = $_COOKIE['session_id'] ?? '';
+      $sessionId = cookieGet('session_id');
 
-      if (empty($sessionToken)) {
+      if (empty($sessionId)) {
          http_response_code(200);
          echo "event: noSessionId\n";
-         echo "data: " . json_encode(['error' => 'Unauthorized: No session token provided']) . "\n\n";
+         echo "data: " . json_encode(['success' => false, 'error' => 'Unauthorized: No session token provided']) . "\n\n";
          exit();
       }
 
@@ -43,7 +44,7 @@ class SessionInfo
       $initialRun = true;
 
       while (!connection_aborted()) {
-         $results = validateSessionGetInfo($this->conn, $sessionToken);
+         $results = validateSessionGetInfo($this->conn, $sessionId);
 
          if (!$results['validated']) {
             echo "event: invalidSessionId\n";
@@ -128,7 +129,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
    http_response_code(405);
-   echo json_encode(['error' => 'Method not allowed']);
+   echo json_encode(['success' => false, 'error' => 'Method not allowed']);
    exit();
 }
 
