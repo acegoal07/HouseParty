@@ -34,7 +34,7 @@ class HasParty
          exit();
       }
 
-      $stmt = $this->conn->prepare("SELECT count(*) FROM parties p JOIN sessions s ON p.host_id = s.host_id WHERE s.session_id = ?");
+      $stmt = $this->conn->prepare("SELECT count(*) FROM parties p JOIN sessions s ON p.host_id = s.host_id WHERE s.session_id = ? COLLATE latin1_bin");
       $stmt->bind_param('s', $sessionId);
       $stmt->execute();
       $count = 0;
@@ -42,6 +42,7 @@ class HasParty
       $stmt->fetch();
 
       if ($stmt->error) {
+         $stmt->close();
          http_response_code(500);
          echo json_encode(['success' => false, 'error' => "Database error: {$stmt->error}"]);
          throw new Exception("Database error: {$stmt->error}");

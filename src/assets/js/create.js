@@ -42,13 +42,12 @@ globalThis.addEventListener('load', () => {
       event.preventDefault();
       loadingIcon.classList.remove("hide");
 
-      fetch(`api/v1/website/database.php`, {
+      fetch(`api/v2/party/createParty.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/json'
          },
          body: JSON.stringify({
-            type: 'createParty',
             party_ends_in: partyDurationInput.value,
             explicit: explicitCheckbox.checked ? 1 : 0,
             duplicate_blocker: duplicateBlockerCheckbox.checked ? 1 : 0
@@ -57,10 +56,7 @@ globalThis.addEventListener('load', () => {
          .then(response => response.json())
          .then(data => {
             if (data.success) {
-               event.target.reset();
                return globalThis.location.href = `./dashboard.html`;
-            } else {
-               loadingIcon.classList.add("hide");
             }
          })
          .catch(error => {

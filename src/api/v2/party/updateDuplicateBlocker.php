@@ -37,6 +37,14 @@ class UpdateDuplicateBlocker
          exit();
       }
 
+      $validation = validateSession($this->conn, $sessionId);
+
+      if (!$validation['validated']) {
+         http_response_code(401);
+         echo json_encode(['success' => false, 'error' => 'Unauthorized: Invalid session']);
+         exit();
+      }
+
       $duplicateBlocker = $this->input['duplicate_blocker'] ?? null;
 
       if (!is_bool($duplicateBlocker)) {
@@ -50,6 +58,7 @@ class UpdateDuplicateBlocker
       $stmt->execute();
 
       if ($stmt->error) {
+         $stmt->close();
          http_response_code(500);
          echo json_encode(['success' => false, 'error' => "Database error: {$stmt->error}"]);
          throw new Exception("Database error: {$stmt->error}");

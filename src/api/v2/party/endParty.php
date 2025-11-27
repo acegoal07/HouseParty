@@ -3,23 +3,20 @@ include __DIR__ . '/../secrets.php';
 include __DIR__ . '/../util/sessionManager.php';
 include_once __DIR__ . '/../util/cookieManager.php';
 include __DIR__ . '/../util/checkOrigin.php';
-include __DIR__ . '/../util/parseInput.php';
 header("Access-Control-Allow-Origin: {$allowedDomain}");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json");
 
-class UpdateExplicit
+class EndParty
 {
    private $conn;
-   private $input;
 
    public function __construct()
    {
       $this->conn = $GLOBALS['conn'];
       checkOrigin();
-      $this->input = parseInput();
    }
 
    public function __destruct()
@@ -45,16 +42,8 @@ class UpdateExplicit
          exit();
       }
 
-      $explicit = $this->input['explicit'] ?? null;
-
-      if (!is_bool($explicit)) {
-         http_response_code(400);
-         echo json_encode(['success' => false, 'error' => 'Bad Request: explicit must be a boolean']);
-         exit();
-      }
-
-      $stmt = $this->conn->prepare("UPDATE parties p JOIN sessions s ON p.host_id = s.host_id SET p.explicit = ? WHERE s.session_id = ? COLLATE latin1_bin");
-      $stmt->bind_param('is', $explicit, $sessionId);
+      $stmt = $this->conn->prepare("DELETE p FROM parties p JOIN sessions s ON p.host_id = s.host_id WHERE s.session_id = ? COLLATE latin1_bin");
+      $stmt->bind_param('s', $sessionId);
       $stmt->execute();
 
       if ($stmt->error) {
@@ -67,7 +56,7 @@ class UpdateExplicit
       $stmt->close();
 
       http_response_code(200);
-      echo json_encode(['success' => true, 'message' => 'Explicit content preference updated successfully']);
+      echo json_encode(['success' => true, 'message' => 'Party ended successfully']);
       exit();
    }
 }
@@ -83,5 +72,5 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
    exit();
 }
 
-$updateExplicit = new UpdateExplicit();
-$updateExplicit->handleRequest();
+$endParty = new EndParty();
+$endParty->handleRequest();

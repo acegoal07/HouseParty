@@ -172,19 +172,20 @@ globalThis.addEventListener('load', () => {
    document.querySelector('form#extend-party-form').addEventListener('submit', (event) => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
-      fetch(`api/v1/website/database.php`, {
+      fetch(`api/v2/party/extendParty.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/json'
          },
          body: JSON.stringify({
-            type: 'extendPartyDuration',
-            extend_by: partyExtensionInput.value
+            hours: partyExtensionInput.value
          })
       })
          .then(response => response.json())
-         .then(() => {
-            event.target.reset();
+         .then(data => {
+            if (data.success) {
+               event.target.reset();
+            }
          })
          .catch(error => {
             console.error('Extend Party Error:', error);
@@ -295,22 +296,14 @@ globalThis.addEventListener('load', () => {
    // Handle the button press for generating a new party ID
    document.querySelector('button#confirm-generate-new-party-id-button').addEventListener('click', (event) => {
       event.preventDefault();
+      document.dispatchEvent(new Event('closeCurrentModal'));
       loadingIcon.classList.remove('hide');
-      fetch(`api/v1/website/database.php`, {
+      fetch(`api/v2/party/generateNewPartyId.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/json'
-         },
-         body: JSON.stringify({
-            type: 'generateNewPartyId'
-         })
+         }
       })
-         .then(response => response.json())
-         .then(data => {
-            if (data.success) {
-               globalThis.location.reload();
-            }
-         })
          .catch(error => {
             console.error('Generate New Party ID Error:', error);
          });
@@ -319,15 +312,13 @@ globalThis.addEventListener('load', () => {
    // Handle the button press for confirming the end of the party
    document.querySelector('button#confirm-end-party-button').addEventListener('click', (event) => {
       event.preventDefault();
+      document.dispatchEvent(new Event('closeCurrentModal'));
       loadingIcon.classList.remove('hide');
-      fetch(`api/v1/website/database.php`, {
+      fetch(`api/v2/party/endParty.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/json'
-         },
-         body: JSON.stringify({
-            type: 'deleteParty'
-         })
+         }
       })
          .then(response => response.json())
          .then(data => {

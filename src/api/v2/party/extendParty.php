@@ -10,7 +10,7 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json");
 
-class UpdateExplicit
+class ExtendParty
 {
    private $conn;
    private $input;
@@ -45,16 +45,16 @@ class UpdateExplicit
          exit();
       }
 
-      $explicit = $this->input['explicit'] ?? null;
+      $hours = (int)$this->input['hours'] ?? null;
 
-      if (!is_bool($explicit)) {
+      if (!is_int($hours) || $hours <= 0) {
          http_response_code(400);
-         echo json_encode(['success' => false, 'error' => 'Bad Request: explicit must be a boolean']);
+         echo json_encode(['success' => false, 'error' => 'Bad Request: hours must be a positive integer']);
          exit();
       }
 
-      $stmt = $this->conn->prepare("UPDATE parties p JOIN sessions s ON p.host_id = s.host_id SET p.explicit = ? WHERE s.session_id = ? COLLATE latin1_bin");
-      $stmt->bind_param('is', $explicit, $sessionId);
+      $stmt = $this->conn->prepare("UPDATE parties p JOIN sessions s ON p.host_id = s.host_id SET p.party_expires_at = DATE_ADD(p.party_expires_at, INTERVAL ? HOUR) WHERE s.session_id = ? COLLATE latin1_bin");
+      $stmt->bind_param('is', $hours, $sessionId);
       $stmt->execute();
 
       if ($stmt->error) {
@@ -67,7 +67,7 @@ class UpdateExplicit
       $stmt->close();
 
       http_response_code(200);
-      echo json_encode(['success' => true, 'message' => 'Explicit content preference updated successfully']);
+      echo json_encode(['success' => true, 'message' => 'Party extended successfully']);
       exit();
    }
 }
@@ -83,5 +83,5 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
    exit();
 }
 
-$updateExplicit = new UpdateExplicit();
-$updateExplicit->handleRequest();
+$extendParty = new ExtendParty();
+$extendParty->handleRequest();

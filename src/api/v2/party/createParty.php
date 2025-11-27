@@ -1,0 +1,130 @@
+<?php
+include __DIR__ . '/../secrets.php';
+include __DIR__ . '/../util/sessionManager.php';
+include_once __DIR__ . '/../util/cookieManager.php';
+include __DIR__ . '/../util/checkOrigin.php';
+include __DIR__ . '/../util/parseInput.php';
+include __DIR__ . '/../util/generatePartyId.php';
+include __DIR__ . '/../util/getAccessToken.php';
+header("Access-Control-Allow-Origin: {$allowedDomain}");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Credentials: true");
+header("Content-Type: application/json");
+
+class CreateParty
+{
+   private $conn;
+   private $input;
+
+   public function __construct()
+   {
+      $this->conn = $GLOBALS['conn'];
+      checkOrigin();
+      $this->input = parseInput();
+   }
+
+   public function __destruct()
+   {
+      $this->conn->close();
+   }
+
+   public function handleRequest()
+   {
+      $sessionId = cookieGet('session_id');
+
+      if (empty($sessionId)) {
+         http_response_code(401);
+         echo json_encode(['success' => false, 'error' => 'Unauthorized: No session token provided']);
+         exit();
+      }
+
+      $validation = validateSession($this->conn, $sessionId, true);
+
+      if (!$validation['validated']) {
+         http_response_code(401);
+         echo json_encode(['success' => false, 'error' => 'Unauthorized: Invalid session']);
+         exit();
+      }
+
+      $hostId = $validation['host_id'];
+
+      $stmt = $this->conn->prepare("SELECT count(*) FROM parties WHERE host_id = ? COLLATE latin1_bin");
+      $stmt->bind_param('s', $hostId);
+      $stmt->execute();
+      $partyCount = 0;
+      $stmt->bind_result($partyCount);
+      $stmt->fetch();
+
+      if ($stmt->error) {
+         $stmt->close();
+         http_response_code(500);
+         echo json_encode(['success' => false, 'error' => "Database error: {$stmt->error}"]);
+         throw new Exception("Database error: {$stmt->error}");
+      }
+
+      $stmt->close();
+
+      if ($partyCount > 0) {
+         http_response_code(400);
+         echo json_encode(['success' => false, 'error' => 'Host already has an active party']);
+         exit();
+      }
+
+      $stmt = $this->conn->prepare("SELECT refresh_token FROM users WHERE host_id = ? COLLATE latin1_bin");
+      $stmt->bind_param('s', $hostId);
+      $stmt->execute();
+      $refreshToken = '';
+      $stmt->bind_result($refreshToken);
+      $stmt->fetch();
+
+      if ($stmt->error) {
+         $stmt->close();
+         http_response_code(500);
+         echo json_encode(['success' => false, 'error' => "Database error: {$stmt->error}"]);
+         throw new Exception("Database error: {$stmt->error}");
+      }
+
+      $stmt->close();
+
+      $partyId = generatePartyId($this->conn);
+      $accessToken = getAccessToken($refreshToken);
+
+      $tokenExpiresAt = gmdate('Y-m-d H:i:00',  time() + 3600);
+
+      $partyExpiresAt = time() + $this->input['party_ends_in'] * 3600;
+      $partyExpiresAt = (int) (round($partyExpiresAt / 60) * 60);
+      $partyExpiresAt = gmdate('Y-m-d H:i:00', $partyExpiresAt);
+
+      $stmt = $this->conn->prepare("INSERT INTO parties (party_id, host_id, access_token, party_expires_at, token_expires_at, explicit, duplicate_blocker) VALUES (?, ?, ?, ?, ?, ?, ?)");
+      $stmt->bind_param("sssssii", $partyId, $hostId, $accessToken, $partyExpiresAt, $tokenExpiresAt, $this->input['explicit'], $this->input['duplicate_blocker']);
+      $stmt->execute();
+
+      if ($stmt->error) {
+         $stmt->close();
+         http_response_code(500);
+         echo json_encode(['success' => false, 'error' => "Database error: {$stmt->error}"]);
+         throw new Exception("Database error: {$stmt->error}");
+      }
+
+      $stmt->close();
+
+      http_response_code(200);
+      echo json_encode(['success' => true]);
+      exit();
+   }
+}
+
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
+   http_response_code(204);
+   exit();
+}
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+   http_response_code(405);
+   echo json_encode(['success' => false, 'error' => 'Method not allowed']);
+   exit();
+}
+
+$createParty = new CreateParty();
+$createParty->handleRequest();

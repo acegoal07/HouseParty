@@ -36,7 +36,7 @@ class PartyExists
          exit();
       }
 
-      $stmt = $this->conn->prepare("SELECT COUNT(*) FROM parties WHERE party_id = ?");
+      $stmt = $this->conn->prepare("SELECT COUNT(*) FROM parties WHERE party_id = ? COLLATE latin1_bin");
       $stmt->bind_param('s', $partyId);
       $stmt->execute();
       $count = 0;
@@ -44,6 +44,7 @@ class PartyExists
       $stmt->fetch();
 
       if ($stmt->error) {
+         $stmt->close();
          http_response_code(500);
          echo json_encode(['success' => false, 'error' => "Database error: {$stmt->error}"]);
          throw new Exception("Database error: {$stmt->error}");
