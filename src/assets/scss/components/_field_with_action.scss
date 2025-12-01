@@ -18,6 +18,10 @@
          background-color: variables.$bg-secondary;
       }
 
+      input.field-value {
+         cursor: pointer;
+      }
+
       .field-value {
          flex-grow: 2;
          white-space: nowrap;

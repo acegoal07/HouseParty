@@ -1,5 +1,6 @@
 <?php
 include __DIR__ . '/../secrets.php';
+include __DIR__ . '/../util/getAccessToken.php';
 
 // Only allow CLI or cron execution
 if (php_sapi_name() !== 'cli') {
@@ -12,7 +13,7 @@ $stmt = $conn->prepare("SELECT p.party_id, u.refresh_token FROM parties p JOIN u
 $stmt->execute();
 $results = $stmt->get_result();
 
-while ($row = $result->fetch_assoc()) {
+while ($row = $results->fetch_assoc()) {
    $accessToken = getAccessToken($row['refresh_token']);
    $tokenExpiresAt = gmdate('Y-m-d H:i:00',  time() + 3600);
 

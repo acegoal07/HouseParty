@@ -17,8 +17,8 @@ class UpdateExplicit
 
    public function __construct()
    {
-      $this->conn = $GLOBALS['conn'];
       checkOrigin();
+      $this->conn = $GLOBALS['conn'];
       $this->input = parseInput();
    }
 

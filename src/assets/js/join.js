@@ -51,7 +51,7 @@ globalThis.addEventListener('load', () => {
          .then(data => {
             if (data.success) {
                if (data.party_exists) {
-                  return globalThis.location.href = `party.html?session_code=${encodeURIComponent(partyCode)}`;
+                  return globalThis.location.href = `party.html?party_id=${encodeURIComponent(partyCode)}`;
                } else {
                   noPartyFoundError.classList.remove('hide');
                }

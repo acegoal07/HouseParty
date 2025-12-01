@@ -16,8 +16,8 @@ class GenerateNewPartyId
 
    public function __construct()
    {
-      $this->conn = $GLOBALS['conn'];
       checkOrigin();
+      $this->conn = $GLOBALS['conn'];
    }
 
    public function __destruct()

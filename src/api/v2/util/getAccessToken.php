@@ -1,6 +1,12 @@
 <?php
 include __DIR__ . '/../secrets.php';
 
+// Only allow CLI or cron execution
+if (php_sapi_name() !== 'cli' && realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE__) {
+   http_response_code(403);
+   exit();
+}
+
 /**
  * Get a new access token from Spotify using the provided refresh token
  * @param string $refreshToken

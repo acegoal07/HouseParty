@@ -40,14 +40,14 @@ eventSource.addEventListener('init', event => {
 
    partyIdDisplay.textContent = data.party.party_id;
 
-   const partyUrl = `${globalThis.location.origin}/party.html?session_code=${encodeURIComponent(data.party.party_id)}`;
+   const partyUrl = `${globalThis.location.origin}/party.html?party_id=${encodeURIComponent(data.party.party_id)}`;
 
    partyUrlDisplay.textContent = partyUrl;
    partyUrlLink.href = partyUrl;
    partyLinkClickToShare.dataset.shareUrl = partyUrl;
 
    QrCreator.render({
-      text: `${partyUrl}`,
+      text: partyUrl,
       radius: 0.5,
       ecLevel: 'H',
       fill: '#fff',
@@ -88,7 +88,7 @@ eventSource.addEventListener('partyUpdate', event => {
    if (data.party.party_id !== partyIdDisplay.textContent) {
       partyIdDisplay.textContent = data.party.party_id;
 
-      const partyUrl = `${globalThis.location.origin}/party.html?session_code=${encodeURIComponent(data.party.party_id)}`;
+      const partyUrl = `${globalThis.location.origin}/party.html?party_id=${encodeURIComponent(data.party.party_id)}`;
 
       partyUrlDisplay.textContent = partyUrl;
       partyUrlLink.href = partyUrl;
