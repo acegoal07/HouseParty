@@ -40,11 +40,13 @@ class SessionInfo
          exit();
       }
 
+      $dataLevel = $this->input['datalevel'] ?? 'none';
+
       $pastResults = null;
       $initialRun = true;
 
       while (!connection_aborted()) {
-         $results = validateSessionGetInfo($this->conn, $sessionId);
+         $results = validateSession($this->conn, $sessionId, $dataLevel);
 
          if (!$results['validated']) {
             echo "event: invalidSessionId\n";
@@ -55,30 +57,12 @@ class SessionInfo
          }
 
          switch ($this->input['datalevel']) {
-            case 'minimal':
-               if ($initialRun) {
-                  echo "event: init\n";
-                  echo "data: " . json_encode([
-                     'active_party' => $results['active_party'],
-                  ]) . "\n\n";
-                  $initialRun = false;
-                  break;
-               }
-
-               if ($results['active_party'] !== $pastResults['active_party']) {
-                  echo "event: partyStatusChange\n";
-                  echo "data: " . json_encode([
-                     'active_party' => $results['active_party'],
-                  ]) . "\n\n";
-               }
-
-               break;
             case 'full':
                if ($initialRun) {
                   echo "event: init\n";
                   echo "data: " . json_encode([
                      'active_party' => $results['active_party'],
-                     'party' => $results['party'],
+                     'party' => $results['party']
                   ]) . "\n\n";
                   $initialRun = false;
                   break;
@@ -88,7 +72,7 @@ class SessionInfo
                   echo "event: partyStatusChange\n";
                   echo "data: " . json_encode([
                      'active_party' => $results['active_party'],
-                     'party' => $results['party'],
+                     'party' => $results['party']
                   ]) . "\n\n";
                }
 
@@ -96,7 +80,25 @@ class SessionInfo
                   echo "event: partyUpdate\n";
                   echo "data: " . json_encode([
                      'active_party' => $results['active_party'],
-                     'party' => $results['party'],
+                     'party' => $results['party']
+                  ]) . "\n\n";
+               }
+
+               break;
+            case 'minimal':
+               if ($initialRun) {
+                  echo "event: init\n";
+                  echo "data: " . json_encode([
+                     'active_party' => $results['active_party']
+                  ]) . "\n\n";
+                  $initialRun = false;
+                  break;
+               }
+
+               if ($results['active_party'] !== $pastResults['active_party']) {
+                  echo "event: partyStatusChange\n";
+                  echo "data: " . json_encode([
+                     'active_party' => $results['active_party']
                   ]) . "\n\n";
                }
 

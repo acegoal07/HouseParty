@@ -39,7 +39,7 @@ class CreateParty
          exit();
       }
 
-      $validation = validateSession($this->conn, $sessionId, true);
+      $validation = validateSession($this->conn, $sessionId);
 
       if (!$validation['validated']) {
          http_response_code(401);
@@ -47,10 +47,8 @@ class CreateParty
          exit();
       }
 
-      $hostId = $validation['host_id'];
-
-      $stmt = $this->conn->prepare("SELECT count(*) FROM parties WHERE host_id = ? COLLATE latin1_bin");
-      $stmt->bind_param('s', $hostId);
+      $stmt = $this->conn->prepare("SELECT count(*) FROM parties p JOIN sessions s ON p.host_id = s.host_id WHERE session_id = ?");
+      $stmt->bind_param('s', $sessionId);
       $stmt->execute();
       $partyCount = 0;
       $stmt->bind_result($partyCount);
@@ -71,11 +69,12 @@ class CreateParty
          exit();
       }
 
-      $stmt = $this->conn->prepare("SELECT refresh_token FROM users WHERE host_id = ? COLLATE latin1_bin");
-      $stmt->bind_param('s', $hostId);
+      $stmt = $this->conn->prepare("SELECT u.host_id, u.refresh_token FROM users u JOIN sessions s ON u.host_id = s.host_id WHERE session_id = ? COLLATE latin1_bin");
+      $stmt->bind_param('s', $sessionId);
       $stmt->execute();
+      $hostId = '';
       $refreshToken = '';
-      $stmt->bind_result($refreshToken);
+      $stmt->bind_result($hostId, $refreshToken);
       $stmt->fetch();
 
       if ($stmt->error) {

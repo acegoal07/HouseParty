@@ -64,31 +64,42 @@ function deleteSession($conn, $session_id)
 }
 
 /**
- * Validates that the session id is valid
- * @param mysqli $conn The MySQLi connection
- * @param string $session_id The session ID to validate
- * @param bool $host_id Whether to return the host_id associated with the session
- * @return array{validated:bool, host_id:string|null} Tuple [validated, host_id] or false if invalid
+ * Validates the user's session ID and optionally returns party information.
+ * @param mysqli $conn The MySQLi database connection.
+ * @param string $session_id The session ID to validate.
+ * @param "none"|"minimal"|"full" $party_info_level The level of party info to return.
+ * @return array{
+ *   validated: bool,
+ *   active_party?: bool,
+ *   party?: mixed
+ * }
  */
-function validateSession($conn, $session_id, $host_id = false)
+function validateSession($conn, $session_id, $party_info_level = "none")
 {
-   global $cookieLifespan;
-
    if (!is_string($session_id) || strlen($session_id) !== 64 || !ctype_xdigit($session_id)) {
       cookieDelete('session_id');
-      return ['validated' => false, 'host_id' => null];
+      return [
+         'validated' => false
+      ];
    }
 
-   $stmt = $conn->prepare("SELECT host_id, expires_at FROM sessions WHERE session_id = ? COLLATE latin1_bin LIMIT 1");
+   $stmt = $conn->prepare("SELECT expires_at FROM sessions WHERE session_id = ? COLLATE latin1_bin LIMIT 1");
    $stmt->bind_param("s", $session_id);
    $stmt->execute();
-   $results = $stmt->get_result();
+   $expires_at = "";
+   $stmt->bind_result($expires_at);
+   $stmt->fetch();
    $stmt->close();
 
-   $row = $results->fetch_assoc();
+   if (empty($expires_at)) {
+      cookieDelete('session_id');
+      return [
+         'validated' => false
+      ];
+   }
 
-   if (strtotime($row['expires_at']) < time() + 3600) {
-      $expires_timestamp = time() + $cookieLifespan;
+   if (strtotime($expires_at) < time() + 3600) {
+      $expires_timestamp = time() + $GLOBALS['cookieLifespan'];
       $expires_at = date('Y-m-d H:i:s', $expires_timestamp);
       $stmt = $conn->prepare("UPDATE sessions SET expires_at = ? WHERE session_id = ? COLLATE latin1_bin");
       $stmt->bind_param("ss", $expires_at, $session_id);
@@ -97,36 +108,42 @@ function validateSession($conn, $session_id, $host_id = false)
       cookieSet('session_id', $session_id, $expires_at);
    }
 
-   if ($results->num_rows === 0) {
-      cookieDelete('session_id');
-      return ['validated' => false, 'host_id' => null];
+   if ($party_info_level === "full") {
+      $stmt = $conn->prepare("SELECT p.party_id, p.party_expires_at, p.explicit, p.duplicate_blocker FROM parties p JOIN sessions s ON p.host_id = s.host_id WHERE s.session_id = ? COLLATE latin1_bin LIMIT 1");
+      $stmt->bind_param("s", $session_id);
+      $stmt->execute();
+      $party_info = $stmt->get_result();
+      $party_info_row = $party_info->fetch_assoc();
+      $stmt->close();
+
+      if ($party_info->num_rows === 0) {
+         return [
+            'validated' => true,
+            'active_party' => false
+         ];
+      } else {
+         return [
+            'validated' => true,
+            'active_party' => true,
+            'party' => $party_info_row
+         ];
+      }
+   } elseif ($party_info_level === "minimal") {
+      $stmt = $conn->prepare("SELECT count(*) FROM parties p JOIN sessions s ON p.host_id = s.host_id WHERE s.session_id = ? COLLATE latin1_bin LIMIT 1");
+      $stmt->bind_param("s", $session_id);
+      $stmt->execute();
+      $count = 0;
+      $stmt->bind_result($count);
+      $stmt->fetch();
+      $stmt->close();
+
+      return [
+         'validated' => true,
+         'active_party' => $count === 1 ? true : false
+      ];
    } else {
-      return ['validated' => true, 'host_id' => $host_id ? $row['host_id'] : null];
+      return [
+         'validated' => true
+      ];
    }
-}
-
-/**
- * Validates the session and retrieves associated party information
- * @param mysqli $conn The MySQLi connection
- * @param string $session_id The session ID to validate
- * @return array{validated:bool, active_party:bool, party:array|null} Tuple [validated, extended, active_party, party]
- */
-function validateSessionGetInfo($conn, $session_id)
-{
-   $validation = validateSession($conn, $session_id, true);
-   if (!$validation['validated']) {
-      cookieDelete('session_id');
-      return $validation;
-   }
-
-   // Check for any party associated with this host by session — only fetch one row
-   $stmt = $conn->prepare("SELECT p.party_id, p.party_expires_at, p.explicit, p.duplicate_blocker FROM parties p JOIN sessions s ON p.host_id = s.host_id WHERE s.session_id = ? COLLATE latin1_bin LIMIT 1");
-   $stmt->bind_param("s", $session_id);
-   $stmt->execute();
-   $results = $stmt->get_result();
-   $row = $results->fetch_assoc();
-   $stmt->close();
-
-   $hasParty = $row !== null && $row !== false;
-   return ['validated' => true, 'host_id' => $validation['host_id'], 'active_party' => $hasParty, 'party' => $hasParty ? $row : null];
 }

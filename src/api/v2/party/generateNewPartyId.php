@@ -35,7 +35,7 @@ class GenerateNewPartyId
          exit();
       }
 
-      $validation = validateSession($this->conn, $sessionId, true);
+      $validation = validateSession($this->conn, $sessionId);
 
       if (!$validation['validated']) {
          http_response_code(401);
@@ -43,11 +43,10 @@ class GenerateNewPartyId
          exit();
       }
 
-      $hostId = $validation['host_id'];
       $newPartyId = generatePartyId($this->conn);
 
-      $stmt = $this->conn->prepare("UPDATE parties set party_id = ? WHERE host_id = ? COLLATE latin1_bin");
-      $stmt->bind_param('ss', $newPartyId, $hostId);
+      $stmt = $this->conn->prepare("UPDATE parties p JOIN sessions s ON p.host_id = s.host_id SET p.party_id = ? WHERE s.session_id = ? COLLATE latin1_bin");
+      $stmt->bind_param('ss', $newPartyId, $sessionId);
       $stmt->execute();
 
       if ($stmt->error) {
