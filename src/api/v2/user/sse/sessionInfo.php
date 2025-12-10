@@ -12,6 +12,25 @@ header('Content-Type: text/event-stream');
 header('Cache-Control: no-cache');
 header('Connection: keep-alive');
 
+// If browser sends an option return info
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
+   http_response_code(204);
+   exit();
+}
+
+// Check if the request method is valid
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+   http_response_code(405);
+   echo json_encode([
+      'success' => false,
+      'error' => [
+         'type' => 'forbiddenMethod',
+         'message' => 'Method not allowed'
+      ]
+   ]);
+   exit();
+}
+
 class SessionInfo
 {
    private $conn;
@@ -22,6 +41,7 @@ class SessionInfo
       checkOrigin();
       $this->conn = $GLOBALS['conn'];
       $this->input = parseInput($this->conn);
+      $this->handleRequest();
    }
 
    public function __destruct()
@@ -29,7 +49,7 @@ class SessionInfo
       $this->conn->close();
    }
 
-   public function handleRequest()
+   private function handleRequest()
    {
       $sessionId = cookieGet('session_id');
 
@@ -68,22 +88,48 @@ class SessionInfo
                   break;
                }
 
-               if ($results['active_party'] !== $pastResults['active_party']) {
-                  echo "event: partyStatusChange\n";
-                  echo "data: " . json_encode([
-                     'active_party' => $results['active_party'],
-                     'party' => $results['party']
-                  ]) . "\n\n";
-               }
-
                if ($results['party'] !== $pastResults['party']) {
-                  echo "event: partyUpdate\n";
-                  echo "data: " . json_encode([
-                     'active_party' => $results['active_party'],
-                     'party' => $results['party']
-                  ]) . "\n\n";
-               }
+                  if ($results['active_party'] !== $pastResults['active_party']) {
+                     echo "event: partyUpdate\n";
+                     echo "data: " . json_encode([
+                        'type' => 'partyStatusChange',
+                        'active_party' => $results['active_party']
+                     ]) . "\n\n";
+                     break;
+                  }
 
+                  if ($results['party']['party_id'] !== $pastResults['party']['party_id']) {
+                     echo "event: partyUpdate\n";
+                     echo "data: " . json_encode([
+                        'type' => 'partyIdUpdate',
+                        'party_id' => $results['party']['party_id']
+                     ]) . "\n\n";
+                  }
+
+                  if ($results['party']['party_expires_at'] !== $pastResults['party']['party_expires_at']) {
+                     echo "event: partyUpdate\n";
+                     echo "data: " . json_encode([
+                        'type' => 'partyExpiresAtUpdate',
+                        'party_expires_at' => $results['party']['party_expires_at']
+                     ]) . "\n\n";
+                  }
+
+                  if ($results['party']['duplicate_blocker'] !== $pastResults['party']['duplicate_blocker']) {
+                     echo "event: partyUpdate\n";
+                     echo "data: " . json_encode([
+                        'type' => 'duplicateBlockerUpdate',
+                        'duplicate_blocker' => $results['party']['duplicate_blocker']
+                     ]) . "\n\n";
+                  }
+
+                  if ($results['party']['explicit'] !== $pastResults['party']['explicit']) {
+                     echo "event: partyUpdate\n";
+                     echo "data: " . json_encode([
+                        'type' => 'explicitUpdate',
+                        'explicit' => $results['party']['explicit']
+                     ]) . "\n\n";
+                  }
+               }
                break;
             case 'minimal':
                if ($initialRun) {
@@ -96,8 +142,9 @@ class SessionInfo
                }
 
                if ($results['active_party'] !== $pastResults['active_party']) {
-                  echo "event: partyStatusChange\n";
+                  echo "event: partyUpdate\n";
                   echo "data: " . json_encode([
+                     'type' => 'partyStatusChange',
                      'active_party' => $results['active_party']
                   ]) . "\n\n";
                }
@@ -124,16 +171,4 @@ class SessionInfo
    }
 }
 
-if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
-   http_response_code(204);
-   exit();
-}
-
-if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-   http_response_code(405);
-   echo json_encode(['success' => false, 'error' => 'Method not allowed']);
-   exit();
-}
-
-$sessionInfo = new SessionInfo();
-$sessionInfo->handleRequest();
+new SessionInfo();

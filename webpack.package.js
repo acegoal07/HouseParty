@@ -13,7 +13,10 @@ module.exports = {
                to: '[path][name][ext]',
                context: path.resolve(__dirname, 'src'),
                globOptions: {
-                  ignore: ['**/*.example.php']
+                  ignore: [
+                     '**/*.example.php',
+                     '**/api/v1/**'
+                  ]
                }
             }
          ]

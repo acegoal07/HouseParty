@@ -25,7 +25,13 @@ function getPartyInfo($conn, $partyId)
    if ($stmt->error) {
       $stmt->close();
       http_response_code(500);
-      echo json_encode(['success' => false, 'error' => "Database error: {$stmt->error}"]);
+      echo json_encode([
+         'success' => false,
+         'error' => [
+            'type' => 'database',
+            'message' => $stmt->error
+         ]
+      ]);
       throw new Exception("Database error: {$stmt->error}");
    }
 
@@ -34,7 +40,13 @@ function getPartyInfo($conn, $partyId)
    if ($result->num_rows === 0) {
       $stmt->close();
       http_response_code(404);
-      echo json_encode(['success' => false, 'error' => 'Party not found']);
+      echo json_encode([
+         'success' => false,
+         'error' => [
+            'type' => 'noParty',
+            'message' => 'Party not found'
+         ]
+      ]);
       exit();
    }
 

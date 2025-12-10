@@ -12,6 +12,25 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json");
 
+// If browser sends an option return info
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
+   http_response_code(204);
+   exit();
+}
+
+// Check if the request method is valid
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+   http_response_code(405);
+   echo json_encode([
+      'success' => false,
+      'error' => [
+         'type' => 'forbiddenMethod',
+         'message' => 'Method not allowed'
+      ]
+   ]);
+   exit();
+}
+
 class CreateParty
 {
    private $conn;
@@ -21,7 +40,8 @@ class CreateParty
    {
       checkOrigin();
       $this->conn = $GLOBALS['conn'];
-      $this->input = parseInput();
+      $this->input = parseInput($this->conn);
+      $this->handleRequest();
    }
 
    public function __destruct()
@@ -29,13 +49,19 @@ class CreateParty
       $this->conn->close();
    }
 
-   public function handleRequest()
+   private function handleRequest()
    {
       $sessionId = cookieGet('session_id');
 
       if (empty($sessionId)) {
          http_response_code(401);
-         echo json_encode(['success' => false, 'error' => 'Unauthorized: No session token provided']);
+         echo json_encode([
+            'success' => false,
+            'error' => [
+               'type' => 'unauthorized',
+               'message' => 'No session id provided'
+            ]
+         ]);
          exit();
       }
 
@@ -43,7 +69,42 @@ class CreateParty
 
       if (!$validation['validated']) {
          http_response_code(401);
-         echo json_encode(['success' => false, 'error' => 'Unauthorized: Invalid session']);
+         echo json_encode([
+            'success' => false,
+            'error' => [
+               'type' => 'unauthorized',
+               'message' => 'Invalid session'
+            ]
+         ]);
+         exit();
+      }
+
+      $duplicateBlocker = $this->input['duplicate_blocker'] ?? null;
+
+      if (!is_bool($duplicateBlocker)) {
+         http_response_code(400);
+         echo json_encode([
+            'success' => false,
+            'error' => [
+               'type' => 'badRequest',
+               'message' => 'duplicate_blocker must be a boolean',
+               'debug' => $this->input
+            ]
+         ]);
+         exit();
+      }
+
+      $explicit = $this->input['explicit'] ?? null;
+
+      if (!is_bool($explicit)) {
+         http_response_code(400);
+         echo json_encode([
+            'success' => false,
+            'error' => [
+               'type' => 'badRequest',
+               'message' => 'explicit must be a boolean'
+            ]
+         ]);
          exit();
       }
 
@@ -57,15 +118,27 @@ class CreateParty
       if ($stmt->error) {
          $stmt->close();
          http_response_code(500);
-         echo json_encode(['success' => false, 'error' => "Database error: {$stmt->error}"]);
-         throw new Exception("Database error: {$stmt->error}");
+         echo json_encode([
+            'success' => false,
+            'error' => [
+               'type' => 'database',
+               'message' => $stmt->error
+            ]
+         ]);
+         exit();
       }
 
       $stmt->close();
 
       if ($partyCount > 0) {
          http_response_code(400);
-         echo json_encode(['success' => false, 'error' => 'Host already has an active party']);
+         echo json_encode([
+            'success' => false,
+            'error' => [
+               'type' => 'activeParty',
+               'message' => 'Host already has an active party'
+            ]
+         ]);
          exit();
       }
 
@@ -80,8 +153,14 @@ class CreateParty
       if ($stmt->error) {
          $stmt->close();
          http_response_code(500);
-         echo json_encode(['success' => false, 'error' => "Database error: {$stmt->error}"]);
-         throw new Exception("Database error: {$stmt->error}");
+         echo json_encode([
+            'success' => false,
+            'error' => [
+               'type' => 'database',
+               'message' => $stmt->error
+            ]
+         ]);
+         exit();
       }
 
       $stmt->close();
@@ -96,34 +175,30 @@ class CreateParty
       $partyExpiresAt = gmdate('Y-m-d H:i:00', $partyExpiresAt);
 
       $stmt = $this->conn->prepare("INSERT INTO parties (party_id, host_id, access_token, party_expires_at, token_expires_at, explicit, duplicate_blocker) VALUES (?, ?, ?, ?, ?, ?, ?)");
-      $stmt->bind_param("sssssii", $partyId, $hostId, $accessToken, $partyExpiresAt, $tokenExpiresAt, $this->input['explicit'], $this->input['duplicate_blocker']);
+      $stmt->bind_param("sssssii", $partyId, $hostId, $accessToken, $partyExpiresAt, $tokenExpiresAt, $explicit, $duplicateBlocker);
       $stmt->execute();
 
       if ($stmt->error) {
          $stmt->close();
          http_response_code(500);
-         echo json_encode(['success' => false, 'error' => "Database error: {$stmt->error}"]);
-         throw new Exception("Database error: {$stmt->error}");
+         echo json_encode([
+            'success' => false,
+            'error' => [
+               'type' => 'database',
+               'message' => $stmt->error
+            ]
+         ]);
+         exit();
       }
 
       $stmt->close();
 
       http_response_code(200);
-      echo json_encode(['success' => true]);
+      echo json_encode([
+         'success' => true
+      ]);
       exit();
    }
 }
 
-if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
-   http_response_code(204);
-   exit();
-}
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-   http_response_code(405);
-   echo json_encode(['success' => false, 'error' => 'Method not allowed']);
-   exit();
-}
-
-$createParty = new CreateParty();
-$createParty->handleRequest();
+new CreateParty();

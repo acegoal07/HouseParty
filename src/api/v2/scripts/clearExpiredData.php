@@ -8,10 +8,13 @@ if (php_sapi_name() !== 'cli') {
    exit();
 }
 
+// Delete any parties that are expired and are not set as permanent
 $conn->query("DELETE FROM parties WHERE party_expires_at <= UTC_TIMESTAMP() AND permanent = 0");
 
+// Delete any sessions that are expired
 $conn->query("DELETE FROM sessions WHERE expires_at <= UTC_TIMESTAMP()");
 
+// Delete any leftover users if there are no active parties or sessions
 $conn->query("
             DELETE u
             FROM users u

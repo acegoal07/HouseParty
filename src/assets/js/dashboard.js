@@ -73,70 +73,70 @@ eventSource.addEventListener('init', event => {
    loadingIcon.classList.add('hide');
 });
 
-eventSource.addEventListener('partyUpdate', event => {
-   const data = JSON.parse(event.data);
-
-   if (!data.party || !data.active_party) {
-      return globalThis.location.href = './create.html';
-   }
-
-   if (data.party.party_expires_at !== partyExpiresAt) {
-      partyExpiresAt = data.party.party_expires_at;
-      updateTimestamp();
-   }
-
-   if (data.party.party_id !== partyIdDisplay.textContent) {
-      partyIdDisplay.textContent = data.party.party_id;
-
-      const partyUrl = `${globalThis.location.origin}/party.html?party_id=${encodeURIComponent(data.party.party_id)}`;
-
-      partyUrlDisplay.textContent = partyUrl;
-      partyUrlLink.href = partyUrl;
-      partyLinkClickToShare.dataset.shareUrl = partyUrl;
-
-      qrCodeDisplay.removeChild(qrCodeDisplay.firstChild);
-
-      QrCreator.render({
-         text: `${partyUrl}`,
-         radius: 0.5,
-         ecLevel: 'H',
-         fill: '#fff',
-         size: 125
-      }, qrCodeDisplay);
-   }
-
-   if (data.party.explicit) {
-      enableExplicitButton.classList.add('hide');
-      disableExplicitButton.classList.remove('hide');
-   } else {
-      disableExplicitButton.classList.add('hide');
-      enableExplicitButton.classList.remove('hide');
-   }
-
-   if (data.party.duplicate_blocker) {
-      enableDuplicateBlockerButton.classList.add('hide');
-      disableDuplicateBlockerButton.classList.remove('hide');
-   } else {
-      disableDuplicateBlockerButton.classList.add('hide');
-      enableDuplicateBlockerButton.classList.remove('hide');
-   }
-
-   loadingIcon.classList.add('hide');
-});
-
-eventSource.addEventListener('partyStatusChange', event => {
-   const data = JSON.parse(event.data);
-   if (data.active_party) {
-      return globalThis.location.href = './create.html';
-   }
-});
-
 eventSource.addEventListener('invalidSessionId', () => {
    return globalThis.location.href = './';
 });
 
 eventSource.addEventListener('noSessionId', () => {
    return globalThis.location.href = './';
+});
+
+eventSource.addEventListener('partyUpdate', event => {
+   loadingIcon.classList.remove('hide');
+   const data = JSON.parse(event.data);
+
+   switch (data.type) {
+      case 'partyStatusChange':
+         if (!data.active_party) {
+            return globalThis.location.href = './create.html';
+         }
+         break;
+      case 'partyIdUpdate':
+         partyIdDisplay.textContent = data.party_id;
+
+         const partyUrl = `${globalThis.location.origin}/party.html?party_id=${encodeURIComponent(data.party_id)}`;
+
+         partyUrlDisplay.textContent = partyUrl;
+         partyUrlLink.href = partyUrl;
+         partyLinkClickToShare.dataset.shareUrl = partyUrl;
+
+         qrCodeDisplay.removeChild(qrCodeDisplay.firstChild);
+
+         QrCreator.render({
+            text: `${partyUrl}`,
+            radius: 0.5,
+            ecLevel: 'H',
+            fill: '#fff',
+            size: 125
+         }, qrCodeDisplay);
+         break;
+      case 'partyExpiresAtUpdate':
+         partyExpiresAt = data.party_expires_at;
+         updateTimestamp();
+         break;
+      case 'duplicateBlockerUpdate':
+         if (data.duplicate_blocker) {
+            enableDuplicateBlockerButton.classList.add('hide');
+            disableDuplicateBlockerButton.classList.remove('hide');
+         } else {
+            disableDuplicateBlockerButton.classList.add('hide');
+            enableDuplicateBlockerButton.classList.remove('hide');
+         }
+         break;
+      case 'explicitUpdate':
+         if (data.explicit) {
+            enableExplicitButton.classList.add('hide');
+            disableExplicitButton.classList.remove('hide');
+         } else {
+            disableExplicitButton.classList.add('hide');
+            enableExplicitButton.classList.remove('hide');
+         }
+         break;
+      default:
+         break;
+   }
+
+   loadingIcon.classList.add('hide');
 });
 
 // Update timestamp display

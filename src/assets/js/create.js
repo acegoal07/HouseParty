@@ -15,13 +15,6 @@ eventSource.addEventListener('init', event => {
    loadingIcon.classList.add('hide');
 });
 
-eventSource.addEventListener('partyStatusChange', event => {
-   const data = JSON.parse(event.data);
-   if (data.active_party) {
-      return globalThis.location.href = './dashboard.html';
-   }
-});
-
 eventSource.addEventListener('invalidSessionId', () => {
    return globalThis.location.href = './';
 });
@@ -30,18 +23,31 @@ eventSource.addEventListener('noSessionId', () => {
    return globalThis.location.href = './';
 });
 
+eventSource.addEventListener('partyUpdate', event => {
+   const data = JSON.parse(event.data);
+
+   switch (data.type) {
+      case 'partyStatusChange':
+         if (data.active_party) {
+            return globalThis.location.href = './dashboard.html';
+         }
+         break;
+      default:
+         break;
+   }
+});
+
 globalThis.addEventListener('load', () => {
    // Get DOM elements
-   loadingIcon = document.getElementById("loading-icon");
-   partyDurationInput = document.getElementById("party-duration");
-   explicitCheckbox = document.getElementById("explicit-checkbox");
-   duplicateBlockerCheckbox = document.getElementById("duplicate-blocker-checkbox");
+   loadingIcon = document.querySelector("#loading-icon");
+   partyDurationInput = document.querySelector("#party-duration");
+   explicitCheckbox = document.querySelector("#explicit-checkbox");
+   duplicateBlockerCheckbox = document.querySelector("#duplicate-blocker-checkbox");
 
    // Handle Create Party Form submission
    document.querySelector("form#create-party").addEventListener("submit", (event) => {
       event.preventDefault();
       loadingIcon.classList.remove("hide");
-
       fetch(`api/v2/party/createParty.php`, {
          method: 'post',
          headers: {
@@ -49,8 +55,8 @@ globalThis.addEventListener('load', () => {
          },
          body: JSON.stringify({
             party_ends_in: partyDurationInput.value,
-            explicit: explicitCheckbox.checked ? 1 : 0,
-            duplicate_blocker: duplicateBlockerCheckbox.checked ? 1 : 0
+            explicit: explicitCheckbox.checked,
+            duplicate_blocker: duplicateBlockerCheckbox.checked
          })
       })
          .then(response => response.json())

@@ -15,7 +15,12 @@ function checkOrigin()
 {
    if (strpos($_SERVER['HTTP_REFERER'] ?? '', $GLOBALS['allowedDomain']) !== 0 && strpos($_SERVER['HTTP_ORIGIN'] ?? '', $GLOBALS['allowedDomain']) !== 0) {
       http_response_code(403);
-      echo json_encode(['error' => 'Forbidden']);
+      echo json_encode([
+         'error' => [
+            'type' => 'forbidden',
+            'message' => 'Access to this resource is forbidden'
+         ]
+      ]);
       exit();
    }
 }

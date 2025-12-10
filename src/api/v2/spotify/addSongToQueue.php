@@ -9,6 +9,25 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json");
 
+// If browser sends an option return info
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
+   http_response_code(204);
+   exit();
+}
+
+// Check if the request method is valid
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+   http_response_code(405);
+   echo json_encode([
+      'success' => false,
+      'error' => [
+         'type' => 'forbiddenMethod',
+         'message' => 'Method not allowed'
+      ]
+   ]);
+   exit();
+}
+
 class AddSongToQueue
 {
    private $conn;
@@ -19,6 +38,7 @@ class AddSongToQueue
       checkOrigin();
       $this->conn = $GLOBALS['conn'];
       $this->input = parseInput($this->conn);
+      $this->HandleRequest();
    }
 
    public function __destruct()
@@ -26,32 +46,54 @@ class AddSongToQueue
       $this->conn->close();
    }
 
-   public function HandleRequest()
+   private function HandleRequest()
    {
+      // Get party id and check if it's not empty
       $partyId = $this->input['party_id'] ?? '';
 
       if (empty($partyId)) {
          http_response_code(400);
-         echo json_encode(['success' => false, 'error' => 'Bad Request: party_id is required']);
+         echo json_encode([
+            'success' => false,
+            'error' => [
+               'type' => 'badRequest',
+               'message' => 'party_id is required'
+            ]
+         ]);
          exit();
       }
 
+      // Get track uri and check if it's not empty
       $trackUri = $this->input['track_uri'] ?? '';
 
       if (empty($trackUri)) {
          http_response_code(400);
-         echo json_encode(['success' => false, 'error' => 'Bad Request: track_uri is required']);
+         echo json_encode([
+            'success' => false,
+            'error' => [
+               'type' => 'badRequest',
+               'message' => 'track_uri is required'
+            ]
+         ]);
          exit();
       }
 
+      // Retrieve the information about the party the id was provided for and checks if it's active
       $partyInfo = getPartyInfo($this->conn, $partyId);
 
       if (!$partyInfo) {
          http_response_code(404);
-         echo json_encode(['success' => false, 'error' => 'Party not found']);
+         echo json_encode([
+            'success' => false,
+            'error' => [
+               'type' => 'noActiveParty',
+               'message' => 'Party not found'
+            ]
+         ]);
          exit();
       }
 
+      // Send a request to the spotify servers to check if the user has an active player
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, "https://api.spotify.com/v1/me/player");
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -110,6 +152,7 @@ class AddSongToQueue
          exit();
       }
 
+      // If explicit is not enabled for the party check if the track request is not explicit
       if (!$partyInfo['explicit']) {
          $ch = curl_init();
          curl_setopt($ch, CURLOPT_URL, "https://api.spotify.com/v1/tracks/" . explode(":", $trackUri)[2]);
@@ -157,6 +200,7 @@ class AddSongToQueue
          }
       }
 
+      // If duplicate blocker if enabled for the party check if the song is already in the queue
       if ($partyInfo['duplicate_blocker']) {
          $ch = curl_init();
          curl_setopt($ch, CURLOPT_URL, "https://api.spotify.com/v1/me/player/queue");
@@ -215,6 +259,7 @@ class AddSongToQueue
          }
       }
 
+      // if all the checks pass send a request to spotify to add the song to the queue
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_POST, true);
       curl_setopt($ch, CURLOPT_URL, "https://api.spotify.com/v1/me/player/queue?uri=" . urlencode($trackUri));
@@ -259,16 +304,4 @@ class AddSongToQueue
    }
 }
 
-if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
-   http_response_code(204);
-   exit();
-}
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-   http_response_code(405);
-   echo json_encode(['success' => false, 'error' => 'Method not allowed']);
-   exit();
-}
-
-$addSongToQueue = new AddSongToQueue();
-$addSongToQueue->HandleRequest();
+new AddSongToQueue();

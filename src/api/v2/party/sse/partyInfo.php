@@ -12,6 +12,25 @@ header('Content-Type: text/event-stream');
 header('Cache-Control: no-cache');
 header('Connection: keep-alive');
 
+// If browser sends an option return info
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
+   http_response_code(204);
+   exit();
+}
+
+// Check if the request method is valid
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+   http_response_code(405);
+   echo json_encode([
+      'success' => false,
+      'error' => [
+         'type' => 'forbiddenMethod',
+         'message' => 'Method not allowed'
+      ]
+   ]);
+   exit();
+}
+
 class PartyInfo
 {
    private $conn;
@@ -21,6 +40,7 @@ class PartyInfo
       checkOrigin();
       $this->conn = $GLOBALS['conn'];
       $this->input = parseInput($this->conn);
+      $this->handleRequest();
    }
 
    public function __destruct()
@@ -28,7 +48,7 @@ class PartyInfo
       $this->conn->close();
    }
 
-   public function handleRequest()
+   private function handleRequest()
    {
       $partyId = $this->input['party_id'];
 
@@ -37,7 +57,10 @@ class PartyInfo
          echo "event: noPartyId\n";
          echo "data: " . json_encode([
             'success' => false,
-            'error' => "Bad request: No party id provided"
+            'error' => [
+               'type' => 'badRequest',
+               'message' => 'party_id is required'
+            ]
          ] . "\n\n");
          exit();
       }
@@ -84,11 +107,22 @@ class PartyInfo
             $initialRun = false;
          } else {
             if ($pastResults !== $row) {
-               echo "event: partyUpdate\n";
-               echo "data: " . json_encode([
-                  "active_party" => $results->num_rows > 0,
-                  "party" => $row
-               ]) . "\n\n";
+               if (($results->num_rows > 0) !== ($pastResults !== null)) {
+                  echo "event: partyUpdate\n";
+                  echo "data: " . json_encode([
+                     "type" => 'partyStatusChange',
+                     "explicit" => $row['explicit']
+                  ]) . "\n\n";
+                  break;
+               }
+
+               if ($row['explicit'] !== $pastResults['explicit']) {
+                  echo "event: partyUpdate\n";
+                  echo "data: " . json_encode([
+                     "type" => 'explicitUpdate',
+                     "explicit" => $row['explicit']
+                  ]) . "\n\n";
+               }
             }
          }
          echo ":\n\n";
@@ -102,5 +136,4 @@ class PartyInfo
    }
 }
 
-$partyInfo = new PartyInfo();
-$partyInfo->handleRequest();
+new PartyInfo();

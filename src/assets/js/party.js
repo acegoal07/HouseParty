@@ -103,6 +103,9 @@ function addSongToQueue(event, song, artists) {
 
 // Search function
 function search() {
+   if (!searchInput.value && !searchResults.dataset.currentSearch) {
+      return;
+   }
    loadingIcon.classList.remove('hide');
    for (const child of searchResults.querySelectorAll('.search-results-item')) {
       child.remove();
@@ -290,12 +293,20 @@ eventSource.addEventListener('init', event => {
 eventSource.addEventListener('partyUpdate', event => {
    const data = JSON.parse(event.data);
 
-   if (!data.active_party && data.party === null) {
-      return globalThis.location.href = "./join.html";
-   }
-   if (explicitToggle !== data.party.explicit) {
-      search();
-      explicitToggle = data.party.explicit;
+   switch (data.type) {
+      case 'partyStatusChange':
+         if (!data.active_party) {
+            return globalThis.location.href = "./join.html";
+         }
+         break;
+      case 'explicitUpdate':
+         if (explicitToggle !== data.explicit) {
+            search();
+            explicitToggle = data.explicit;
+         }
+         break;
+      default:
+         break;
    }
 });
 

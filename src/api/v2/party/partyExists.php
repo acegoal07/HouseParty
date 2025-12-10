@@ -9,6 +9,25 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json");
 
+// If browser sends an option return info
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
+   http_response_code(204);
+   exit();
+}
+
+// Check if the request method is valid
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+   http_response_code(405);
+   echo json_encode([
+      'success' => false,
+      'error' => [
+         'type' => 'forbiddenMethod',
+         'message' => 'Method not allowed'
+      ]
+   ]);
+   exit();
+}
+
 class PartyExists
 {
    private $conn;
@@ -18,7 +37,8 @@ class PartyExists
    {
       checkOrigin();
       $this->conn = $GLOBALS['conn'];
-      $this->input = parseInput();
+      $this->input = parseInput($this->conn);
+      $this->handleRequest();
    }
 
    public function __destruct()
@@ -26,13 +46,19 @@ class PartyExists
       $this->conn->close();
    }
 
-   public function handleRequest()
+   private function handleRequest()
    {
       $partyId = $this->input['party_id'] ?? '';
 
       if (empty($partyId)) {
-         http_response_code(400);
-         echo json_encode(['success' => false, 'error' => 'Bad Request: party_id is required']);
+         http_response_code(401);
+         echo json_encode([
+            'success' => false,
+            'error' => [
+               'type' => 'unauthorized',
+               'message' => 'No session id provided'
+            ]
+         ]);
          exit();
       }
 
@@ -46,28 +72,25 @@ class PartyExists
       if ($stmt->error) {
          $stmt->close();
          http_response_code(500);
-         echo json_encode(['success' => false, 'error' => "Database error: {$stmt->error}"]);
-         throw new Exception("Database error: {$stmt->error}");
+         echo json_encode([
+            'success' => false,
+            'error' => [
+               'type' => 'database',
+               'message' => $stmt->error
+            ]
+         ]);
+         exit();
       }
 
       $stmt->close();
 
       http_response_code(200);
-      echo json_encode(['success' => true, 'party_exists' => $count > 0]);
+      echo json_encode([
+         'success' => true,
+         'party_exists' => $count > 0
+      ]);
       exit();
    }
 }
 
-if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
-   http_response_code(204);
-   exit();
-}
-
-if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-   http_response_code(405);
-   echo json_encode(['success' => false, 'error' => 'Method not allowed']);
-   exit();
-}
-
-$partyExists = new PartyExists();
-$partyExists->handleRequest();
+new PartyExists();

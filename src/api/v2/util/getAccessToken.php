@@ -19,16 +19,15 @@ function getAccessToken($refreshToken)
    curl_setopt($ch, CURLOPT_URL, 'https://accounts.spotify.com/api/token');
    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
    curl_setopt($ch, CURLOPT_POST, 1);
+   curl_setopt($ch, CURLOPT_HTTPHEADER, [
+      'Content-Type: application/x-www-form-urlencoded'
+   ]);
    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
       'grant_type'    => 'refresh_token',
       'refresh_token' => $refreshToken,
       'client_id'     => $GLOBALS['spotifyClientId'],
       'client_secret' => $GLOBALS['spotifyClientSecret'],
    ]));
-
-   $headers = [];
-   $headers[] = 'Content-Type: application/x-www-form-urlencoded';
-   curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
    $result = curl_exec($ch);
    if (curl_errno($ch)) {

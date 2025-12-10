@@ -28,6 +28,7 @@
 
    input[type="text"],
    input[type="number"] {
+      cursor: text !important;
       background-color: variables.$bg-secondary;
       color: #fff;
       border: none;

@@ -10,6 +10,25 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json");
 
+// If browser sends an option return info
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
+   http_response_code(204);
+   exit();
+}
+
+// Check if the request method is valid
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+   http_response_code(405);
+   echo json_encode([
+      'success' => false,
+      'error' => [
+         'type' => 'forbiddenMethod',
+         'message' => 'Method not allowed'
+      ]
+   ]);
+   exit();
+}
+
 class UpdateDuplicateBlocker
 {
    private $conn;
@@ -19,7 +38,8 @@ class UpdateDuplicateBlocker
    {
       checkOrigin();
       $this->conn = $GLOBALS['conn'];
-      $this->input = parseInput();
+      $this->input = parseInput($this->conn);
+      $this->handleRequest();
    }
 
    public function __destruct()
@@ -27,13 +47,19 @@ class UpdateDuplicateBlocker
       $this->conn->close();
    }
 
-   public function handleRequest()
+   private function handleRequest()
    {
       $sessionId = cookieGet('session_id');
 
       if (empty($sessionId)) {
          http_response_code(401);
-         echo json_encode(['success' => false, 'error' => 'Unauthorized: No session token provided']);
+         echo json_encode([
+            'success' => false,
+            'error' => [
+               'type' => 'unauthorized',
+               'message' => 'No session id provided'
+            ]
+         ]);
          exit();
       }
 
@@ -41,7 +67,13 @@ class UpdateDuplicateBlocker
 
       if (!$validation['validated']) {
          http_response_code(401);
-         echo json_encode(['success' => false, 'error' => 'Unauthorized: Invalid session']);
+         echo json_encode([
+            'success' => false,
+            'error' => [
+               'type' => 'unauthorized',
+               'message' => 'Invalid session'
+            ]
+         ]);
          exit();
       }
 
@@ -49,7 +81,13 @@ class UpdateDuplicateBlocker
 
       if (!is_bool($duplicateBlocker)) {
          http_response_code(400);
-         echo json_encode(['success' => false, 'error' => 'Bad Request: duplicate_blocker must be a boolean']);
+         echo json_encode([
+            'success' => false,
+            'error' => [
+               'type' => 'badRequest',
+               'message' => 'duplicate_blocker must be a boolean'
+            ]
+         ]);
          exit();
       }
 
@@ -60,28 +98,24 @@ class UpdateDuplicateBlocker
       if ($stmt->error) {
          $stmt->close();
          http_response_code(500);
-         echo json_encode(['success' => false, 'error' => "Database error: {$stmt->error}"]);
-         throw new Exception("Database error: {$stmt->error}");
+         echo json_encode([
+            'success' => false,
+            'error' => [
+               'type' => 'database',
+               'message' => $stmt->error
+            ]
+         ]);
+         exit();
       }
 
       $stmt->close();
 
       http_response_code(200);
-      echo json_encode(['success' => true, 'message' => 'Duplicate blocker preference updated successfully']);
+      echo json_encode([
+         'success' => true
+      ]);
       exit();
    }
 }
 
-if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
-   http_response_code(204);
-   exit();
-}
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-   http_response_code(405);
-   echo json_encode(['success' => false, 'error' => 'Method not allowed']);
-   exit();
-}
-
-$updateDuplicateBlocker = new UpdateDuplicateBlocker();
-$updateDuplicateBlocker->handleRequest();
+new UpdateDuplicateBlocker();

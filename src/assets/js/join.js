@@ -11,7 +11,6 @@ eventSource.addEventListener('init', () => {
 });
 
 eventSource.addEventListener('invalidSessionId', () => {
-   logoutButton.classList.add('hide');
    eventSource.close();
 });
 
