@@ -20,14 +20,13 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
 
 // Check if the request method is valid
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-   http_response_code(405);
-   echo json_encode([
-      'success' => false,
+   echo "event: forbiddenMethod";
+   echo "data : " . json_encode([
       'error' => [
          'type' => 'forbiddenMethod',
          'message' => 'Method not allowed'
       ]
-   ]);
+   ]) . "\n\n";
    exit();
 }
 
@@ -35,9 +34,10 @@ class PartyInfo
 {
    private $conn;
    private $input;
+
    public function __construct()
    {
-      checkOrigin();
+      checkOriginSSE();
       $this->conn = $GLOBALS['conn'];
       $this->input = parseInput($this->conn);
       $this->handleRequest();
@@ -53,10 +53,8 @@ class PartyInfo
       $partyId = $this->input['party_id'];
 
       if (empty($partyId)) {
-         http_response_code(400);
          echo "event: noPartyId\n";
          echo "data: " . json_encode([
-            'success' => false,
             'error' => [
                'type' => 'badRequest',
                'message' => 'party_id is required'
@@ -87,10 +85,11 @@ class PartyInfo
          $stmt->execute();
 
          if ($stmt->error) {
-            http_response_code(500);
             echo "event: serverError\n";
             echo "data: {}\n\n";
             $stmt->close();
+            ob_flush();
+            flush();
             exit();
          }
 

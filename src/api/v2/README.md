@@ -11,5 +11,6 @@ The v2 API introduces several new features and enhancements over v1 to improve p
 
 ## API Documentation
 - [House Party - User API Documentation](user/README.md)
-- [House Party - User SSE API Documentation](party/sse/README.md)
+- [House Party - User SSE API Documentation](user/sse/README.md)
 ---
+- [House Party - Spotify API Documentation](spotify/README.md)
