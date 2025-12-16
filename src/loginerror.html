@@ -19,23 +19,29 @@
    </div>
    <!-- HEADER -->
    <header>
-      <div id="main-error" class="hide">
-         <h1 class="heading" aria-describedby="login-error-description">Login Error</h1>
-         <p class="description" id="login-error-description">An error occurred when logging in</p>
+      <div id="unknown-error" class="hide">
+         <h1 class="heading" aria-describedby="unknown-error-description">Login Error</h1>
+         <p class="description" id="unknown-error-description">An error occurred when logging in</p>
       </div>
-      <div id="development-error" class="hide">
-         <h1 class="heading" aria-describedby="development-error-description">In Development</h1>
-         <p class="description" id="development-error-description">Due to this project being in development you have to have an authorised Spotify
-            account to be able to login to your Spotify</p>
+
+      <div id="not-authorised-error" class="hide">
+         <h1 class="heading" aria-describedby="not-authorised-error-description">Private Access</h1>
+         <p class="description" id="not-authorised-error-description">This website can only be used by authorised users
+            as
+            it is a private website</p>
       </div>
-      <div id="premium-account-error" class="hide">
-         <h1 class="heading" aria-describedby="premium-account-error-description">Premium Required</h1>
-         <p class="description" id="premium-account-error-description">To use this service you require a spotify account with premium</p>
+
+      <div id="premium-account-required-error" class="hide">
+         <h1 class="heading" aria-describedby="premium-account-required-error-description">Premium Required</h1>
+         <p class="description" id="ppremium-account-required-error-description">To use this service you require a
+            spotify account
+            with premium</p>
       </div>
-      <div id="request-limit-error" class="hide">
-         <h1 class="heading" aria-describedby="request-limit-error-description">Request Limit</h1>
-         <p class="description" id="request-limit-error-description">Unfortunately the request limit has been reached please wait a couple
-            minutes and try again</p>
+
+      <div id="rate-limit-reached-error" class="hide">
+         <h1 class="heading" aria-describedby="rate-limit-reached-error-description">Rate Limit Reached</h1>
+         <p class="description" id="rate-limit-reached-error-description">Unfortunately the Spotify rate limit has been
+            reached please try again in a minute</p>
       </div>
    </header>
    <!-- MAIN -->

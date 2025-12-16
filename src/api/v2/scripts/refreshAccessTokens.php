@@ -15,10 +15,15 @@ $results = $stmt->get_result();
 
 while ($row = $results->fetch_assoc()) {
    $accessToken = getAccessToken($row['refresh_token']);
+
+   if (isset($accessToken['error'])) {
+      continue;
+   }
+
    $tokenExpiresAt = gmdate('Y-m-d H:i:00',  time() + 3600);
 
    $stmt = $conn->prepare("UPDATE parties SET access_token = ?, token_expires_at = ? WHERE party_id = ? COLLATE latin1_bin");
-   $stmt->bind_param("sss", $accessToken, $tokenExpiresAt, $row['party_id']);
+   $stmt->bind_param("sss", $accessToken['access_token'], $tokenExpiresAt, $row['party_id']);
    $stmt->execute();
    $stmt->close();
 }

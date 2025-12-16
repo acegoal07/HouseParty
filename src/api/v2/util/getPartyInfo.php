@@ -32,7 +32,7 @@ function getPartyInfo($conn, $partyId)
             'message' => $stmt->error
          ]
       ]);
-      throw new Exception("Database error: {$stmt->error}");
+      exit();
    }
 
    $stmt->close();

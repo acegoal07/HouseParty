@@ -1,31 +1,48 @@
 <?php
 include __DIR__ . '/../secrets.php';
 include __DIR__ . '/../util/sessionManager.php';
+include __DIR__ . '/../util/parseInput.php';
 header("Access-Control-Allow-Origin: {$allowedDomain}");
 header("Access-Control-Allow-Methods: GET");
 
-class SpotifyLoginHandler
+// If browser sends an option return info
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
+   http_response_code(204);
+   exit();
+}
+
+// Check if the request method is valid
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+   http_response_code(405);
+   echo json_encode([
+      'error' => [
+         'type' => 'forbiddenMethod',
+         'message' => 'Method not allowed'
+      ]
+   ]);
+   exit();
+}
+
+class Login
 {
    private $conn;
-   private $spotifyClientId;
-   private $spotifyClientSecret;
+   private $input;
 
-   /**
-    * Constructor
-    * @param mysqli $conn The database connection
-    * @param string $spotifyClientId The Spotify client ID
-    * @param string $spotifyClientSecret The Spotify client secret
-    */
-   public function __construct($conn, $spotifyClientId, $spotifyClientSecret)
+   public function __construct()
    {
-      $this->conn = $conn;
-      $this->spotifyClientId = $spotifyClientId;
-      $this->spotifyClientSecret = $spotifyClientSecret;
+      $this->conn = $GLOBALS['conn'];
+      $this->input = parseInput($this->conn);
+      $this->handleRequest();
+   }
+
+   public function __destruct()
+   {
+      $this->conn->close();
    }
 
    /**
     * Redirect the user to the login error page with an error code
-    * @param int $errorCode The error code
+    * @param "unknown"|"rateLimitReached"|"notAuthorised"|"premiumAccountRequired" $errorCode The error code
     * @return void
     */
    private function redirectWithError($errorCode)
@@ -34,124 +51,84 @@ class SpotifyLoginHandler
       exit();
    }
 
-   /**
-    * Handle the request
-    * @return void
-    */
-   public function handleRequest()
+   private function handleRequest()
    {
-      if (!isset($_SERVER['REQUEST_METHOD'])) {
-         http_response_code(405);
-         echo json_encode(['error' => 'Bad Request: Missing request method']);
-         exit();
-      }
-      if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-         if (isset($_GET['error'])) {
-            $this->redirectWithError(1);
-         } else {
-            $this->processLogin();
-         }
-      } else {
-         http_response_code(405);
-         exit();
-      }
-   }
+      $code = $this->input['code'] ?? '';
 
-   /**
-    * Get the access token from the Spotify API
-    * @return array The access token
-    */
-   private function getAccessToken()
-   {
+      if (empty($code)) {
+         return $this->redirectWithError('unknown');
+      }
+
+      // Get users access token
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, "https://accounts.spotify.com/api/token");
       curl_setopt($ch, CURLOPT_POST, true);
       curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
          'grant_type' => 'authorization_code',
-         'code' => $_GET['code'],
+         'code' => $code,
          'redirect_uri' => 'https://houseparty.acegoal07.dev/api/v2/user/login.php',
-         'client_id' => $this->spotifyClientId,
-         'client_secret' => $this->spotifyClientSecret
+         'client_id' => $GLOBALS['spotifyClientId'],
+         'client_secret' => $GLOBALS['spotifyClientSecret']
       ]));
       curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
       $response = curl_exec($ch);
-      $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-      curl_close($ch);
 
-      if (curl_errno($ch)) {
-         error_log('cURL Error: ' . curl_error($ch));
-         $this->redirectWithError(1);
+      if (!$response || curl_errno($ch)) {
+         return $this->redirectWithError('unknown');
       }
 
-      if ($http_code === 429) {
-         $this->redirectWithError(4);
-      } elseif ($http_code !== 200) {
-         $this->redirectWithError(1);
+      $responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+      if ($responseCode === 429) {
+         return $this->redirectWithError('unknown');
       }
 
-      return json_decode($response, true);
-   }
+      $responseData = json_decode($response, true);
 
-   /**
-    * Get the host ID from the Spotify API
-    * @param string $accessToken The access token
-    * @return array The host ID
-    */
-   private function getHostId($accessToken)
-   {
+      $refreshToken = $responseData['refresh_token'] ?? '';
+      $accessToken = $responseData['access_token'] ?? '';
+
+      if (empty($refreshToken) || empty($accessToken)) {
+         return $this->redirectWithError('unknown');
+      }
+
+      // Get users id and check their account for access
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, "https://api.spotify.com/v1/me");
       curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Bearer {$accessToken}"]);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
       $response = curl_exec($ch);
-      $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-      curl_close($ch);
 
-      if (curl_errno($ch)) {
-         error_log('cURL Error: ' . curl_error($ch));
-         $this->redirectWithError(1);
+      if (!$response || curl_errno($ch)) {
+         return $this->redirectWithError('unknown');
       }
 
-      if ($http_code === 429) {
-         $this->redirectWithError(4);
-      } elseif ($http_code === 403) {
-         $this->redirectWithError(2);
-      } elseif ($http_code !== 200) {
-         $this->redirectWithError(1);
+      $responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+      if ($responseCode === 429) {
+         return $this->redirectWithError('rateLimitReached');
+      } elseif ($responseCode === 403) {
+         return $this->redirectWithError('notAuthorised');
       }
 
-      return json_decode($response, true);
-   }
+      $responseData = json_decode($response, true);
 
-   /**
-    * Process the login request
-    * @return void
-    */
-   private function processLogin()
-   {
-      $result = $this->getAccessToken();
-      $refresh_token = $result['refresh_token'];
-
-      $result = $this->getHostId($result['access_token']);
-
-      if (!isset($result['id'])) {
-         $this->redirectWithError(1);
+      if (!isset($responseData['id'])) {
+         return $this->redirectWithError('unknown');
+      } elseif ($responseData['product'] !== 'premium') {
+         return $this->redirectWithError('premiumAccountRequired');
       }
 
-      if ($result['product'] !== 'premium') {
-         $this->redirectWithError(3);
-      }
+      // Create session and login user
+      createSession($this->conn, hash('sha256', $responseData['id']), $refreshToken);
 
-      $hashed_host_id = hash('sha256', $result['id']);
-
-      createSession($this->conn, $hashed_host_id, $refresh_token);
-
+      // Go to create page
       header("Location: /create.html");
       exit();
    }
 }
 
-$spotifyLoginHandler = new SpotifyLoginHandler($conn, $spotifyClientId, $spotifyClientSecret);
-$spotifyLoginHandler->handleRequest();
-$conn->close();
+new Login();

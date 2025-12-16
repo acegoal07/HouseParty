@@ -166,7 +166,19 @@ class CreateParty
       $stmt->close();
 
       $partyId = generatePartyId($this->conn);
+      
       $accessToken = getAccessToken($refreshToken);
+      if (isset($accessToken['error'])) {
+         http_response_code($accessToken['response_code']);
+         echo json_encode([
+            'success' => false,
+            'error' => [
+               'type' => $accessToken['error']['type'],
+               'message' => $accessToken['error']['message']
+            ]
+         ]);
+         exit();
+      }
 
       $tokenExpiresAt = gmdate('Y-m-d H:i:00',  time() + 3600);
 
@@ -175,7 +187,7 @@ class CreateParty
       $partyExpiresAt = gmdate('Y-m-d H:i:00', $partyExpiresAt);
 
       $stmt = $this->conn->prepare("INSERT INTO parties (party_id, host_id, access_token, party_expires_at, token_expires_at, explicit, duplicate_blocker) VALUES (?, ?, ?, ?, ?, ?, ?)");
-      $stmt->bind_param("sssssii", $partyId, $hostId, $accessToken, $partyExpiresAt, $tokenExpiresAt, $explicit, $duplicateBlocker);
+      $stmt->bind_param("sssssii", $partyId, $hostId, $accessToken['access_token'], $partyExpiresAt, $tokenExpiresAt, $explicit, $duplicateBlocker);
       $stmt->execute();
 
       if ($stmt->error) {

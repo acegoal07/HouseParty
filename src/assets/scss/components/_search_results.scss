@@ -11,7 +11,8 @@
 
    &:has(.search-results-item) {
       margin-top: 1.3rem;
-      @media (max-width: 600px) { 
+
+      @media (max-width: 600px) {
          margin-top: 1.15rem;
       }
    }
@@ -116,6 +117,11 @@
             svg {
                fill: variables.$color-primary-hover;
             }
+         }
+
+         &:focus {
+            outline: 2px solid variables.$color-focus;
+            outline-offset: 2px;
          }
 
          path {

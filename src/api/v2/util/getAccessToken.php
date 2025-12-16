@@ -10,6 +10,7 @@ if (php_sapi_name() !== 'cli' && realpath($_SERVER['SCRIPT_FILENAME'] ?? '') ===
 /**
  * Get a new access token from Spotify using the provided refresh token
  * @param string $refreshToken
+ * @return array{access_token: string|null, response_code: int|null, error: array{type: string, message: string}|null}
  * @throws Exception
  */
 function getAccessToken($refreshToken)
@@ -31,13 +32,39 @@ function getAccessToken($refreshToken)
 
    $result = curl_exec($ch);
    if (curl_errno($ch)) {
-      throw new Exception('Error fetching access token: ' . curl_error($ch));
+      return [
+         'response_code' => 500,
+         'error' => [
+            'type' => "unknown",
+            'message' => "Error while retrieving some spotify information"
+         ]
+      ];
+   }
+
+   $responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+   if ($responseCode === 429) {
+      return [
+         'response_code' => 429,
+         'error' => [
+            'type' => 'rateLimitReached',
+            'message' => 'The spotify rate limit has been reached try again later'
+         ]
+      ];
    }
 
    $response = json_decode($result, true);
    if (isset($response['access_token'])) {
-      return $response['access_token'];
+      return [
+         'access_token' => $response['access_token']
+      ];
    } else {
-      throw new Exception('Error fetching access token: ' . ($response['error_description'] ?? 'Unknown error'));
+      return [
+         'response_code' => 500,
+         'error' => [
+            'type' => "unknown",
+            'message' => "Error while retrieving some spotify information"
+         ]
+      ];
    }
 }
