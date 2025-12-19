@@ -37,7 +37,7 @@ class SessionInfo
 
    public function __construct()
    {
-      checkOriginSSE();
+      checkOrigin("sse");
       $this->conn = $GLOBALS['conn'];
       $this->input = parseInput($this->conn);
       $this->handleRequest();
@@ -50,6 +50,7 @@ class SessionInfo
 
    private function handleRequest()
    {
+      // Get users session id from cookies and make sure it exists
       $sessionId = cookieGet('session_id');
 
       if (empty($sessionId)) {
@@ -63,6 +64,7 @@ class SessionInfo
          exit();
       }
 
+      // Get data level and defaults it to the lowest level if it's not set
       $dataLevel = $this->input['datalevel'] ?? 'none';
 
       $pastResults = null;

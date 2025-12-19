@@ -37,7 +37,7 @@ class PartyInfo
 
    public function __construct()
    {
-      checkOriginSSE();
+      checkOrigin("sse");
       $this->conn = $GLOBALS['conn'];
       $this->input = parseInput($this->conn);
       $this->handleRequest();

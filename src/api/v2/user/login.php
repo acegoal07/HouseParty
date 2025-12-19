@@ -2,6 +2,7 @@
 include __DIR__ . '/../secrets.php';
 include __DIR__ . '/../util/sessionManager.php';
 include __DIR__ . '/../util/parseInput.php';
+include __DIR__ . '/../util/getAccessToken.php';
 header("Access-Control-Allow-Origin: {$allowedDomain}");
 header("Access-Control-Allow-Methods: GET");
 
@@ -60,35 +61,17 @@ class Login
       }
 
       // Get users access token
-      $ch = curl_init();
-      curl_setopt($ch, CURLOPT_URL, "https://accounts.spotify.com/api/token");
-      curl_setopt($ch, CURLOPT_POST, true);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
-         'grant_type' => 'authorization_code',
-         'code' => $code,
-         'redirect_uri' => 'https://houseparty.acegoal07.dev/api/v2/user/login.php',
-         'client_id' => $GLOBALS['spotifyClientId'],
-         'client_secret' => $GLOBALS['spotifyClientSecret']
-      ]));
-      curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+      $accessToken = getAccessToken($code, 'authorization_code');
 
-      $response = curl_exec($ch);
-
-      if (!$response || curl_errno($ch)) {
-         return $this->redirectWithError('unknown');
+      if (isset($accessToken['error'])) {
+         return $this->redirectWithError(match ($accessToken['response_code']) {
+            429 => 'rateLimitReached',
+            default => 'unknown'
+         });
       }
 
-      $responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-      if ($responseCode === 429) {
-         return $this->redirectWithError('unknown');
-      }
-
-      $responseData = json_decode($response, true);
-
-      $refreshToken = $responseData['refresh_token'] ?? '';
-      $accessToken = $responseData['access_token'] ?? '';
+      $refreshToken = $accessToken['refresh_token'] ?? '';
+      $accessToken = $accessToken['access_token'] ?? '';
 
       if (empty($refreshToken) || empty($accessToken)) {
          return $this->redirectWithError('unknown');

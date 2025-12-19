@@ -76,8 +76,10 @@ class Logout
          exit();
       }
 
+      // Delete session from database
       deleteSession($this->conn, $sessionId);
 
+      // Delete the users cookie
       cookieDelete('session_id');
 
       http_response_code(200);
