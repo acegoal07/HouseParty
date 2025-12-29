@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . '/../secrets.php';
+include_once __DIR__ . '/../secrets.php';
 include_once __DIR__ . '/cookieManager.php';
 
 // Only allow CLI or cron execution

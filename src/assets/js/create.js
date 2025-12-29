@@ -27,11 +27,8 @@ eventSource.addEventListener('noSessionId', () => {
 eventSource.addEventListener('partyUpdate', event => {
    const data = JSON.parse(event.data);
 
-   if (data.type === 'partyStatusChange') {
-      if (data.active_party) {
-         globalThis.location.href = './dashboard.html';
-         return;
-      }
+   if (data.type === 'partyStatusChange' && data.active_party) {
+      globalThis.location.href = './dashboard.html';
    }
 });
 
@@ -60,7 +57,18 @@ globalThis.addEventListener('load', () => {
          .then(response => response.json())
          .then(data => {
             if (data.success) {
-               return globalThis.location.href = `./dashboard.html`;
+               globalThis.location.href = `./dashboard.html`;
+            } else {
+               if (data.error.type === 'unauthorized') {
+                  globalThis.location.href = `./`;
+                  return;
+               }
+
+               document.dispatchEvent(new CustomEvent('openModal', {
+                  detail: {
+                     target: data.error.type === 'rateLimitReached' ? 'too-many-requests-modal' : 'unknown-error-modal'
+                  }
+               }));
             }
          })
          .catch(error => {

@@ -17,6 +17,29 @@
             d="M304 48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zm0 416a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM48 304a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm464-48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM142.9 437A48 48 0 1 0 75 369.1 48 48 0 1 0 142.9 437zm0-294.2A48 48 0 1 0 75 75a48 48 0 1 0 67.9 67.9zM369.1 437A48 48 0 1 0 437 369.1 48 48 0 1 0 369.1 437z" />
       </svg>
    </div>
+   <!-- UNKNOWN ERROR MODAL -->
+   <dialog class="modal-background" id="unknown-error-modal" aria-labelledby="unknown-error-title"
+      aria-describedby="unknown-error-description">
+      <div class="modal-body">
+         <h1 id="unknown-error-title">An error has occurred</h1>
+         <p id="unknown-error-description">Whoops something went wrong please try again!</p>
+         <div class="btn-container mb-1">
+            <button class="btn btn-primary modal-closer" type="button" aria-label="I'll try again">I'll try
+               again</button>
+         </div>
+      </div>
+   </dialog>
+   <!-- TOO MANY REQUESTS MODAL -->
+   <dialog class="modal-background" id="too-many-requests-modal" aria-labelledby="too-many-requests-title">
+      <div class="modal-body">
+         <h1 id="too-many-requests-title">Request limit</h1>
+         <p id="too-many-requests-description">Unfortunately the request limit has been reached please wait a couple
+            minutes and try again</p>
+         <div class="btn-container mb-1">
+            <button class="btn btn-primary modal-closer" type="button" aria-label="Ok will do">Ok will do</button>
+         </div>
+      </div>
+   </dialog>
    <!-- HEADER -->
    <header>
       <h1 class="heading" aria-describedby="page-description">Create Party</h1>
@@ -27,8 +50,8 @@
       <form id="create-party" class="form-container">
          <div class="input-label-container">
             <label class="input-label" for="party-duration">Party Duration (hours)</label>
-            <input class="short-input" id="party-duration" type="number" name="party-duration" title="Party Duration" minlength="1"
-               maxlength="2" min="1" max="24" required value="4" />            
+            <input class="short-input" id="party-duration" type="number" name="party-duration" title="Party Duration"
+               minlength="1" maxlength="2" min="1" max="24" required value="4" />
          </div>
          <div class="checkbox-group">
             <div class="custom-checkbox-container">

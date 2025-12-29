@@ -16,3 +16,9 @@ $conn = new mysqli($host, $user, $pass, $db, $port);
 // Allowed domain for CORS
 global $allowedDomain;
 $allowedDomain = 'https://url.com';
+// Cookie domain
+global $cookieDomain;
+$cookieDomain = 'url.com';
+// Cookie lifespan
+global $cookieLifespan;
+$cookieLifespan = 43200; // 12 hours

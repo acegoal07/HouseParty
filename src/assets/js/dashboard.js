@@ -188,6 +188,11 @@ globalThis.addEventListener('load', () => {
          .then(data => {
             if (data.success) {
                event.target.reset();
+            } else if (data.error.type === 'unauthorized') {
+               globalThis.location.href = './';
+            } else {
+               console.error('Extend Party Error:', data.error);
+               loadingIcon.classList.add('hide');
             }
          })
          .catch(error => {
@@ -213,6 +218,11 @@ globalThis.addEventListener('load', () => {
             if (data.success) {
                disableExplicitButton.classList.add('hide');
                enableExplicitButton.classList.remove('hide');
+            } else if (data.error.type === 'unauthorized') {
+               globalThis.location.href = './';
+            } else {
+               console.error('Disable Explicit Error:', data.error);
+               loadingIcon.classList.add('hide');
             }
          })
          .catch(error => {
@@ -238,6 +248,11 @@ globalThis.addEventListener('load', () => {
             if (data.success) {
                enableExplicitButton.classList.add('hide');
                disableExplicitButton.classList.remove('hide');
+            } else if (data.error.type === 'unauthorized') {
+               globalThis.location.href = './';
+            } else {
+               console.error('Enable Explicit Error:', data.error);
+               loadingIcon.classList.add('hide');
             }
          })
          .catch(error => {
@@ -263,6 +278,11 @@ globalThis.addEventListener('load', () => {
             if (data.success) {
                disableDuplicateBlockerButton.classList.add('hide');
                enableDuplicateBlockerButton.classList.remove('hide');
+            } else if (data.error.type === 'unauthorized') {
+               globalThis.location.href = './';
+            } else {
+               console.error('Disable Duplicate Blocker Error:', data.error);
+               loadingIcon.classList.add('hide');
             }
          })
          .catch(error => {
@@ -289,6 +309,11 @@ globalThis.addEventListener('load', () => {
                enableDuplicateBlockerButton.classList.add('hide');
                disableDuplicateBlockerButton.classList.remove('hide');
                loadingIcon.classList.add('hide');
+            } else if (data.error.type === 'unauthorized') {
+               globalThis.location.href = './';
+            } else {
+               console.error('Enable Duplicate Blocker Error:', data.error);
+               loadingIcon.classList.add('hide');
             }
          })
          .catch(error => {
@@ -307,6 +332,17 @@ globalThis.addEventListener('load', () => {
             'Content-Type': 'application/json'
          }
       })
+         .then(response => response.json())
+         .then(data => {
+            if (!data.success) {
+               if (data.error.type === 'unauthorized') {
+                  globalThis.location.href = './';
+               } else {
+                  console.error('Generate New Party ID Error:', data.error);
+                  loadingIcon.classList.add('hide');
+               }
+            }
+         })
          .catch(error => {
             console.error('Generate New Party ID Error:', error);
          });
@@ -327,6 +363,11 @@ globalThis.addEventListener('load', () => {
          .then(data => {
             if (data.success) {
                globalThis.location.href = './create.html';
+            } else if (data.error.type === 'unauthorized') {
+               globalThis.location.href = './';
+            } else {
+               console.error('End Party Error:', data.error);
+               loadingIcon.classList.add('hide');
             }
          })
          .catch(error => {
