@@ -3,7 +3,7 @@ let loadingIcon;
 let logoutButton;
 let loggedIn = false;
 
-// Set up EventSource listeners 
+// Set up EventSource listeners
 const eventSource = new EventSource('api/v2/user/sse/sessionInfo.php', { withCredentials: true });
 
 eventSource.addEventListener('init', () => {

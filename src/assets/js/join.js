@@ -3,7 +3,7 @@ let loadingIcon;
 let noPartyFoundError;
 let partyCodeInput;
 
-// Set up EventSource listeners 
+// Set up EventSource listeners
 const eventSource = new EventSource('api/v2/user/sse/sessionInfo.php', { withCredentials: true });
 
 eventSource.addEventListener('init', () => {
@@ -50,7 +50,8 @@ globalThis.addEventListener('load', () => {
          .then(data => {
             if (data.success) {
                if (data.party_exists) {
-                  return globalThis.location.href = `party.html?party_id=${encodeURIComponent(partyCode)}`;
+                  globalThis.location.href = `party.html?party_id=${encodeURIComponent(partyCode)}`;
+                  return;
                } else {
                   noPartyFoundError.classList.remove('hide');
                }

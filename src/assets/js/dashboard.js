@@ -26,13 +26,14 @@ let disableExplicitButton;
 let enableDuplicateBlockerButton;
 let disableDuplicateBlockerButton;
 
-// Set up EventSource listeners 
+// Set up EventSource listeners
 const eventSource = new EventSource('api/v2/user/sse/sessionInfo.php?datalevel=full', { withCredentials: true });
 
 eventSource.addEventListener('init', event => {
    const data = JSON.parse(event.data);
    if (!data.active_party) {
-      return globalThis.location.href = './create.html';
+      globalThis.location.href = './create.html';
+      return;
    }
 
    partyExpiresAt = data.party.party_expires_at;
@@ -74,11 +75,11 @@ eventSource.addEventListener('init', event => {
 });
 
 eventSource.addEventListener('invalidSessionId', () => {
-   return globalThis.location.href = './';
+   globalThis.location.href = './';
 });
 
 eventSource.addEventListener('noSessionId', () => {
-   return globalThis.location.href = './';
+   globalThis.location.href = './';
 });
 
 eventSource.addEventListener('partyUpdate', event => {
@@ -88,10 +89,11 @@ eventSource.addEventListener('partyUpdate', event => {
    switch (data.type) {
       case 'partyStatusChange':
          if (!data.active_party) {
-            return globalThis.location.href = './create.html';
+            globalThis.location.href = './create.html';
+            return;
          }
          break;
-      case 'partyIdUpdate':
+      case 'partyIdUpdate': {
          partyIdDisplay.textContent = data.party_id;
 
          const partyUrl = `${globalThis.location.origin}/party.html?party_id=${encodeURIComponent(data.party_id)}`;
@@ -100,7 +102,7 @@ eventSource.addEventListener('partyUpdate', event => {
          partyUrlLink.href = partyUrl;
          partyLinkClickToShare.dataset.shareUrl = partyUrl;
 
-         qrCodeDisplay.removeChild(qrCodeDisplay.firstChild);
+         qrCodeDisplay.firstChild.remove();
 
          QrCreator.render({
             text: `${partyUrl}`,
@@ -110,6 +112,7 @@ eventSource.addEventListener('partyUpdate', event => {
             size: 125
          }, qrCodeDisplay);
          break;
+      }
       case 'partyExpiresAtUpdate':
          partyExpiresAt = data.party_expires_at;
          updateTimestamp();
@@ -323,7 +326,7 @@ globalThis.addEventListener('load', () => {
          .then(response => response.json())
          .then(data => {
             if (data.success) {
-               return globalThis.location.href = './create.html';
+               globalThis.location.href = './create.html';
             }
          })
          .catch(error => {

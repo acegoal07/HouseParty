@@ -4,36 +4,34 @@ let partyDurationInput;
 let explicitCheckbox;
 let duplicateBlockerCheckbox;
 
-// Set up EventSource listeners 
+// Set up EventSource listeners
 const eventSource = new EventSource('api/v2/user/sse/sessionInfo.php?datalevel=minimal', { withCredentials: true });
 
 eventSource.addEventListener('init', event => {
    const data = JSON.parse(event.data);
    if (data.active_party) {
-      return globalThis.location.href = './dashboard.html';
+      globalThis.location.href = './dashboard.html';
+      return;
    }
    loadingIcon.classList.add('hide');
 });
 
 eventSource.addEventListener('invalidSessionId', () => {
-   return globalThis.location.href = './';
+   globalThis.location.href = './';
 });
 
 eventSource.addEventListener('noSessionId', () => {
-   return globalThis.location.href = './';
+   globalThis.location.href = './';
 });
 
 eventSource.addEventListener('partyUpdate', event => {
    const data = JSON.parse(event.data);
 
-   switch (data.type) {
-      case 'partyStatusChange':
-         if (data.active_party) {
-            return globalThis.location.href = './dashboard.html';
-         }
-         break;
-      default:
-         break;
+   if (data.type === 'partyStatusChange') {
+      if (data.active_party) {
+         globalThis.location.href = './dashboard.html';
+         return;
+      }
    }
 });
 

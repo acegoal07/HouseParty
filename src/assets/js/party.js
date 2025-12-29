@@ -8,7 +8,7 @@ import '@/assets/js/util/clickToShare.js';
 // Initialize variables
 let loadingIcon;
 
-let partyId = new URLSearchParams(globalThis.location.search).get('party_id')?.trim();
+const partyId = new URLSearchParams(globalThis.location.search).get('party_id')?.trim();
 let explicitToggle;
 
 let searchForm;
@@ -41,7 +41,16 @@ function addSongToQueue(event, song, artists) {
       })
          .then(response => response.json())
          .then(data => {
-            if (!data.success) {
+            if (data.success) {
+               document.dispatchEvent(new CustomEvent('openModal', {
+                  detail: {
+                     target: 'add-to-queue-successfully-modal',
+                     callback: () => {
+                        document.querySelector('#add-queue-successfully-song-name').textContent = `${song.name} by ${artists}`;
+                     }
+                  }
+               }));
+            } else {
                switch (data.error.type) {
                   case 'rateLimitReached':
                      document.dispatchEvent(new CustomEvent('openModal', {
@@ -82,15 +91,6 @@ function addSongToQueue(event, song, artists) {
                      }));
                      break;
                }
-            } else {
-               document.dispatchEvent(new CustomEvent('openModal', {
-                  detail: {
-                     target: 'add-to-queue-successfully-modal',
-                     callback: () => {
-                        document.querySelector('#add-queue-successfully-song-name').textContent = `${song.name} by ${artists}`;
-                     }
-                  }
-               }));
             }
 
             loadingIcon.classList.add('hide');
@@ -261,13 +261,14 @@ function search() {
       });
 }
 
-// Set up EventSource listeners 
+// Set up EventSource listeners
 const eventSource = new EventSource(`api/v2/party/sse/partyInfo.php?party_id=${partyId}`);
 
 eventSource.addEventListener('init', event => {
    const data = JSON.parse(event.data);
    if (!data.active_party) {
-      return globalThis.location.href = './join.html';
+      globalThis.location.href = './join.html';
+      return;
    }
    partyIdDisplay.textContent = partyId;
 
@@ -296,7 +297,8 @@ eventSource.addEventListener('partyUpdate', event => {
    switch (data.type) {
       case 'partyStatusChange':
          if (!data.active_party) {
-            return globalThis.location.href = "./join.html";
+            globalThis.location.href = "./join.html";
+            return;
          }
          break;
       case 'explicitUpdate':
@@ -311,9 +313,10 @@ eventSource.addEventListener('partyUpdate', event => {
 });
 
 globalThis.addEventListener('load', () => {
-   // Get DOM elements and set variables   
+   // Get DOM elements and set variables
    if (!partyId) {
-      return globalThis.location.href = './join.html';
+      globalThis.location.href = './join.html';
+      return;
    }
    loadingIcon = document.querySelector('div#loading-icon');
    searchForm = document.querySelector('form#search-songs-form');

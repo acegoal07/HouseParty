@@ -34,6 +34,7 @@ class CollapsibleHandler {
    open(target) {
       if (target === this.collapsible) { return; }
       target.setAttribute('aria-expanded', 'true');
+      target.classList.remove('closing');
       target.open = true;
       const content = target.querySelector('.collapsible-content');
       content.style.setProperty('--content-height', `${content.scrollHeight}px`);
@@ -50,6 +51,7 @@ class CollapsibleHandler {
       target.setAttribute('aria-expanded', 'false');
       target.classList.add('closing');
       setTimeout(() => {
+         if (!target.classList.contains('closing')) { return; }
          target.open = false;
          target.classList.remove('closing');
          const content = target.querySelector('.collapsible-content');
