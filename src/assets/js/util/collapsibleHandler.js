@@ -67,10 +67,9 @@ class CollapsibleHandler {
       const animation = content.getAnimations().find(animation => animation.animationName === 'open-collapsible');
       if (animation) {
          animation.pause();
-         content.style.setProperty('--current-height', `${content.clientHeight}px`);
-      } else {
-         content.style.setProperty('--current-height', `${content.clientHeight}px`);
       }
+
+      content.style.setProperty('--current-height', `${content.clientHeight}px`);
 
       target.classList.add('closing');
 

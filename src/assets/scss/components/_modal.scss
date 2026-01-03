@@ -18,21 +18,25 @@ body:has(dialog[open]) {
       display: flex;
       width: 100%;
       height: 100%;
-      -webkit-animation: modal-open 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      animation: modal-open 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      -webkit-animation: modal-open 0.3s forwards;
+      animation: modal-open 0.3s forwards;
+
+      &::-webkit-backdrop {
+         background-color: rgba(0, 0, 0, 0.7);
+         -webkit-backdrop-filter: blur(15px);
+         backdrop-filter: blur(15px);
+      }
+
+      &::backdrop {
+         background-color: rgba(0, 0, 0, 0.7);
+         -webkit-backdrop-filter: blur(15px);
+         backdrop-filter: blur(15px);
+      }
    }
 
    &.closing {
-      -webkit-animation: modal-close 0.3s cubic-bezier(0.7, 0, 0.84, 0) forwards;
-      animation: modal-close 0.3s cubic-bezier(0.7, 0, 0.84, 0) forwards;
-   }
-
-
-   &::backdrop {
-      transition: background-color 0.3s ease;
-      background-color: rgba(0, 0, 0, 0.7);
-      -webkit-backdrop-filter: blur(15px);
-      backdrop-filter: blur(15px);
+      -webkit-animation: modal-close 0.3s forwards;
+      animation: modal-close 0.3s forwards;
    }
 }
 
@@ -63,47 +67,39 @@ body:has(dialog[open]) {
 @-webkit-keyframes modal-open {
    0% {
       opacity: 0;
-      transform: scale(0.9) translateY(-20px);
    }
 
    100% {
       opacity: 1;
-      transform: scale(1) translateY(0);
    }
 }
 
 @keyframes modal-open {
    0% {
       opacity: 0;
-      transform: scale(0.9) translateY(-20px);
    }
 
    100% {
       opacity: 1;
-      transform: scale(1) translateY(0);
    }
 }
 
 @-webkit-keyframes modal-close {
    0% {
       opacity: 1;
-      transform: scale(1) translateY(0);
    }
 
    100% {
       opacity: 0;
-      transform: scale(0.95) translateY(10px);
    }
 }
 
 @keyframes modal-close {
    0% {
       opacity: 1;
-      transform: scale(1) translateY(0);
    }
 
    100% {
       opacity: 0;
-      transform: scale(0.95) translateY(10px);
    }
 }
