@@ -44,7 +44,6 @@ details.collapsible-item {
 
       .collapsible-content {
          display: block;
-         overflow: hidden;
          -webkit-animation: close-collapsible 500ms forwards;
          animation: close-collapsible 500ms forwards;
       }
@@ -80,16 +79,30 @@ details.collapsible-item {
 
    .collapsible-content {
       display: none;
-      overflow: hidden;
       height: 0;
+      overflow: hidden;
       cursor: default;
+
+      &> :first-child {
+         margin-top: 0;
+
+         &::before {
+            content: '';
+            display: block;
+            height: 1rem;
+         }
+      }
+
+      &> :last-child {
+         margin-bottom: 0;
+      }
    }
 }
 
 // ANIMATIONS
 @-webkit-keyframes open-collapsible {
    0% {
-      height: 0;
+      height: var(--current-height);
    }
 
    99% {
@@ -103,7 +116,7 @@ details.collapsible-item {
 
 @keyframes open-collapsible {
    0% {
-      height: 0;
+      height: var(--current-height);
    }
 
    99% {
@@ -117,11 +130,7 @@ details.collapsible-item {
 
 @-webkit-keyframes close-collapsible {
    0% {
-      height: auto;
-   }
-
-   1% {
-      height: var(--content-height);
+      height: var(--current-height)
    }
 
    100% {
@@ -131,11 +140,7 @@ details.collapsible-item {
 
 @keyframes close-collapsible {
    0% {
-      height: auto;
-   }
-
-   1% {
-      height: var(--content-height);
+      height: var(--current-height)
    }
 
    100% {

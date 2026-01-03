@@ -33,11 +33,26 @@ class CollapsibleHandler {
     */
    open(target) {
       if (target === this.collapsible) { return; }
-      target.setAttribute('aria-expanded', 'true');
-      target.classList.remove('closing');
-      target.open = true;
       const content = target.querySelector('.collapsible-content');
+      const animation = content.getAnimations().find(animation => animation.animationName === 'close-collapsible');
+      if (animation) {
+         animation.pause();
+         content.style.setProperty('--current-height', `${content.clientHeight}px`);
+         target.classList.remove('closing');
+      } else {
+         content.style.setProperty('--current-height', `${content.clientHeight}px`);
+      }
+
+      target.open = true;
+      target.setAttribute('aria-expanded', 'true');
       content.style.setProperty('--content-height', `${content.scrollHeight}px`);
+
+      content.getAnimations().find(animation => animation.animationName === 'open-collapsible').onfinish = () => {
+         if (target.classList.contains('closing')) { return; }
+         content.style.removeProperty('--content-height');
+         content.style.removeProperty('--current-height');
+      }
+
       this.collapsible = target;
    }
 
@@ -48,15 +63,26 @@ class CollapsibleHandler {
    close() {
       if (!this.collapsible) { return; }
       const target = this.collapsible;
-      target.setAttribute('aria-expanded', 'false');
+      const content = target.querySelector('.collapsible-content');
+      const animation = content.getAnimations().find(animation => animation.animationName === 'open-collapsible');
+      if (animation) {
+         animation.pause();
+         content.style.setProperty('--current-height', `${content.clientHeight}px`);
+      } else {
+         content.style.setProperty('--current-height', `${content.clientHeight}px`);
+      }
+
       target.classList.add('closing');
-      setTimeout(() => {
+
+      content.getAnimations().find(animation => animation.animationName === 'close-collapsible').onfinish = () => {
          if (!target.classList.contains('closing')) { return; }
          target.open = false;
+         target.setAttribute('aria-expanded', 'false');
          target.classList.remove('closing');
-         const content = target.querySelector('.collapsible-content');
          content.style.removeProperty('--content-height');
-      }, 500);
+         content.style.removeProperty('--current-height');
+      }
+
       this.collapsible = null;
    }
 }
