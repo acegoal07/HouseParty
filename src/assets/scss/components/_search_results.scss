@@ -83,7 +83,11 @@
          }
 
          path {
-            transition: fill ease 0.35s;
+            transition: fill ease 0.2s;
+
+            @media (prefers-reduced-motion: reduce) {
+               transition: none !important;
+            }
          }
       }
 
@@ -125,7 +129,11 @@
          }
 
          path {
-            transition: fill ease 0.35s;
+            transition: fill ease 0.2s;
+
+            @media (prefers-reduced-motion: reduce) {
+               transition: none !important;
+            }
          }
       }
    }

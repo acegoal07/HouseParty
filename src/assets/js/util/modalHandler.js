@@ -80,14 +80,17 @@ class ModalHandler {
    close(callback = null) {
       const modal = document.querySelector('dialog[open]');
       if (modal) {
-         modal.classList.add('closing');
-         setTimeout(() => {
+         if (globalThis.matchMedia(`(prefers-reduced-motion: reduce)`).matches) {
             modal.close();
-            modal.classList.remove('closing');
-            if (callback) {
-               callback();
-            }
-         }, 300);
+            if (callback) { callback(); }
+         } else {
+            modal.classList.add('closing');
+            setTimeout(() => {
+               modal.close();
+               modal.classList.remove('closing');
+               if (callback) { callback(); }
+            }, 300);
+         }
       }
    }
 }

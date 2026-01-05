@@ -33,24 +33,30 @@ class CollapsibleHandler {
     */
    open(target) {
       if (target === this.collapsible) { return; }
-      const content = target.querySelector('.collapsible-content');
-      const animation = content.getAnimations().find(animation => animation.animationName === 'close-collapsible');
-      if (animation) {
-         animation.pause();
-         content.style.setProperty('--current-height', `${content.clientHeight}px`);
-         target.classList.remove('closing');
+
+      if (globalThis.matchMedia(`(prefers-reduced-motion: reduce)`).matches) {
+         target.open = true;
+         target.setAttribute('aria-expanded', 'true');
       } else {
-         content.style.setProperty('--current-height', `${content.clientHeight}px`);
-      }
+         const content = target.querySelector('.collapsible-content');
+         const animation = content.getAnimations().find(animation => animation.animationName === 'close-collapsible');
+         if (animation) {
+            animation.pause();
+            content.style.setProperty('--current-height', `${content.clientHeight}px`);
+            target.classList.remove('closing');
+         } else {
+            content.style.setProperty('--current-height', `${content.clientHeight}px`);
+         }
 
-      target.open = true;
-      target.setAttribute('aria-expanded', 'true');
-      content.style.setProperty('--content-height', `${content.scrollHeight}px`);
+         target.open = true;
+         target.setAttribute('aria-expanded', 'true');
+         content.style.setProperty('--content-height', `${content.scrollHeight}px`);
 
-      content.getAnimations().find(animation => animation.animationName === 'open-collapsible').onfinish = () => {
-         if (target.classList.contains('closing')) { return; }
-         content.style.removeProperty('--content-height');
-         content.style.removeProperty('--current-height');
+         content.getAnimations().find(animation => animation.animationName === 'open-collapsible').onfinish = () => {
+            if (target.classList.contains('closing')) { return; }
+            content.style.removeProperty('--content-height');
+            content.style.removeProperty('--current-height');
+         }
       }
 
       this.collapsible = target;
@@ -63,23 +69,29 @@ class CollapsibleHandler {
    close() {
       if (!this.collapsible) { return; }
       const target = this.collapsible;
-      const content = target.querySelector('.collapsible-content');
-      const animation = content.getAnimations().find(animation => animation.animationName === 'open-collapsible');
-      if (animation) {
-         animation.pause();
-      }
 
-      content.style.setProperty('--current-height', `${content.clientHeight}px`);
-
-      target.classList.add('closing');
-
-      content.getAnimations().find(animation => animation.animationName === 'close-collapsible').onfinish = () => {
-         if (!target.classList.contains('closing')) { return; }
+      if (globalThis.matchMedia(`(prefers-reduced-motion: reduce)`).matches) {
          target.open = false;
          target.setAttribute('aria-expanded', 'false');
-         target.classList.remove('closing');
-         content.style.removeProperty('--content-height');
-         content.style.removeProperty('--current-height');
+      } else {
+         const content = target.querySelector('.collapsible-content');
+         const animation = content.getAnimations().find(animation => animation.animationName === 'open-collapsible');
+         if (animation) {
+            animation.pause();
+         }
+
+         content.style.setProperty('--current-height', `${content.clientHeight}px`);
+
+         target.classList.add('closing');
+
+         content.getAnimations().find(animation => animation.animationName === 'close-collapsible').onfinish = () => {
+            if (!target.classList.contains('closing')) { return; }
+            target.open = false;
+            target.setAttribute('aria-expanded', 'false');
+            target.classList.remove('closing');
+            content.style.removeProperty('--content-height');
+            content.style.removeProperty('--current-height');
+         }
       }
 
       this.collapsible = null;

@@ -21,6 +21,11 @@ body:has(dialog[open]) {
       -webkit-animation: modal-open 0.3s forwards;
       animation: modal-open 0.3s forwards;
 
+      @media (prefers-reduced-motion: reduce) {
+         -webkit-animation: none !important;
+         animation: none !important;
+      }
+
       &::-webkit-backdrop {
          background-color: rgba(0, 0, 0, 0.7);
          -webkit-backdrop-filter: blur(15px);

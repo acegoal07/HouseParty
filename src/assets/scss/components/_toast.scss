@@ -16,6 +16,13 @@
    -webkit-animation: slideInOut 2.5s forwards;
    animation: slideInOut 2.5s forwards;
    z-index: 1;
+
+   @media (prefers-reduced-motion: reduce) {
+      -webkit-animation: none !important;
+      animation: none !important;
+      visibility: visible;
+      top: 20px;
+   }
 }
 
 // ANIMATION

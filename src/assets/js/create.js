@@ -1,3 +1,6 @@
+// Imports
+import '@/assets/js/util/modalHandler.js';
+
 // Initialize variables
 let loadingIcon;
 let partyDurationInput;

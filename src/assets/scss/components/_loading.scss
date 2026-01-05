@@ -27,6 +27,11 @@ div.loading-container {
       -webkit-animation: loadingAnimation 1.5s linear infinite;
       animation: loadingAnimation 1.5s linear infinite;
       fill: variables.$color-primary;
+
+      @media (prefers-reduced-motion: reduce) {
+         -webkit-animation: none !important;
+         animation: none !important;
+      }
    }
 }
 

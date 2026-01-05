@@ -34,6 +34,12 @@ details.collapsible-item {
          overflow: visible;
          -webkit-animation: open-collapsible 500ms forwards;
          animation: open-collapsible 500ms forwards;
+
+         @media (prefers-reduced-motion: reduce) {
+            height: auto;
+            -webkit-animation: none !important;
+            animation: none !important;
+         }
       }
    }
 
@@ -74,6 +80,10 @@ details.collapsible-item {
          margin: auto 0.5rem 0.22rem auto;
          transform: rotate(-45deg);
          transition: transform 500ms ease-in-out;
+
+         @media (prefers-reduced-motion: reduce) {
+            transition: none !important;
+         }
       }
    }
 
