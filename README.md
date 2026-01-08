@@ -4,20 +4,17 @@
 
 # House Party - Opening your Spotify queue to your party
 This is my final year project for computer science in this project I am aiming to make a website that allows people to let other people add songs to their spotify playlist without the person needing a spotify account or app installed. This is done by using the Spotify Web API and the website acts as a middleman between the user and the Spotify API.
+
 # Documentation
-- PHP
-  - [Website API documentation](src/api/website/README.md)
-  - [Server scripts documentation](src/api/server/README.md)
-  - [Util documentation](src/api/util/README.md)
-- JS
-  - [Pages documentation](src/assets/js/README.md)
-  - [Utility documentation](src/assets/js/util/README.md)
+- [API Documentation](src/api/README.md)
+- [JS Documentation](src/assets/js/README.md)
+
 # External Libraries Used
 - [Spotify Web API](https://developer.spotify.com/documentation/web-api/)
 - [qr-creator](https://github.com/nimiq/qr-creator)
-- [font-awesome](https://fontawesome.com/)
 - [BootStrap Icons](https://getbootstrap.com/)
 - [google fonts](https://fonts.google.com/specimen/Roboto)
+
 # Database Design
 [dbdiagram.io version](database_design.txt)
 - ```users```
@@ -35,3 +32,4 @@ This is my final year project for computer science in this project I am aiming t
   - ```party_expires_at``` - Timestamp for when the party expires and needs to be closed
   - ```explicit``` - Whether or not to allow explicit songs to be added
   - ```duplicate_blocker``` - whether or not to allow duplicate songs to be added to the queue
+  - ```permanent``` - whether or not the party is permanent and doesn't expire

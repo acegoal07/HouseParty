@@ -26,8 +26,6 @@ Table parties {
   party_expires_at datetime [not null]
   explicit tinyint(1) [default: 0, not null]
   duplicate_blocker tinyint(1) [default: 0, not null]
-  
-  paused tinyint(1) [default: 0, not null]
   permanent tinyint(1) [default:0, not null]
   
   indexes {

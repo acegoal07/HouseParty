@@ -1,0 +1,80 @@
+@use '../variables';
+
+// CLICK TO COPY
+.click-to-copy {
+   display: grid !important;
+
+   &:hover {
+      svg path {
+         transition: fill ease 0.2s;
+         fill: variables.$color-primary-hover;
+
+         @media (prefers-reduced-motion: reduce) {
+            transition: none !important;
+         }
+      }
+   }
+
+   svg {
+      grid-column: 1;
+      grid-row: 1;
+   }
+
+   &:not(.copied) {
+      .copy-success-icon {
+         display: none;
+         opacity: 0;
+      }
+   }
+
+   &.copied {
+
+      .copy-success-icon {
+         opacity: 1;
+         -webkit-animation: click-to-copy-fade-in-out 2.5s forwards;
+         animation: click-to-copy-fade-in-out 2.5s forwards;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+
+         .copy-success-icon {
+            -webkit-animation: none !important;
+            animation: none !important;
+         }
+      }
+   }
+}
+
+
+// ANIMATIONS
+@-webkit-keyframes click-to-copy-fade-in-out {
+   0% {
+      opacity: 0;
+      display: block;
+   }
+
+   10%,
+   90% {
+      opacity: 1;
+   }
+
+   100% {
+      opacity: 0;
+   }
+}
+
+@keyframes click-to-copy-fade-in-out {
+   0% {
+      opacity: 0;
+      display: block;
+   }
+
+   10%,
+   90% {
+      opacity: 1;
+   }
+
+   100% {
+      opacity: 0;
+   }
+}

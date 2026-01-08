@@ -12,5 +12,8 @@
     "build:all": "npm run build:js && npm run build:css",
     "package": "webpack --config webpack.package.js",
     "build+package": "npm run build:all && npm run package"
+  },
+  "dependencies": {
+    "qr-creator": "^1.0.0"
   }
 }

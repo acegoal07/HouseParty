@@ -1,5 +1,5 @@
 // Imports
-import '@/assets/js/util/qrcode.js';
+import QrCreator from 'qr-creator';
 import '@/assets/js/util/modalHandler.js';
 import '@/assets/js/util/collapsibleHandler.js';
 import '@/assets/js/util/clickToCopy.js';
