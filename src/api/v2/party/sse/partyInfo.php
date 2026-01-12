@@ -126,11 +126,10 @@ class PartyInfo
             }
          }
 
+         $heartbeatCount++;
          if ($heartbeatCount > 15) {
             $heartbeatCount = 0;
             echo ":\n\n";
-         } else {
-            $heartbeatCount++;
          }
 
          ob_flush();
