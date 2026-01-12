@@ -1,3 +1,6 @@
+// Imports
+import '@/assets/js/util/clickToPaste.js';
+
 // Initialize variables
 let loadingIcon;
 let noPartyFoundError;

@@ -71,6 +71,7 @@ class PartyInfo
       }
 
       $pastResults = null;
+      $heartbeatCount = 0;
       $initialRun = true;
 
       while (!connection_aborted()) {
@@ -124,7 +125,14 @@ class PartyInfo
                }
             }
          }
-         echo ":\n\n";
+
+         if ($heartbeatCount > 15) {
+            $heartbeatCount = 0;
+            echo ":\n\n";
+         } else {
+            $heartbeatCount++;
+         }
+
          ob_flush();
          flush();
 

@@ -68,6 +68,7 @@ class SessionInfo
       $dataLevel = $this->input['datalevel'] ?? 'none';
 
       $pastResults = null;
+      $heartbeatCount = 0;
       $initialRun = true;
 
       while (!connection_aborted()) {
@@ -178,7 +179,13 @@ class SessionInfo
                break;
          }
 
-         echo ":\n\n";
+         if ($heartbeatCount > 15) {
+            $heartbeatCount = 0;
+            echo ":\n\n";
+         } else {
+            $heartbeatCount++;
+         }
+
          ob_flush();
          flush();
 

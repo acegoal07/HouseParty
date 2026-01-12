@@ -105,9 +105,9 @@
             <div class="field-with-actions mt-1">
                <div class="field-body">
                   <code class="field-value" id="party-id"></code>
-                  <ul class="field-actions">
+                  <ul class="field-action-list">
                      <li class="field-action">
-                        <button class="click-to-copy" data-copy-target="party-id" type="button"
+                        <button class="field-action-function click-to-copy" data-copy-target="party-id" type="button"
                            aria-label="Copy Party ID">
                            <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
                               <path
@@ -115,7 +115,6 @@
                               <path
                                  d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z" />
                            </svg>
-
                            <svg class="copy-success-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
                               <path fill-rule="evenodd"
                                  d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0" />
@@ -134,10 +133,9 @@
                   <a class="field-value" target="_blank" rel="noopener" id="party-url-link">
                      <code id="party-url"></code>
                   </a>
-                  <ul class="field-actions">
                      <li class="field-action">
-                        <button id="party-url-link-share" type="button" class="click-to-share hide"
-                           data-share-title="House Party" data-share-text="Join my party on House Party!"
+                        <button class="field-action-function click-to-share hide" id="party-url-link-share"
+                           type="button" data-share-title="House Party" data-share-text="Join my party on House Party!"
                            aria-label="Share Party URL">
                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
                               <path
@@ -148,15 +146,14 @@
                         </button>
                      </li>
                      <li class="field-action">
-                        <button class="click-to-copy" data-copy-target="party-url" type="button"
-                           aria-label="Copy Party Code">
+                        <button class="field-action-function click-to-copy" data-copy-target="party-url" type="button"
+                           aria-label="Copy Party URL">
                            <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
                               <path
                                  d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z" />
                               <path
                                  d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z" />
                            </svg>
-
                            <svg class="copy-success-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
                               <path fill-rule="evenodd"
                                  d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0" />
@@ -178,16 +175,12 @@
          <div class="field-with-actions">
             <div class="field-body secondary">
                <input class="field-value" type="text" placeholder="Search..." aria-label="Search Songs">
-               <ul class="field-actions">
-                  <li class="field-action">
-                     <button type="submit" aria-label="Search">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-hidden="true">
-                           <path
-                              d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
-                        </svg>
-                     </button>
-                  </li>
-               </ul>
+               <button class="field-action-function" type="submit" aria-label="Search">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-hidden="true">
+                     <path
+                        d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+                  </svg>
+               </button>
             </div>
          </div>
       </form>

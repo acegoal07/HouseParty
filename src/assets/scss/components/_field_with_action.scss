@@ -41,56 +41,66 @@
          }
       }
 
-      .field-actions {
+      ul.field-action-list {
          align-self: stretch;
          display: inline-flex;
          padding: 0;
          margin: 0;
 
-         .field-action {
+         li.field-action {
             display: inline;
 
-            &:last-child button {
-               border-top-right-radius: 15px;
-               border-bottom-right-radius: 15px;
+            button {
+               border-radius: 0 !important;
             }
 
-            button {
-               background-color: transparent;
-               border: none;
-               cursor: pointer;
-               height: 100%;
-               display: flex;
-               align-items: center;
-               padding: 0.5rem;
+            &:last-child button.field-action-function {
+               border-top-right-radius: 15px !important;
+               border-bottom-right-radius: 15px !important;
+            }
+         }
+      }
 
-               svg {
-                  width: 1.875rem;
-                  height: 1.875rem;
-                  fill: variables.$color-primary;
+      &:has(button.field-action-function.hide) .field-value {
+         border-radius: 15px !important;
+      }
 
-                  @media (max-width: 600px) {
-                     width: 1.563rem;
-                     height: 1.563rem;
+      button.field-action-function {
+         background-color: transparent;
+         border: none;
+         cursor: pointer;
+         height: 100%;
+         display: flex;
+         align-items: center;
+         padding: 0.5rem;
+         border-top-right-radius: 15px;
+         border-bottom-right-radius: 15px;
 
-                  }
+         &:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px variables.$color-focus;
+         }
 
-                  &:hover {
-                     fill: variables.$color-primary-hover;
-                  }
+         svg {
+            width: 1.875rem;
+            height: 1.875rem;
+            fill: variables.$color-primary;
 
-                  path {
-                     transition: fill ease 0.2s;
+            @media (max-width: 600px) {
+               width: 1.563rem;
+               height: 1.563rem;
 
-                     @media (prefers-reduced-motion: reduce) {
-                        transition: none !important;
-                     }
-                  }
-               }
+            }
 
-               &:focus {
-                  outline: none;
-                  box-shadow: 0 0 0 2px variables.$color-focus;
+            &:hover {
+               fill: variables.$color-primary-hover;
+            }
+
+            path {
+               transition: fill ease 0.2s;
+
+               @media (prefers-reduced-motion: reduce) {
+                  transition: none !important;
                }
             }
          }
