@@ -11,7 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
                      return;
                   }
 
-                  document.querySelector(`#${target.dataset.pasteTarget}`).value = pasteData;
+                  const pasteTarget = document.querySelector(`#${target.dataset.pasteTarget}`);
+                  if ('value' in target) {
+                     pasteTarget.value = pasteData;
+                  } else {
+                     pasteTarget.innerHTML = pasteData;
+                  }
                });
          });
       }

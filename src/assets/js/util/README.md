@@ -7,6 +7,7 @@ Go back to JS documentation [here](../README.md)
 - [House Party - Utilities Documentation](#house-party---utilities-documentation)
   - [Contents](#contents)
   - [clickToCopy](#clicktocopy)
+  - [clickToPaste](#clicktopaste)
   - [clickToShare](#clicktoshare)
   - [collapsibleHandler](#collapsiblehandler)
   - [modalHandler](#modalhandler)
@@ -22,6 +23,17 @@ This util is used to make it so the user can copy something to the clipboard. Th
 <!-- Copy the text contents of a specified target -->
 <p id="url">url</p>
 <button class="click-to-copy" data-copy-target="url" type="button">Copy URL</button>
+```
+
+---
+## clickToPaste
+This util is used to make it so the user can paste something from the clipboard. The event for the button is handled automatically. The pasted data will be inserted into the text content of a specified target.
+
+```html
+<!-- Paste the clipboard contents into the specified target -->
+<input type="text" id="paste-target" />
+
+<button class="click-to-paste" data-paste-target="paste-target" type="button">Paste into input</button>
 ```
 
 ---
