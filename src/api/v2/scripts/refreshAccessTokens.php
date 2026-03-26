@@ -1,6 +1,6 @@
 <?php
-include_once __DIR__ . '/../secrets.php';
-include_once __DIR__ . '/../util/getAccessToken.php';
+require_once __DIR__ . '/../secrets.php';
+require_once __DIR__ . '/../util/getAccessToken.php';
 
 // Only allow CLI or cron execution
 if (php_sapi_name() !== 'cli') {

@@ -1,11 +1,11 @@
 <?php
-include_once __DIR__ . '/../secrets.php';
-include_once __DIR__ . '/../util/sessionManager.php';
-include_once __DIR__ . '/../util/cookieManager.php';
-include_once __DIR__ . '/../util/checkOrigin.php';
-include_once __DIR__ . '/../util/parseInput.php';
-include_once __DIR__ . '/../util/generatePartyId.php';
-include_once __DIR__ . '/../util/getAccessToken.php';
+require_once __DIR__ . '/../secrets.php';
+require_once __DIR__ . '/../util/sessionManager.php';
+require_once __DIR__ . '/../util/cookieManager.php';
+require_once __DIR__ . '/../util/checkOrigin.php';
+require_once __DIR__ . '/../util/parseInput.php';
+require_once __DIR__ . '/../util/generatePartyId.php';
+require_once __DIR__ . '/../util/getAccessToken.php';
 header("Access-Control-Allow-Origin: {$allowedDomain}");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");

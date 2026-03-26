@@ -8,6 +8,7 @@ globalThis.addEventListener('load', () => {
          break;
       case 'notAuthorised':
          document.querySelector('div#not-authorised-error').classList.remove('hide');
+         // document.querySelector('a#request-access-button').classList.remove('hide');
          break;
       case 'premiumAccountRequired':
          document.querySelector('div#premium-account-required-error').classList.remove('hide');

@@ -1,9 +1,9 @@
 {
   "devDependencies": {
-    "copy-webpack-plugin": "^13.0.1",
+    "copy-webpack-plugin": "^14.0.0",
     "terser-webpack-plugin": "^5.3.14",
     "webpack": "^5.102.1",
-    "webpack-cli": "^6.0.1"
+    "webpack-cli": "^7.0.0"
   },
   "scripts": {
     "build:js": "webpack --config webpack.build.js",

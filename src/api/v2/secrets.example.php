@@ -22,3 +22,6 @@ $cookieDomain = 'url.com';
 // Cookie lifespan
 global $cookieLifespan;
 $cookieLifespan = 43200; // 12 hours
+// Request access webhook url
+global $requestAccessWebhook;
+$requestAccessWebhook = 'DISCORD WEBHOOK';

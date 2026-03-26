@@ -1,5 +1,5 @@
 <?php
-include_once __DIR__ . '/../secrets.php';
+require_once __DIR__ . '/../secrets.php';
 
 // Only allow CLI or cron execution
 if (php_sapi_name() !== 'cli' && realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE__) {
