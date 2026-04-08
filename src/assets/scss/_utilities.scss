@@ -5,6 +5,12 @@
    display: none !important;
 }
 
+// SPECIAL TEXT
+.special-text {
+   font-weight: bold;
+   color: variables.$color-primary;
+}
+
 // MARGIN UTILITIES
 .mt-1 {
    margin-top: 1.3rem;
@@ -14,16 +20,17 @@
    }
 }
 
-.mb-0 {
-   margin-bottom: 0 !important;
-}
-
 .mb-1 {
    margin-bottom: 1.3rem;
 
    @media (max-width: 600px) {
       margin-bottom: 1.15rem;
    }
+}
+
+// TEXT ALIGN
+.align-text-center {
+   text-align: center !important;
 }
 
 // BACK TO THE TOP BUTTON  
@@ -44,6 +51,11 @@
       margin-top: 1.15rem;
    }
 
+   &:focus {
+      outline: 2px solid variables.$color-focus;
+      outline-offset: 2px;
+   }
+
    &:hover {
       svg {
          fill: variables.$color-primary-hover;
@@ -51,7 +63,11 @@
    }
 
    path {
-      transition: fill ease 0.35s;
+      transition: fill ease 0.2s;
+
+      @media (prefers-reduced-motion: reduce) {
+         transition: none !important;
+      }
    }
 }
 

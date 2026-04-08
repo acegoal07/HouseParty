@@ -146,7 +146,7 @@ function validateSessionGetPartialInfo($conn, $session_id)
    }
 
    // Check for any party associated with this host by session — only fetch one row
-   $stmt = $conn->prepare("SELECT p.party_id, p.party_expires_at, p.explicit, p.duplicate_blocker FROM parties p JOIN sessions s ON p.host_id = s.host_id WHERE s.session_id = ? COLLATE latin1_bin LIMIT 1");
+   $stmt = $conn->prepare("SELECT p.party_id FROM parties p JOIN sessions s ON p.host_id = s.host_id WHERE s.session_id = ? COLLATE latin1_bin LIMIT 1");
    $stmt->bind_param("s", $session_id);
    $stmt->execute();
    $results = $stmt->get_result();
@@ -154,5 +154,5 @@ function validateSessionGetPartialInfo($conn, $session_id)
    $stmt->close();
 
    $hasParty = $row !== null && $row !== false;
-   return ['validated' => true, 'host_id' => $validation['host_id'], 'active_party' => $hasParty];
+   return ['validated' => true, 'active_party' => $hasParty];
 }

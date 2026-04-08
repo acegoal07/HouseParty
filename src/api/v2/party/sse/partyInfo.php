@@ -1,0 +1,145 @@
+<?php
+require_once __DIR__ . '/../../secrets.php';
+require_once __DIR__ . '/../../util/sessionManager.php';
+require_once __DIR__ . '/../../util/cookieManager.php';
+require_once __DIR__ . '/../../util/checkOrigin.php';
+require_once __DIR__ . '/../../util/parseInput.php';
+header("Access-Control-Allow-Origin: {$allowedDomain}");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Methods: GET, OPTIONS");
+header('Content-Type: text/event-stream');
+header('Cache-Control: no-cache');
+header('Connection: keep-alive');
+
+// If browser sends an option return info
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
+   http_response_code(204);
+   exit();
+}
+
+// Check if the request method is valid
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+   echo "event: forbiddenMethod";
+   echo "data : " . json_encode([
+      'error' => [
+         'type' => 'forbiddenMethod',
+         'message' => 'Method not allowed'
+      ]
+   ]) . "\n\n";
+   exit();
+}
+
+class PartyInfo
+{
+   private $conn;
+   private $input;
+
+   public function __construct()
+   {
+      checkOrigin("sse");
+      $this->conn = $GLOBALS['conn'];
+      $this->input = parseInput($this->conn);
+      $this->handleRequest();
+   }
+
+   public function __destruct()
+   {
+      $this->conn->close();
+   }
+
+   private function handleRequest()
+   {
+      $partyId = $this->input['party_id'];
+
+      if (empty($partyId)) {
+         echo "event: noPartyId\n";
+         echo "data: " . json_encode([
+            'error' => [
+               'type' => 'badRequest',
+               'message' => 'party_id is required'
+            ]
+         ] . "\n\n");
+         exit();
+      }
+
+      $loggedIn = false;
+      $sessionId = cookieGet('session_id');
+
+      if (!empty($sessionId)) {
+         $loggedIn = true;
+      }
+
+      $pastResults = null;
+      $heartbeatCount = 0;
+      $initialRun = true;
+
+      while (!connection_aborted()) {
+         if ($loggedIn) {
+            if (!validateSession($this->conn, $sessionId)['validated']) {
+               $loggedIn = false;
+            }
+         }
+
+         $stmt = $this->conn->prepare("SELECT explicit FROM parties WHERE party_id = ? COLLATE latin1_bin");
+         $stmt->bind_param("s", $partyId);
+         $stmt->execute();
+
+         if ($stmt->error) {
+            echo "event: serverError\n";
+            echo "data: {}\n\n";
+            $stmt->close();
+            ob_flush();
+            flush();
+            exit();
+         }
+
+         $results = $stmt->get_result();
+         $row = $results->fetch_assoc();
+         $stmt->close();
+
+         if ($initialRun) {
+            echo "event: init\n";
+            echo "data: " . json_encode([
+               "active_party" => $results->num_rows > 0,
+               "party" => $row
+            ]) . "\n\n";
+            $initialRun = false;
+         } else {
+            if ($pastResults !== $row) {
+               if (($results->num_rows > 0) !== ($pastResults !== null)) {
+                  echo "event: partyUpdate\n";
+                  echo "data: " . json_encode([
+                     "type" => 'partyStatusChange',
+                     "explicit" => $row['explicit']
+                  ]) . "\n\n";
+                  break;
+               }
+
+               if ($row['explicit'] !== $pastResults['explicit']) {
+                  echo "event: partyUpdate\n";
+                  echo "data: " . json_encode([
+                     "type" => 'explicitUpdate',
+                     "explicit" => $row['explicit']
+                  ]) . "\n\n";
+               }
+            }
+         }
+
+         $heartbeatCount++;
+         if ($heartbeatCount > 15) {
+            $heartbeatCount = 0;
+            echo ":\n\n";
+         }
+
+         ob_flush();
+         flush();
+
+         $pastResults = $row;
+
+         sleep(2);
+      }
+   }
+}
+
+new PartyInfo();

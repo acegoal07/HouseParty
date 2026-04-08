@@ -1,44 +1,35 @@
-//////////////// Variables /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Imports
+import '@/assets/js/util/clickToPaste.js';
+
+// Initialize variables
 let loadingIcon;
-let pollingInterval;
 let noPartyFoundError;
 let partyCodeInput;
 
-//////////////// Polling functions /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function pollingFunction() {
-   fetch(`api/website/database.php?${new URLSearchParams({ type: 'validateSession' })}`);
-}
+// Set up EventSource listeners
+const eventSource = new EventSource('api/v2/user/sse/sessionInfo.php', { withCredentials: true });
 
-function startPolling() {
-   pollingFunction();
-   pollingInterval = setInterval(pollingFunction, 1000);
-}
+eventSource.addEventListener('init', () => {
+   loadingIcon.classList.add('hide');
+});
 
-function stopPolling() {
-   clearInterval(pollingInterval);
-}
+eventSource.addEventListener('invalidSessionId', () => {
+   eventSource.close();
+});
 
-//////////////// Main Body /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+eventSource.addEventListener('noSessionId', () => {
+   loadingIcon.classList.add('hide');
+   eventSource.close();
+});
+
 globalThis.addEventListener('load', () => {
-   //////////////// Set variables //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // Get DOM elements
    loadingIcon = document.querySelector('div#loading-icon');
    noPartyFoundError = document.querySelector('p#no-party-found-error');
    partyCodeInput = document.querySelector('input#party-code');
 
-   //////////////// Page polling ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   startPolling();
-
-   /////////////////////// Stop Polling while off the page /////////////////////////////////////////////////////////////////////////////////////////
-   document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-         stopPolling();
-      } else {
-         startPolling();
-      }
-   });
-
-   //////////////// Join Form //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   document.querySelector('form#join-form').addEventListener('submit', (event) => {
+   // Handle Join Form submission
+   document.querySelector('form#join-form').addEventListener('submit', event => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
       noPartyFoundError.classList.add('hide');
@@ -55,15 +46,18 @@ globalThis.addEventListener('load', () => {
          return;
       }
 
-      fetch(`api/website/database.php?type=validateParty&party_id=${encodeURIComponent(partyCode)}`, {
+      fetch(`api/v2/party/partyExists.php?party_id=${encodeURIComponent(partyCode)}`, {
          method: 'GET'
       })
          .then(response => response.json())
          .then(data => {
-            if (data.party_exists) {
-               globalThis.location.href = `party.html?session_code=${encodeURIComponent(partyCode)}`;
-            } else {
-               noPartyFoundError.classList.remove('hide');
+            if (data.success) {
+               if (data.party_exists) {
+                  globalThis.location.href = `party.html?party_id=${encodeURIComponent(partyCode)}`;
+                  return;
+               } else {
+                  noPartyFoundError.classList.remove('hide');
+               }
             }
             loadingIcon.classList.add("hide");
          })

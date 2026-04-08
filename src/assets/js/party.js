@@ -1,34 +1,42 @@
-//////////////// Imports ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import '@/assets/js/util/qrcode.js';
+// Imports
+import QrCreator from 'qr-creator';
 import '@/assets/js/util/modalHandler.js';
 import '@/assets/js/util/collapsibleHandler.js';
 import '@/assets/js/util/clickToCopy.js';
 import '@/assets/js/util/clickToShare.js';
 
-//////////////// Variables /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-let pollingInterval;
-let partyId;
+// Initialize variables
 let loadingIcon;
+
+const partyId = new URLSearchParams(globalThis.location.search).get('party_id')?.trim();
+let explicitToggle;
+
 let searchForm;
 let searchInput;
 let searchResults;
+
 let backToTop;
 let noResults;
-let explicitToggle;
 
-//////////////// Add song to queue function ////////////////////////////////////////////////////////////////////////////////////////////////////////
+let partyIdDisplay;
+let partyUrlLink;
+let partyUrlDisplay;
+let partyLinkClickToShare;
+let qrCodeDisplay;
+
+// Add song to queue
 function addSongToQueue(event, song, artists) {
    if (event.type === 'click' || (event.type === 'keydown' && (event.key === 'Enter' || event.key === ' '))) {
       loadingIcon.classList.remove('hide');
-      fetch(`api/website/spotify.php`, {
+      fetch(`api/v2/spotify/addSongToQueue.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/json'
          },
          body: JSON.stringify({
             type: 'addSongToQueue',
-            song_id: song.uri,
-            party_id: partyId
+            party_id: partyId,
+            track_uri: song.uri
          })
       })
          .then(response => response.json())
@@ -43,35 +51,35 @@ function addSongToQueue(event, song, artists) {
                   }
                }));
             } else {
-               switch (data.response_code) {
-                  case 2:
-                     document.dispatchEvent(new CustomEvent('openModal', {
-                        detail: {
-                           target: 'add-to-queue-duplicate-modal',
-                           callback: () => {
-                              document.querySelector('#add-queue-duplicate-song-name').textContent = `${song.name} by ${artists}`;
-                           }
-                        }
-                     }));
-                     break;
-                  case 3:
-                     document.dispatchEvent(new CustomEvent('openModal', {
-                        detail: {
-                           target: 'add-to-queue-not-playing-modal'
-                        }
-                     }));
-                     break;
-                  case 4:
+               switch (data.error.type) {
+                  case 'rateLimitReached':
                      document.dispatchEvent(new CustomEvent('openModal', {
                         detail: {
                            target: 'too-many-requests-modal'
                         }
                      }));
                      break;
-                  case 5:
+                  case 'noActivePlayer':
+                     document.dispatchEvent(new CustomEvent('openModal', {
+                        detail: {
+                           target: 'add-to-queue-not-playing-modal'
+                        }
+                     }));
+                     break;
+                  case 'explicitContentBlocked':
                      document.dispatchEvent(new CustomEvent('openModal', {
                         detail: {
                            target: 'add-to-queue-explicit-blocked-modal'
+                        }
+                     }));
+                     break;
+                  case 'duplicateSongBlocked':
+                     document.dispatchEvent(new CustomEvent('openModal', {
+                        detail: {
+                           target: 'add-to-queue-duplicate-modal',
+                           callback: () => {
+                              document.querySelector('#add-queue-duplicate-song-name').textContent = `${song.name} by ${artists}`;
+                           }
                         }
                      }));
                      break;
@@ -84,6 +92,7 @@ function addSongToQueue(event, song, artists) {
                      break;
                }
             }
+
             loadingIcon.classList.add('hide');
          })
          .catch(error => {
@@ -92,8 +101,11 @@ function addSongToQueue(event, song, artists) {
    }
 }
 
-//////////////// Search function ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Search function
 function search() {
+   if (!searchInput.value && !searchResults.dataset.currentSearch) {
+      return;
+   }
    loadingIcon.classList.remove('hide');
    for (const child of searchResults.querySelectorAll('.search-results-item')) {
       child.remove();
@@ -107,24 +119,23 @@ function search() {
       loadingIcon.classList.add('hide');
       return;
    }
-   fetch(`api/website/spotify.php?${new URLSearchParams({
-      type: 'searchSongByName',
-      search_term: encodeURIComponent(searchTerm),
-      party_id: partyId
+   fetch(`api/v2/spotify/searchForSong.php?${new URLSearchParams({
+      party_id: partyId,
+      query: encodeURIComponent(searchTerm)
    })}`, {
       method: 'GET'
    })
       .then(response => response.json())
       .then(data => {
-         // Handle rate limiting
-         if (data.response_code === 1) {
-            return document.dispatchEvent(new CustomEvent('openModal', {
+         if (!data.success && data.error.type === "rateLimitReached") {
+            loadingIcon.classList.add("hide");
+            document.dispatchEvent(new CustomEvent('openModal', {
                detail: {
                   target: 'too-many-requests-modal'
                }
             }));
+            return;
          }
-
          // Check if there are no results
          const tracks = Object.values(data.tracks);
          if (tracks.length === 0) {
@@ -215,7 +226,7 @@ function search() {
             addIconSvg.appendChild(addIconPath);
 
             // Add event listener to the add icon
-            addIcon.addEventListener('click', (event) => addSongToQueue(event, song, artists));
+            addIcon.addEventListener('click', event => addSongToQueue(event, song, artists));
 
             // Append the add icon to the result container
             resultContainer.appendChild(addIcon);
@@ -250,90 +261,86 @@ function search() {
       });
 }
 
-//////////////// Polling functions /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function pollingFunction() {
-   fetch(`api/website/database.php?${new URLSearchParams({
-      type: 'validatePartyAndSession',
-      party_id: partyId
-   })}`, {
-      method: 'GET'
-   }).then(response => response.json()).then(data => {
-      if (!data.party_exists) {
-         globalThis.location.href = './join.html';
-      }
-      if (document.querySelector('div#party-qrcode').childElementCount === 0) {
-         const websiteUrl = `${globalThis.location.origin}/party.html?session_code=`;
-         document.querySelector('code#party-id').textContent = partyId;
-         document.querySelector('a#party-url-link').href = `${websiteUrl}${encodeURIComponent(partyId)}`;
-         document.querySelector('code#party-url').textContent = `${websiteUrl}${encodeURIComponent(partyId)}`;
-         document.querySelector('button#share-party-url').dataset.shareUrl = `${websiteUrl}${encodeURIComponent(partyId)}`;
-         QrCreator.render({
-            text: `${websiteUrl}${encodeURIComponent(partyId)}`,
-            radius: 0.5,
-            ecLevel: 'H',
-            fill: '#fff',
-            size: 125
-         }, document.querySelector('div#party-qrcode'));
-      }
-      if (data.explicit !== explicitToggle) {
-         explicitToggle = data.explicit;
-         if (searchResults.querySelectorAll('.search-results-item').length > 0) {
-            search();
+// Set up EventSource listeners
+const eventSource = new EventSource(`api/v2/party/sse/partyInfo.php?party_id=${partyId}`);
+
+eventSource.addEventListener('init', event => {
+   const data = JSON.parse(event.data);
+   if (!data.active_party) {
+      globalThis.location.href = './join.html';
+      return;
+   }
+   partyIdDisplay.textContent = partyId;
+
+   const partyUrl = `${globalThis.location.origin}/party.html?party_id=${encodeURIComponent(partyId)}`;
+
+   partyUrlDisplay.textContent = partyUrl;
+   partyUrlLink.href = partyUrl;
+   partyLinkClickToShare.dataset.shareUrl = partyUrl;
+
+   QrCreator.render({
+      text: partyUrl,
+      radius: 0.5,
+      ecLevel: 'H',
+      fill: '#fff',
+      size: 125
+   }, qrCodeDisplay);
+
+   explicitToggle = data.party.explicit;
+
+   loadingIcon.classList.add('hide');
+});
+
+eventSource.addEventListener('partyUpdate', event => {
+   const data = JSON.parse(event.data);
+
+   switch (data.type) {
+      case 'partyStatusChange':
+         if (!data.active_party) {
+            globalThis.location.href = "./join.html";
+            return;
          }
-      }
-   }).catch(error => {
-      console.error('Page Polling Error:', error);
-   });
-}
+         break;
+      case 'explicitUpdate':
+         if (explicitToggle !== data.explicit) {
+            search();
+            explicitToggle = data.explicit;
+         }
+         break;
+      default:
+         break;
+   }
+});
 
-function startPolling() {
-   pollingFunction();
-   pollingInterval = setInterval(pollingFunction, 1000);
-}
-
-function stopPolling() {
-   clearInterval(pollingInterval);
-}
-
-//////////////// Main Body /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 globalThis.addEventListener('load', () => {
-   //////////////// Set variables //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   partyId = new URLSearchParams(globalThis.location.search).get('session_code')?.trim();
-   loadingIcon = document.querySelector('div#loading-icon');
+   // Get DOM elements and set variables
    if (!partyId) {
       globalThis.location.href = './join.html';
+      return;
    }
+   loadingIcon = document.querySelector('div#loading-icon');
    searchForm = document.querySelector('form#search-songs-form');
    searchInput = searchForm.querySelector('input');
    searchResults = document.querySelector('div#search-results');
    noResults = document.querySelector('span#no-results');
    backToTop = document.querySelector('button#back-to-top');
 
-   //////////////// Page polling //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   startPolling();
+   partyIdDisplay = document.querySelector("#party-id");
+   partyUrlLink = document.querySelector("#party-url-link");
+   partyUrlDisplay = document.querySelector("#party-url");
+   partyLinkClickToShare = document.querySelector("#party-url-link-share");
+   qrCodeDisplay = document.querySelector("#party-qrcode");
 
-   /////////////// Stop Polling while off the page /////////////////////////////////////////////////////////////////////////////////////////////////
-   document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-         stopPolling();
-      } else {
-         startPolling();
-      }
-   });
-
-   //////////////// Search submit //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   searchForm.addEventListener('submit', (event) => {
+   // Handle search form
+   searchForm.addEventListener('submit', event => {
       event.preventDefault();
       search();
    });
 
-   /////////////// Back to Top ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   document.querySelector('button#back-to-top').addEventListener('click', (event) => {
+   // Handle back to top button press
+   document.querySelector('button#back-to-top').addEventListener('click', event => {
       event.preventDefault();
       globalThis.scrollTo({ top: 0, behavior: 'smooth' });
       document.firstElementChild.focus();
    });
-
-   /////////////// Finishing up ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   loadingIcon.classList.add('hide');
 });

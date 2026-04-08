@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
             title: button.dataset.shareTitle,
             text: button.dataset.shareText,
             url: button.dataset.shareUrl
-         }).catch((error) => {
+         }).catch(error => {
             console.error('Error sharing:', error);
          });
       });

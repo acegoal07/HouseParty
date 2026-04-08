@@ -10,6 +10,7 @@ module.exports = {
       loginerror: './src/assets/js/loginerror.js',
       party: './src/assets/js/party.js',
       dashboard: './src/assets/js/dashboard.js',
+      accessrequest: './src/assets/js/accessrequest.js'
    },
    output: {
       filename: '[name]-min.js',

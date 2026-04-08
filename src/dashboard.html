@@ -74,7 +74,7 @@
                      the dashboard</li>
                   <li>Then sit back and listen to the music you and your party adds to your queue</li>
                </ol>
-               <p class="mb-0">Participants in the session can only add songs to the queue. Don't worry about songs
+               <p>Participants in the session can only add songs to the queue. Don't worry about songs
                   being skipped
                   or
                   the
@@ -89,13 +89,23 @@
                <div class="field-with-actions mt-1">
                   <div class="field-body">
                      <code class="field-value" id="party-id"></code>
-                     <ul class="field-actions">
+                     <ul class="field-action-list">
                         <li class="field-action">
-                           <button class="click-to-copy-target" data-copy-target="party-id" type="button"
+                           <button class="field-action-function click-to-copy" data-copy-target="party-id" type="button"
                               aria-label="Copy Party ID">
-                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                              <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
                                  <path
-                                    d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z" />
+                                    d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z" />
+                                 <path
+                                    d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z" />
+                              </svg>
+                              <svg class="copy-success-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                                 <path fill-rule="evenodd"
+                                    d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0" />
+                                 <path
+                                    d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z" />
+                                 <path
+                                    d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z" />
                               </svg>
                            </button>
                         </li>
@@ -107,11 +117,11 @@
                      <a class="field-value" target="_blank" rel="noopener" id="party-url-link">
                         <code id="party-url"></code>
                      </a>
-                     <ul class="field-actions">
+                     <ul class="field-action-list">
                         <li class="field-action">
-                           <button id="party-url-link-share" type="button" class="click-to-share hide"
-                              data-share-title="House Party" data-share-text="Join my party on House Party!"
-                              aria-label="Share Party URL">
+                           <button class="field-action-function click-to-share hide" id="party-url-link-share"
+                              type="button" data-share-title="House Party"
+                              data-share-text="Join my party on House Party!" aria-label="Share Party URL">
                               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
                                  <path
                                     d="M3.5 6a.5.5 0 0 0-.5.5v8a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-8a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 1 0-1h2A1.5 1.5 0 0 1 14 6.5v8a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 14.5v-8A1.5 1.5 0 0 1 3.5 5h2a.5.5 0 0 1 0 1z" />
@@ -121,11 +131,21 @@
                            </button>
                         </li>
                         <li class="field-action">
-                           <button class="click-to-copy-target" data-copy-target="party-url" type="button"
-                              aria-label="Copy Party Code">
-                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                           <button class="field-action-function click-to-copy" data-copy-target="party-url"
+                              type="button" aria-label="Copy Party URL">
+                              <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
                                  <path
-                                    d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z" />
+                                    d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z" />
+                                 <path
+                                    d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z" />
+                              </svg>
+                              <svg class="copy-success-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                                 <path fill-rule="evenodd"
+                                    d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0" />
+                                 <path
+                                    d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z" />
+                                 <path
+                                    d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z" />
                               </svg>
                            </button>
                         </li>
@@ -144,11 +164,11 @@
             <summary>Extend party duration</summary>
             <div class="collapsible-content">
                <p>Enter how many hours you would like to extend the party</p>
-               <form id="extend-party-form" class="form-container">
+               <form id="extend-party-form" class="form-container" action="javascript:void(0);">
                   <div class="input-label-container">
                      <label class="input-label" for="party-extension">Party Extension (hours)</label>
-                     <input id="party-extension" class="short-input input-secondary" type="number" name="party-extension"
-                        title="Party Extension (hours)" minlength="1" maxlength="2" min="1" max="24" required value="4" />
+                     <input id="party-extension" class="short-input input-secondary" type="number"
+                        name="party-extension" title="Party Extension (hours)" min="1" max="24" value="4" required />
                   </div>
                   <div class="btn-container">
                      <button class="btn btn-primary" type="submit" aria-label="Extend Party">Extend Party</button>

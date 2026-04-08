@@ -1,37 +1,26 @@
 document.addEventListener('DOMContentLoaded', () => {
-   // Loop through all elements with the class 'click-to-copy' or 'click-to-copy-target'
-   for (const button of document.querySelectorAll('.click-to-copy, .click-to-copy-target')) {
-      // Add an event listener to the button that copies the text to the clipboard
-      button.addEventListener('click', () => {
-         // Determine the text to copy based on the button's class
-         const copyText = (button.classList.contains('click-to-copy-target') ? document.querySelector(`#${button.dataset.copyTarget}`).textContent : button.dataset.copyText).trim();
-         // If the text exists, copy it to the clipboard and show a copy message
-         if (copyText !== '' && copyText) {
-            navigator.clipboard.writeText(copyText)
-               .then(() => {
-                  if (!document.querySelector('div.copy-toast')) {
-                     showCopyMessage();
-                  }
-               })
-               .catch(error => {
-                  console.error('Failed to copy: ', error);
-               });
+   // Get and loop through all instances of click to copy
+   for (const target of document.querySelectorAll('.click-to-copy')) {
+      // Add click event listener to click to copy targets
+      target.addEventListener('click', () => {
+         // Get click to copy data either from target or attributes
+         const copyText = (Object.hasOwn(target.dataset, 'copyTarget') ? document.querySelector(`#${target.dataset.copyTarget}`).textContent : target.dataset.copyText).trim();
+         // If copy text is empty or copied attribute has already been added to the click to copy ignore click
+         if (copyText === '' || !copyText || target.classList.contains('copied')) {
+            return;
          }
+
+         // Copy data to clipboard
+         navigator.clipboard.writeText(copyText)
+            .then(() => {
+               // Add copied class
+               target.classList.add('copied');
+
+               // Wait for animation to finish and then remove copied class
+               setTimeout(() => {
+                  target.classList.remove('copied');
+               }, 2500)
+            });
       });
    }
 });
-
-/**
- * showCopyMessage
- * Creates a message element and appends it to the body to indicate that the text has been copied
- */
-function showCopyMessage() {
-   const message = document.createElement('div');
-   message.className = 'copy-toast';
-   message.textContent = 'Copied!';
-   document.body.appendChild(message);
-
-   setTimeout(() => {
-      message.remove();
-   }, 2500);
-}

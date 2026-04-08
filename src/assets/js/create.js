@@ -1,89 +1,81 @@
-//////////////// Variables /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Imports
+import '@/assets/js/util/modalHandler.js';
+
+// Initialize variables
 let loadingIcon;
-let pollingInterval;
 let partyDurationInput;
 let explicitCheckbox;
 let duplicateBlockerCheckbox;
 
-//////////////// Polling functions /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function pollingFunction() {
-   // Check if the party exists, retrieve the required data and validate the user session
-   fetch(`api/website/database.php?${new URLSearchParams({
-      type: 'validateSession',
-      partial_data: 'true'
-   })}`, {
-      method: 'GET'
-   })
-      .then(response => response.json())
-      .then(data => {
-         if (!data.validated) { return globalThis.location.href = './'; }
-         if (data.active_party) { return globalThis.location.href = './dashboard.html'; }
-      })
-      .catch(() => {
-         return globalThis.location.href = './';
-      });
-}
+// Set up EventSource listeners
+const eventSource = new EventSource('api/v2/user/sse/sessionInfo.php?datalevel=minimal', { withCredentials: true });
 
-function startPolling() {
-   pollingFunction();
-   pollingInterval = setInterval(pollingFunction, 1000);
-}
+eventSource.addEventListener('init', event => {
+   const data = JSON.parse(event.data);
+   if (data.active_party) {
+      globalThis.location.href = './dashboard.html';
+      return;
+   }
+   loadingIcon.classList.add('hide');
+});
 
-function stopPolling() {
-   clearInterval(pollingInterval);
-}
+eventSource.addEventListener('invalidSessionId', () => {
+   globalThis.location.href = './';
+});
 
-//////////////// Main Body /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-globalThis.addEventListener("load", () => {
-   //////////////// Set variables //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   loadingIcon = document.getElementById("loading-icon");
-   partyDurationInput = document.getElementById("party-duration");
-   explicitCheckbox = document.getElementById("explicit-checkbox");
-   duplicateBlockerCheckbox = document.getElementById("duplicate-blocker-checkbox");
+eventSource.addEventListener('noSessionId', () => {
+   globalThis.location.href = './';
+});
 
-   //////////////// Page polling ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   startPolling();
+eventSource.addEventListener('partyUpdate', event => {
+   const data = JSON.parse(event.data);
 
-   /////////////// Stop Polling while off the page /////////////////////////////////////////////////////////////////////////////////////////////////
-   document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-         stopPolling();
-      } else {
-         startPolling();
-      }
-   });
+   if (data.type === 'partyStatusChange' && data.active_party) {
+      globalThis.location.href = './dashboard.html';
+   }
+});
 
-   //////////////// Create party form //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   document.querySelector("form#create-party").addEventListener("submit", (event) => {
+globalThis.addEventListener('load', () => {
+   // Get DOM elements
+   loadingIcon = document.querySelector("#loading-icon");
+   partyDurationInput = document.querySelector("#party-duration");
+   explicitCheckbox = document.querySelector("#explicit-checkbox");
+   duplicateBlockerCheckbox = document.querySelector("#duplicate-blocker-checkbox");
+
+   // Handle Create Party Form submission
+   document.querySelector("form#create-party").addEventListener("submit", event => {
       event.preventDefault();
       loadingIcon.classList.remove("hide");
-
-      fetch(`api/website/database.php`, {
+      fetch(`api/v2/party/createParty.php`, {
          method: 'post',
          headers: {
             'Content-Type': 'application/json'
          },
          body: JSON.stringify({
-            type: 'createParty',
             party_ends_in: partyDurationInput.value,
-            explicit: explicitCheckbox.checked ? 1 : 0,
-            duplicate_blocker: duplicateBlockerCheckbox.checked ? 1 : 0
+            explicit: explicitCheckbox.checked,
+            duplicate_blocker: duplicateBlockerCheckbox.checked
          })
       })
          .then(response => response.json())
          .then(data => {
             if (data.success) {
-               event.target.reset();
-               return globalThis.location.href = `./dashboard.html`;
+               globalThis.location.href = `./dashboard.html`;
             } else {
-               loadingIcon.classList.add("hide");
+               if (data.error.type === 'unauthorized') {
+                  globalThis.location.href = `./`;
+                  return;
+               }
+
+               document.dispatchEvent(new CustomEvent('openModal', {
+                  detail: {
+                     target: data.error.type === 'rateLimitReached' ? 'too-many-requests-modal' : 'unknown-error-modal'
+                  }
+               }));
             }
          })
          .catch(error => {
             console.error('Create Party Error:', error);
          });
    });
-
-   //////////////// Hide loading icon //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   loadingIcon.classList.add("hide");
 });

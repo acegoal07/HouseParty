@@ -195,7 +195,9 @@ class DatabaseHandler
          $this->input['party_data'] = 'false';
       }
 
-      if (!isset($this->input['partial_data']))
+      if (!isset($this->input['partial_data'])) {
+         $this->input['partial_data'] = 'false';
+      }
 
       http_response_code(200);
 

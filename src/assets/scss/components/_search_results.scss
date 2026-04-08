@@ -11,7 +11,8 @@
 
    &:has(.search-results-item) {
       margin-top: 1.3rem;
-      @media (max-width: 600px) { 
+
+      @media (max-width: 600px) {
          margin-top: 1.15rem;
       }
    }
@@ -82,7 +83,11 @@
          }
 
          path {
-            transition: fill ease 0.35s;
+            transition: fill ease 0.2s;
+
+            @media (prefers-reduced-motion: reduce) {
+               transition: none !important;
+            }
          }
       }
 
@@ -118,8 +123,17 @@
             }
          }
 
+         &:focus {
+            outline: 2px solid variables.$color-focus;
+            outline-offset: 2px;
+         }
+
          path {
-            transition: fill ease 0.35s;
+            transition: fill ease 0.2s;
+
+            @media (prefers-reduced-motion: reduce) {
+               transition: none !important;
+            }
          }
       }
    }

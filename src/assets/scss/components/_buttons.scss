@@ -28,6 +28,10 @@
       transition: background-color ease 0.2s;
       text-align: center;
 
+      @media (prefers-reduced-motion: reduce) {
+         transition: none !important;
+      }
+
       @media (max-width: 600px) {
          font-size: 1.3rem;
          padding: 0.5rem 1rem;

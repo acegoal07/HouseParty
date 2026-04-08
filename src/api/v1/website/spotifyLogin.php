@@ -70,7 +70,7 @@ class SpotifyLoginHandler
       curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
          'grant_type' => 'authorization_code',
          'code' => $_GET['code'],
-         'redirect_uri' => 'https://houseparty.acegoal07.dev/api/website/spotifyLogin.php',
+         'redirect_uri' => 'https://houseparty.acegoal07.dev/api/v1/website/spotifyLogin.php',
          'client_id' => $this->spotifyClientId,
          'client_secret' => $this->spotifyClientSecret
       ]));
@@ -146,9 +146,7 @@ class SpotifyLoginHandler
 
       $hashed_host_id = hash('sha256', $result['id']);
 
-      [$session_id, $expires_at] = createSession($this->conn, $hashed_host_id, $refresh_token);
-
-      cookieSet("session_id", $session_id, $expires_at);
+      createSession($this->conn, $hashed_host_id, $refresh_token);
 
       header("Location: /create.html");
       exit();
