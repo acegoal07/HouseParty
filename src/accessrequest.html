@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xml:lang="en">
+
+<head>
+   <meta charset="utf-8">
+   <title>Access Request</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" type="text/css" media="screen" href="assets/css/style-min.css">
+   <script src="assets/js/accessrequest-min.js" defer></script>
+</head>
+
+<body>
+   <!-- LOADING ICON -->
+   <div class="loading-container hide" id="loading-icon" aria-live="polite">
+      <svg class="loading-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-label="Loading">
+         <path
+            d="M304 48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zm0 416a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM48 304a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm464-48a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM142.9 437A48 48 0 1 0 75 369.1 48 48 0 1 0 142.9 437zm0-294.2A48 48 0 1 0 75 75a48 48 0 1 0 67.9 67.9zM369.1 437A48 48 0 1 0 437 369.1 48 48 0 1 0 369.1 437z" />
+      </svg>
+   </div>
+   <!-- SUCCESS MODAL -->
+   <dialog class="modal-background" id="success-modal" aria-labelledby="success-title"
+      aria-describedby="success-description">
+      <div class="modal-body">
+         <h1 id="success-title">Success</h1>
+         <p id="success-description">Your access request has been submitted, the review process is performed manually
+            due to spotify restrictions so keep an eye out for a response</p>
+         <div class="btn-container mb-1">
+            <a class="btn btn-primary" type="button" aria-label="Go to main menu" href="./">Main Menu</a>
+         </div>
+      </div>
+   </dialog>
+   <!-- FAILED MODAL -->
+   <dialog class="modal-background" id="failed-modal" aria-labelledby="failed-title"
+      aria-describedby="failed-description">
+      <div class="modal-body">
+         <h1 id="failed-title">Error</h1>
+         <p id="failed-description">An error occurred while submitting your access request</p>
+         <div class="btn-container mb-1">
+            <button class="btn btn-primary" id="retry-button" type="button" aria-label="Try again">Try Again</button>
+            <a class="btn btn-primary" type="button" aria-label="Go to main menu" href="./">Main Menu</a>
+         </div>
+      </div>
+   </dialog>
+   <!-- HEADER -->
+   <header>
+      <h1 class="heading" aria-describedby="page-description">Access Request</h1>
+      <p class="description" id="page-description">Fill out the form bellow with your spotify information</p>
+   </header>
+   <!-- MAIN -->
+   <main>
+      <form id="access-request-form" class="form-container" aria-label="access request form">
+         <input type="text" title="name" placeholder="Name" aria-label="Your name" id="name" required>
+         <input type="email" title="email" placeholder="Spotify account email" aria-label="Spotify account email"
+            id="email" required>
+         <div class="btn-container">
+            <button class="btn btn-primary" type="submit" aria-label="Submit">Submit</button>
+            <a class="btn" href="./" aria-label="Go Back to home page">Go Back</a>
+         </div>
+      </form>
+
+   </main>
+   <!-- FOOTER -->
+   <footer>
+      <p>Developed by <a href="https://acegoal07.dev" rel="noopener" target="_blank">acegoal07</a> powered by <a
+            href="https://developer.spotify.com/documentation/web-api/" rel="noopener" target="_blank">Spotify</a>
+      </p>
+   </footer>
+</body>
+
+</html>

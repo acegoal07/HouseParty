@@ -4,6 +4,7 @@ require_once __DIR__ . '/../util/checkOrigin.php';
 require_once __DIR__ . '/../util/parseInput.php';
 header("Access-Control-Allow-Origin: {$allowedDomain}");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Content-Type: application/json");
 
 // If browser sends an option return info
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
@@ -57,6 +58,8 @@ class AccessRequest
          exit();
       }
 
+      $email = urldecode($email);
+
       $name = $this->input['name'] ?? '';
 
       if (empty($name)) {
@@ -71,16 +74,7 @@ class AccessRequest
          exit();
       }
 
-      $premium = $this->input['premium'] ?? false;
-
-      if (!$premium) {
-         http_response_code(200);
-         echo json_encode([
-            'success' => false,
-            'message' => 'premium required'
-         ]);
-         exit();
-      }
+      $name = urldecode($name);
 
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_POST, true);

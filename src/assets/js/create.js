@@ -43,7 +43,7 @@ globalThis.addEventListener('load', () => {
    duplicateBlockerCheckbox = document.querySelector("#duplicate-blocker-checkbox");
 
    // Handle Create Party Form submission
-   document.querySelector("form#create-party").addEventListener("submit", (event) => {
+   document.querySelector("form#create-party").addEventListener("submit", event => {
       event.preventDefault();
       loadingIcon.classList.remove("hide");
       fetch(`api/v2/party/createParty.php`, {

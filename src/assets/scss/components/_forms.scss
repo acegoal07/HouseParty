@@ -27,7 +27,8 @@
    }
 
    input[type="text"],
-   input[type="number"] {
+   input[type="number"],
+   input[type="email"] {
       cursor: text !important;
       background-color: variables.$bg-secondary;
       color: #fff;

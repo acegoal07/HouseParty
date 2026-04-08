@@ -172,7 +172,7 @@ globalThis.addEventListener('load', () => {
    disableDuplicateBlockerButton = document.querySelector("#disable-duplicate-blocker");
 
    // Handle Extend Party Form submission
-   document.querySelector('form#extend-party-form').addEventListener('submit', (event) => {
+   document.querySelector('form#extend-party-form').addEventListener('submit', event => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
       fetch(`api/v2/party/extendParty.php`, {
@@ -201,7 +201,7 @@ globalThis.addEventListener('load', () => {
    });
 
    // Handle the button press for disabling explicit songs
-   disableExplicitButton.addEventListener('click', (event) => {
+   disableExplicitButton.addEventListener('click', event => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
       fetch(`api/v2/party/updateExplicit.php`, {
@@ -231,7 +231,7 @@ globalThis.addEventListener('load', () => {
    });
 
    // Handle the button press for enabling explicit songs
-   enableExplicitButton.addEventListener('click', (event) => {
+   enableExplicitButton.addEventListener('click', event => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
       fetch(`api/v2/party/updateExplicit.php`, {
@@ -261,7 +261,7 @@ globalThis.addEventListener('load', () => {
    });
 
    // Handle the button press for disabling duplicate blocker
-   disableDuplicateBlockerButton.addEventListener('click', (event) => {
+   disableDuplicateBlockerButton.addEventListener('click', event => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
       fetch(`api/v2/party/updateDuplicateBlocker.php`, {
@@ -291,7 +291,7 @@ globalThis.addEventListener('load', () => {
    });
 
    // Handle the button press for enabling duplicate blocker
-   enableDuplicateBlockerButton.addEventListener('click', (event) => {
+   enableDuplicateBlockerButton.addEventListener('click', event => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
       fetch(`api/v2/party/updateDuplicateBlocker.php`, {
@@ -322,7 +322,7 @@ globalThis.addEventListener('load', () => {
    });
 
    // Handle the button press for generating a new party ID
-   document.querySelector('button#confirm-generate-new-party-id-button').addEventListener('click', (event) => {
+   document.querySelector('button#confirm-generate-new-party-id-button').addEventListener('click', event => {
       event.preventDefault();
       document.dispatchEvent(new Event('closeCurrentModal'));
       loadingIcon.classList.remove('hide');
@@ -349,7 +349,7 @@ globalThis.addEventListener('load', () => {
    });
 
    // Handle the button press for confirming the end of the party
-   document.querySelector('button#confirm-end-party-button').addEventListener('click', (event) => {
+   document.querySelector('button#confirm-end-party-button').addEventListener('click', event => {
       event.preventDefault();
       document.dispatchEvent(new Event('closeCurrentModal'));
       loadingIcon.classList.remove('hide');

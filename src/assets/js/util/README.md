@@ -98,8 +98,8 @@ document.dispatchEvent(new CustomEvent('openModal', {
   }
 }));
 
-// Close modal
-document.dispatchEvent(new Event('closeCurrentModal', {
+// Close modal (new Event can be used if you don't need a callback function)
+document.dispatchEvent(new CustomEvent('closeCurrentModal', {
   detail: {
       callback: () => {
         console.log('Modal closed');

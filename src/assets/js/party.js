@@ -332,13 +332,13 @@ globalThis.addEventListener('load', () => {
    qrCodeDisplay = document.querySelector("#party-qrcode");
 
    // Handle search form
-   searchForm.addEventListener('submit', (event) => {
+   searchForm.addEventListener('submit', event => {
       event.preventDefault();
       search();
    });
 
    // Handle back to top button press
-   document.querySelector('button#back-to-top').addEventListener('click', (event) => {
+   document.querySelector('button#back-to-top').addEventListener('click', event => {
       event.preventDefault();
       globalThis.scrollTo({ top: 0, behavior: 'smooth' });
       document.firstElementChild.focus();

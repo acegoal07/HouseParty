@@ -13,7 +13,7 @@ class CollapsibleHandler {
       for (const item of document.querySelectorAll('details.collapsible-item')) {
          if (item.hasAttribute('open')) { this.open(item); }
          item.setAttribute('aria-expanded', item.hasAttribute('open') ? 'true' : 'false');
-         item.addEventListener('click', (event) => {
+         item.addEventListener('click', event => {
             if (event.target.tagName.toLowerCase() !== 'summary' && event.target.tagName.toLowerCase() !== 'details') { return; }
             event.preventDefault();
             if (this.collapsible === item) {

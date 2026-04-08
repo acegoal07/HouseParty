@@ -8,7 +8,7 @@
 // HTML & BODY
 html,
 body {
-   height: 100%;
+   height: 100dvh;
    margin: 0;
 }
 
@@ -72,7 +72,7 @@ main {
 footer {
    position: -webkit-sticky;
    position: sticky;
-   top: 100vh;
+   top: 100dvh;
    text-align: center;
    margin-top: 1.3rem;
 

@@ -29,7 +29,7 @@ globalThis.addEventListener('load', () => {
    partyCodeInput = document.querySelector('input#party-code');
 
    // Handle Join Form submission
-   document.querySelector('form#join-form').addEventListener('submit', (event) => {
+   document.querySelector('form#join-form').addEventListener('submit', event => {
       event.preventDefault();
       loadingIcon.classList.remove('hide');
       noPartyFoundError.classList.add('hide');
@@ -66,5 +66,4 @@ globalThis.addEventListener('load', () => {
             loadingIcon.classList.add("hide");
          });
    });
-
 });

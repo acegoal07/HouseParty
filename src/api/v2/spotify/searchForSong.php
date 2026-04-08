@@ -49,7 +49,7 @@ class SearchForSong
    private function handleRequest()
    {
       // Get party id and check if it's not empty
-      $partyId = $this->input['party_id'] ?? [];
+      $partyId = $this->input['party_id'] ?? '';
 
       if (empty($partyId)) {
          http_response_code(400);
@@ -64,7 +64,7 @@ class SearchForSong
       }
 
       // Get query and check if it's not empty
-      $searchQuery = $this->input['query'] ?? [];
+      $searchQuery = $this->input['query'] ?? '';
 
       if (empty($searchQuery)) {
          http_response_code(400);

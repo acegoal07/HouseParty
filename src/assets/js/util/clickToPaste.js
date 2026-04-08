@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
          target.classList.remove('hide');
          target.addEventListener('click', () => {
             navigator.clipboard.readText()
-               .then((pasteData) => {
+               .then(pasteData => {
                   pasteData = pasteData.trim();
 
                   if (!pasteData || pasteData == '') {

@@ -39,17 +39,17 @@ class ModalHandler {
     * Setup custom event listeners for opening and closing modals
     */
    _setupEvents() {
-      document.addEventListener('openModal', (event) => {
+      document.addEventListener('openModal', event => {
          const { target, callback } = event.detail || {};
          this.open(target, callback);
       });
 
-      document.addEventListener('closeCurrentModal', (event) => {
+      document.addEventListener('closeCurrentModal', event => {
          const { callback } = event.detail || {};
          this.close(callback);
       });
 
-      document.addEventListener('keydown', (event) => {
+      document.addEventListener('keydown', event => {
          if (event.key === 'Escape') {
             const modal = document.querySelector('dialog[open]');
             if (modal) {

@@ -51,6 +51,11 @@
       margin-top: 1.15rem;
    }
 
+   &:focus {
+      outline: 2px solid variables.$color-focus;
+      outline-offset: 2px;
+   }
+
    &:hover {
       svg {
          fill: variables.$color-primary-hover;

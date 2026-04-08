@@ -43,7 +43,7 @@ globalThis.addEventListener('load', () => {
                   globalThis.location.href = './create.html';
                }
             })
-            .catch((error) => {
+            .catch(error => {
                console.error('Error:', error);
             });
       } else {
@@ -76,8 +76,8 @@ globalThis.addEventListener('load', () => {
          .then(() => {
             loadingIcon.classList.add('hide');
          })
-         .catch(() => {
-            console.error('Logout failed');
+         .catch(error => {
+            console.error('Logout failed:', error);
          });
    });
 });
